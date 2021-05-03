@@ -16,6 +16,7 @@ interface IOptionsProps {
   optionValue: string;
   optionLabel: string;
   disabled: boolean;
+  selected: boolean;
 }
 
 interface ISelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -66,7 +67,11 @@ const Select = ({
         {...rest}
       >
         {options.map(option => (
-          <option value={option.optionValue} disabled={option.disabled}>
+          <option
+            value={option.optionValue}
+            disabled={option.disabled}
+            selected={option.selected}
+          >
             {option.optionLabel}
           </option>
         ))}
