@@ -11,6 +11,10 @@ export const StylesContainer = styled.header`
     align-items: center;
     justify-content: space-between;
 
+    .links-on-burger {
+      display: none;
+    }
+
     .links {
       display: flex;
       align-items: center;
@@ -50,6 +54,16 @@ export const StylesContainer = styled.header`
           color: var(--background);
           border: 1px solid #bee3db;
         }
+      }
+    }
+
+    @media (max-width: 768px) {
+      .links-on-burger {
+        display: initial;
+      }
+
+      .links {
+        display: none;
       }
     }
   }

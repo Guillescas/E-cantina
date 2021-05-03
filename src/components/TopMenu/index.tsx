@@ -1,13 +1,17 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import Link from 'next/link';
 
 import SignModal from '../SignModal';
+import Burger from '../Burger';
+import MenuOfBurger from '../MenuOfBurger';
 
 import { StylesContainer } from './styles';
 
 const TopMenu = (): ReactElement => {
-  const [modalIsOpen, setModalIsOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const node = useRef();
 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const toggleModal = () => {
     setModalIsOpen(!modalIsOpen);
   };
@@ -16,6 +20,11 @@ const TopMenu = (): ReactElement => {
     <StylesContainer>
       <nav>
         <h1>Logo</h1>
+
+        <div ref={node} className="links-on-burger">
+          <Burger open={open} setOpen={setOpen} />
+          <MenuOfBurger open={open} />
+        </div>
 
         <div className="links">
           <Link href="/a">
