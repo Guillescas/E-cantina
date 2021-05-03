@@ -85,21 +85,25 @@ const SignModal = ({
                   optionValue: '',
                   optionLabel: 'Selecione uma opção',
                   disabled: true,
+                  selected: true,
                 },
                 {
                   optionValue: 'client',
                   optionLabel: 'Cliente',
                   disabled: false,
+                  selected: false,
                 },
                 {
                   optionValue: 'restaurant',
                   optionLabel: 'Restaurante',
                   disabled: false,
+                  selected: false,
                 },
                 {
                   optionValue: 'manager',
                   optionLabel: 'Gestor',
                   disabled: false,
+                  selected: false,
                 },
               ]}
             />
