@@ -4,6 +4,8 @@ export const StylesContainer = styled.div`
   h2 {
     font-size: 2rem;
     margin-bottom: 2rem;
+
+    text-align: center;
   }
 
   .user-options {

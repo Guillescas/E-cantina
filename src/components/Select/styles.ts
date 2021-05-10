@@ -14,7 +14,6 @@ export const Container = styled.div<ContainerProps>`
   padding: 4px 16px;
   width: 100%;
 
-  border: 2px solid var(--background);
   color: vat(--text);
 
   display: flex;

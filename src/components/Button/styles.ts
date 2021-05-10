@@ -19,6 +19,6 @@ export const StylesContainer = styled.button`
   transition: background-color 0.2s;
 
   &:hover {
-    background: ${shade(0.2, `#bee3db`)};
+    background: ${shade(0.2, `#8d99ae`)};
   }
 `;

@@ -1,52 +1,162 @@
-import { ReactElement, useRef, useState } from 'react';
-import Link from 'next/link';
+import { MenuItem, Menu as MenuUI } from '@material-ui/core';
+import { ReactElement, useState } from 'react';
+import { slide as Menu } from 'react-burger-menu';
+import { useBurger } from '../../hooks/burger';
 
-import SignModal from '../SignModal';
-import Burger from '../Burger';
-import MenuOfBurger from '../MenuOfBurger';
+import { StylesContainer, BurgerStyles, InlineMenu } from './styles';
 
-import { StylesContainer } from './styles';
+interface ITopMenuProps {
+  isWhiteBoxOpen: boolean;
+  openWhiteBox: (isOpen: boolean) => void;
+  setRegisterOption: (option: string) => void;
+  openModal: (isOpen: boolean) => void;
+}
 
-const TopMenu = (): ReactElement => {
-  const [open, setOpen] = useState(false);
-  const node = useRef();
+const TopMenu = ({
+  openWhiteBox,
+  isWhiteBoxOpen,
+  setRegisterOption,
+  openModal,
+}: ITopMenuProps): ReactElement => {
+  const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const toggleModal = () => {
-    setModalIsOpen(!modalIsOpen);
+  const handleOpenDropdownMenu = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseBurgerMenu = () => {
+    setAnchorEl(null);
   };
 
   return (
     <StylesContainer>
-      <nav>
-        <h1>Logo</h1>
+      <InlineMenu>
+        <nav>
+          <h1>Logo</h1>
 
-        <div ref={node} className="links-on-burger">
-          <Burger open={open} setOpen={setOpen} />
-          <MenuOfBurger open={open} />
-        </div>
+          <div className="links">
+            <a>Link 1</a>
+            <a>Link 2</a>
+            <a>Link 3</a>
 
-        <div className="links">
-          <Link href="/a">
-            <a>Some link</a>
-          </Link>
-          <Link href="/a">
-            <a>Another link</a>
-          </Link>
-          <Link href="/a">
-            <a>Third link</a>
-          </Link>
+            <button
+              type="button"
+              className="signup-button"
+              onClick={event => {
+                handleOpenDropdownMenu(event);
+              }}
+            >
+              Criar conta
+            </button>
+            <MenuUI
+              id="simple-menu"
+              keepMounted
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseBurgerMenu}
+            >
+              <MenuItem
+                onClick={() => {
+                  setRegisterOption('restaurant');
+                  openWhiteBox(true);
+                  handleCloseBurgerMenu();
+                }}
+              >
+                Sou um restaurante
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setRegisterOption('establishment');
+                  openWhiteBox(true);
+                  handleCloseBurgerMenu();
+                }}
+              >
+                Sou um estabelecimento
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setRegisterOption('client');
+                  openWhiteBox(true);
+                  handleCloseBurgerMenu();
+                }}
+              >
+                Sou um cliente
+              </MenuItem>
+            </MenuUI>
+            <button
+              type="button"
+              className="signin-button"
+              onClick={() => openModal(true)}
+            >
+              Entrar
+            </button>
+          </div>
+        </nav>
+      </InlineMenu>
 
-          <div className="vertical-bar" />
+      <h1>Logo</h1>
 
-          <a role="button" onClick={() => toggleModal()}>
-            Login
-          </a>
-          <button type="button">Sign up</button>
-        </div>
-      </nav>
+      <BurgerStyles>
+        <Menu
+          className="burger-menu"
+          right
+          isOpen={isMenuOpen}
+          onStateChange={state => stateChangeHandler(state)}
+        >
+          <a>Link 1</a>
+          <a>Link 2</a>
+          <a>Link 3</a>
 
-      <SignModal isModalOpen={modalIsOpen} onRequestClose={toggleModal} />
+          <button
+            type="button"
+            className="signup-button"
+            onClick={event => {
+              handleOpenDropdownMenu(event);
+            }}
+          >
+            Criar conta
+          </button>
+          <MenuUI
+            id="simple-menu"
+            keepMounted
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseBurgerMenu}
+          >
+            <MenuItem
+              onClick={() => {
+                setRegisterOption('restaurant');
+                openWhiteBox(true);
+                toggleMenu();
+                handleCloseBurgerMenu();
+              }}
+            >
+              Sou um restaurante
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setRegisterOption('establishment');
+                openWhiteBox(true);
+                toggleMenu();
+                handleCloseBurgerMenu();
+              }}
+            >
+              Sou um estabelecimento
+            </MenuItem>
+          </MenuUI>
+          <button
+            type="button"
+            className="signin-button"
+            onClick={() => {
+              openModal(true);
+              toggleMenu();
+            }}
+          >
+            Entrar
+          </button>
+        </Menu>
+      </BurgerStyles>
     </StylesContainer>
   );
 };

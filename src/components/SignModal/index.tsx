@@ -4,13 +4,12 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
-import { FiLock, FiMail, FiUser } from 'react-icons/fi';
+import { FiLock, FiMail } from 'react-icons/fi';
 
 import Input from '../Input';
 import Button from '../Button';
 
 import { StylesContainer } from './styles';
-import Select from '../Select';
 
 interface ISignModalProps {
   isModalOpen: boolean;
@@ -60,6 +59,7 @@ const SignModal = ({
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
     // [signIn, addToast, history],
   );
@@ -75,40 +75,6 @@ const SignModal = ({
         <h2>Login</h2>
 
         <Form ref={formRef} onSubmit={handleSubmit}>
-          <div>
-            <Select
-              name="userType"
-              id="userType"
-              icon={FiUser}
-              options={[
-                {
-                  optionValue: '',
-                  optionLabel: 'Selecione uma opção',
-                  disabled: true,
-                  selected: true,
-                },
-                {
-                  optionValue: 'client',
-                  optionLabel: 'Cliente',
-                  disabled: false,
-                  selected: false,
-                },
-                {
-                  optionValue: 'restaurant',
-                  optionLabel: 'Restaurante',
-                  disabled: false,
-                  selected: false,
-                },
-                {
-                  optionValue: 'manager',
-                  optionLabel: 'Gestor',
-                  disabled: false,
-                  selected: false,
-                },
-              ]}
-            />
-          </div>
-
           <div>
             <Input
               name="email"
