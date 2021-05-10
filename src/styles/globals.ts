@@ -7,7 +7,7 @@ export const GlobalStyles = createGlobalStyle`
     --text: #f1f1f1;
     --hover-text: #a0a0a0;
 
-    --primary: #bee3db;
+    --primary: #8d99ae;
   }
 
   * {
