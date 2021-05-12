@@ -58,13 +58,16 @@ const Client = (): ReactElement => {
         type: 'client',
       };
 
-      api
-        .post('/cadastrar', userData)
+      await api
+        .post('/cadastrar', userData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         .then(response => {
-          if (!response) {
+          if (!response.data) {
             return toast.error('Erro ao cadastrar o usuário');
           }
-
           toast.success('Cadastro realizado com sucesso');
           router.push('/');
         })
