@@ -64,8 +64,8 @@ export const Container = styled.div<ContainerProps>`
 
     &:-webkit-autofill {
       background-color: transparent !important;
-      box-shadow: 0 0 0 50px var(--background) inset;
-      -webkit-box-shadow: 0 0 0 50px var(--background) inset;
+      box-shadow: 0 0 0 50px var(--input-background) inset;
+      -webkit-box-shadow: 0 0 0 50px var(--input-background) inset;
       -webkit-text-fill-color: var(--text) !important;
     }
 

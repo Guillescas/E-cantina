@@ -54,7 +54,7 @@ export const StylesContainer = styled.header`
     }
   }
 
-  > h1 {
+  > img {
     display: none;
 
     @media (max-width: 768px) {
@@ -62,7 +62,10 @@ export const StylesContainer = styled.header`
       position: absolute;
 
       left: 36px;
-      top: 40px;
+      top: 16px;
+
+      width: 80px;
+      height: 80px;
     }
   }
 `;

@@ -84,7 +84,7 @@ const TopMenu = (): ReactElement => {
         </nav>
       </InlineMenu>
 
-      <h1>Logo</h1>
+      <img src="/assets/logo.png" alt="Logo" />
 
       <BurgerStyles>
         <Menu

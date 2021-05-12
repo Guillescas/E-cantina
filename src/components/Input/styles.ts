@@ -14,7 +14,7 @@ export const Container = styled.div<ContainerProps>`
   padding: 4px 16px;
   width: 100%;
 
-  border: 2px solid var(--background);
+  border: 2px solid var(--input-background);
   color: vat(--text);
 
   display: flex;
@@ -63,8 +63,9 @@ export const Container = styled.div<ContainerProps>`
     }
 
     &:-webkit-autofill {
+      color: var(--text);
       background-color: transparent !important;
-      -webkit-box-shadow: 0 0 0 50px var(--background) inset;
+      -webkit-box-shadow: 0 0 0 50px var(--input-background) inset;
       -webkit-text-fill-color: var(--text) !important;
     }
   }
