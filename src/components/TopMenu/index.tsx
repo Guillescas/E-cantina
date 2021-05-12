@@ -1,23 +1,18 @@
 import { MenuItem, Menu as MenuUI } from '@material-ui/core';
+import { useRouter } from 'next/router';
 import { ReactElement, useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
+
 import { useBurger } from '../../hooks/burger';
+import { useSignInModal } from '../../hooks/signinModal';
 
 import { StylesContainer, BurgerStyles, InlineMenu } from './styles';
 
-interface ITopMenuProps {
-  isWhiteBoxOpen: boolean;
-  openWhiteBox: (isOpen: boolean) => void;
-  setRegisterOption: (option: string) => void;
-  openModal: (isOpen: boolean) => void;
-}
+const TopMenu = (): ReactElement => {
+  const { openLoginModal } = useSignInModal();
 
-const TopMenu = ({
-  openWhiteBox,
-  isWhiteBoxOpen,
-  setRegisterOption,
-  openModal,
-}: ITopMenuProps): ReactElement => {
+  const router = useRouter();
+
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -33,7 +28,7 @@ const TopMenu = ({
     <StylesContainer>
       <InlineMenu>
         <nav>
-          <h1>Logo</h1>
+          <img src="/assets/logo.png" alt="Logo" />
 
           <div className="links">
             <a>Link 1</a>
@@ -58,17 +53,13 @@ const TopMenu = ({
             >
               <MenuItem
                 onClick={() => {
-                  setRegisterOption('restaurant');
-                  openWhiteBox(true);
-                  handleCloseBurgerMenu();
+                  router.push('/signup/restaurant');
                 }}
               >
                 Sou um restaurante
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  setRegisterOption('establishment');
-                  openWhiteBox(true);
                   handleCloseBurgerMenu();
                 }}
               >
@@ -76,8 +67,6 @@ const TopMenu = ({
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  setRegisterOption('client');
-                  openWhiteBox(true);
                   handleCloseBurgerMenu();
                 }}
               >
@@ -87,7 +76,7 @@ const TopMenu = ({
             <button
               type="button"
               className="signin-button"
-              onClick={() => openModal(true)}
+              onClick={() => openLoginModal()}
             >
               Entrar
             </button>
@@ -126,30 +115,37 @@ const TopMenu = ({
           >
             <MenuItem
               onClick={() => {
-                setRegisterOption('restaurant');
-                openWhiteBox(true);
                 toggleMenu();
                 handleCloseBurgerMenu();
+                router.push('/signup/restaurant');
               }}
             >
               Sou um restaurante
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setRegisterOption('establishment');
-                openWhiteBox(true);
                 toggleMenu();
                 handleCloseBurgerMenu();
+                router.push('/signup/stablishment');
               }}
             >
               Sou um estabelecimento
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                toggleMenu();
+                handleCloseBurgerMenu();
+                router.push('/signup/client');
+              }}
+            >
+              Sou um cliente
             </MenuItem>
           </MenuUI>
           <button
             type="button"
             className="signin-button"
             onClick={() => {
-              openModal(true);
+              openLoginModal();
               toggleMenu();
             }}
           >

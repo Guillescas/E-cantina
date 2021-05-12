@@ -78,6 +78,14 @@ export const InlineMenu = styled.header`
     align-items: center;
     justify-content: space-between;
 
+    img {
+      display: flex;
+      align-items: center;
+
+      width: 80px;
+      height: 80px;
+    }
+
     .links {
       display: flex;
       align-items: center;
