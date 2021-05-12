@@ -9,7 +9,7 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  background: var(--backgroud);
+  background: var(--input-background);
   border-radius: 10px;
   padding: 4px 16px;
   width: 100%;
@@ -83,11 +83,11 @@ export const Error = styled(Tooltip)`
   }
 
   span {
-    background: #c53030;
+    background: #ee6c4d;
     color: #fff;
 
     &::before {
-      border-color: #c53030 transparent;
+      border-color: #ee6c4d transparent;
       visibility: visible;
     }
   }

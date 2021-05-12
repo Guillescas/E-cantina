@@ -9,10 +9,12 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  background: var(--backgroud);
-  border-radius: 10px;
+  background: var(--input-background);
   padding: 4px 16px;
   width: 100%;
+
+  border-radius: 10px;
+  border: 2px solid var(--background);
 
   color: vat(--text);
 
@@ -34,14 +36,14 @@ export const Container = styled.div<ContainerProps>`
   ${props =>
     props.isFocused &&
     css`
-      color: #bee3db;
-      border-color: #bee3db;
+      color: var(--primary);
+      border-color: var(--primary);
     `}
 
   ${props =>
     props.isFilled &&
     css`
-      color: #bee3db;
+      color: var(--primary);
     `}
 
   select {

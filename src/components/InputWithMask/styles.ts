@@ -9,11 +9,12 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  background: var(--backgroud);
+  background: var(--input-background);
   padding: 4px 16px;
   width: 100%;
 
-  border-bottom: 2px solid var(--background);
+  border-radius: 10px;
+  border: 2px solid var(--background);
   color: var(--secondary-text);
 
   display: flex;
