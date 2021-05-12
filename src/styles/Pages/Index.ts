@@ -14,4 +14,6 @@ export const StylesContainer = styled.div`
   overflow-x: hidden;
 `;
 
-export const Content = styled.div``;
+export const Content = styled.div`
+  height: 200px;
+`;
