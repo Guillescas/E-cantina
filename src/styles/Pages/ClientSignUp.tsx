@@ -17,14 +17,11 @@ export const StylesContainer = styled.div`
     }
 
     form {
-      .inputs {
-        display: grid;
-        grid-gap: 1rem;
-        grid-template-columns: repeat(2, 1fr);
+      max-width: 500px;
+      display: grid;
 
-        @media (max-width: 1010px) {
-          grid-template-columns: 1fr;
-        }
+      @media (max-width: 1010px) {
+        grid-template-columns: 1fr;
       }
     }
 
