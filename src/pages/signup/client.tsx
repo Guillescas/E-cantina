@@ -68,6 +68,7 @@ const Client = (): ReactElement => {
           if (!response.data) {
             return toast.error('Erro ao cadastrar o usuário');
           }
+          
           toast.success('Cadastro realizado com sucesso');
           router.push('/');
         })
