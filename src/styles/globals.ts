@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 export const GlobalStyles = createGlobalStyle`
   :root {
     --background: #303030;
+    --input-background: #484848;
 
     --text: #f1f1f1;
     --hover-text: #a0a0a0;

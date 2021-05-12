@@ -1,4 +1,5 @@
-import { ReactElement, useCallback, useRef } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
+import { MenuItem, Menu as MenuUI } from '@material-ui/core';
 import Modal from 'react-modal';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -10,6 +11,7 @@ import Input from '../Input';
 import Button from '../Button';
 
 import { StylesContainer } from './styles';
+import getvalidationErrors from '../../utils/getValidationErrors';
 
 interface ISignModalProps {
   isModalOpen: boolean;
@@ -25,14 +27,24 @@ const SignModal = ({
   isModalOpen,
   onRequestClose,
 }: ISignModalProps): ReactElement => {
-  const formRef = useRef<FormHandles>(null);
+  const loginFormRef = useRef<FormHandles>(null);
 
   const router = useRouter();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleOpenDropdownMenu = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseBurgerMenu = () => {
+    setAnchorEl(null);
+  };
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
       try {
-        // formRef.current?.setErrors({});
+        loginFormRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
           email: Yup.string()
@@ -53,9 +65,9 @@ const SignModal = ({
         router.push('/dashboard');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
-          // const errors = getValidationErrors(err);
-          // formRef.current?.setErrors(errors);
-          // return;
+          const errors = getvalidationErrors(err);
+
+          loginFormRef.current?.setErrors(errors);
         }
       }
     },
@@ -74,7 +86,7 @@ const SignModal = ({
       <StylesContainer>
         <h2>Login</h2>
 
-        <Form ref={formRef} onSubmit={handleSubmit}>
+        <Form ref={loginFormRef} onSubmit={handleSubmit}>
           <div>
             <Input
               name="email"
@@ -97,7 +109,38 @@ const SignModal = ({
         </Form>
 
         <div className="login-links">
-          <a>Criar uma conta</a>
+          <a role="button" onClick={event => handleOpenDropdownMenu(event)}>
+            Criar uma conta
+          </a>
+          <MenuUI
+            id="simple-menu"
+            keepMounted
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseBurgerMenu}
+          >
+            <MenuItem
+              onClick={() => {
+                router.push('/signup/restaurant');
+              }}
+            >
+              Sou um restaurante
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                router.push('/signup/stablishment');
+              }}
+            >
+              Sou um estabelecimento
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                router.push('/signup/client');
+              }}
+            >
+              Sou um cliente
+            </MenuItem>
+          </MenuUI>
           <a>Esqueci minha senha</a>
         </div>
       </StylesContainer>
