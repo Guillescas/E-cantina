@@ -1,7 +1,10 @@
 import { BurgerProvider } from './burger';
+import { SignInModalContextProvider } from './signinModal';
 
 const AppProvider: React.FC = ({ children }: any) => (
-  <BurgerProvider>{children}</BurgerProvider>
+  <SignInModalContextProvider>
+    <BurgerProvider>{children}</BurgerProvider>
+  </SignInModalContextProvider>
 );
 
 export default AppProvider;
