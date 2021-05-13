@@ -33,55 +33,57 @@ const Client = (): ReactElement => {
 
   const formRef = useRef<FormHandles>(null);
 
-  const handleSignUpFormSubmit = useCallback(async (data: SignInFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSignUpFormSubmit = useCallback(
+    async (data: SignInFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-        email: Yup.string().email().required('E-mail obrigatório'),
-        password: Yup.string().required('Senha obrigatória'),
-        confirmPassword: Yup.string().oneOf(
-          [Yup.ref('password'), null],
-          'As senhas não correspondem',
-        ),
-      });
-
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-
-      const userData = {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        type: 'client',
-      };
-
-      await api
-        .post('/cadastrar', userData)
-        .then(response => {
-          if (!response.data) {
-            return toast.error('Erro ao cadastrar o usuário');
-          }
-
-          toast.success('Cadastro realizado com sucesso');
-          router.push('/');
-        })
-        .catch(error => {
-          return toast.error(
-            `Erro inesperado. Tente novamente mais tarde ${error}`,
-          );
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome obrigatório'),
+          email: Yup.string().email().required('E-mail obrigatório'),
+          password: Yup.string().required('Senha obrigatória'),
+          confirmPassword: Yup.string().oneOf(
+            [Yup.ref('password'), null],
+            'As senhas não correspondem',
+          ),
         });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        const userData = {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          type: 'client',
+        };
+
+        await api
+          .post('/client', userData)
+          .then(response => {
+            if (!response.data) {
+              return toast.error('Erro ao cadastrar o usuário');
+            }
+
+            toast.success('Cadastro realizado com sucesso');
+            router.push('/');
+          })
+          .catch(error => {
+            return toast.error(
+              `Erro inesperado. Tente novamente mais tarde ${error}`,
+            );
+          });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+        }
       }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    },
+    [router],
+  );
 
   return (
     <StylesContainer>

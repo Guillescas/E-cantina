@@ -10,47 +10,64 @@ import {
   FiMail,
   FiUser,
 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 import InputWithMask from '../../components/InputWithMask';
 import Select from '../../components/Select';
 import TopMenu from '../../components/TopMenu';
 import SignModal from '../../components/SignModal';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
+import TextArea from '../../components/TextArea';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import { useSignInModal } from '../../hooks/signinModal';
 
-import { StylesContainer } from '../../styles/Pages/SignUp';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import api from '../../services/api';
 
-interface SignInFormData {
+import { StylesContainer } from '../../styles/Pages/RestaurantSignUp';
+
+interface SignUpFormData {
   email: string;
   password: string;
   name: string;
   cnpj: string;
+  type: string;
+  description: string;
+  establishmentName: string;
 }
 
 const SignUpRestaurant = (): ReactElement => {
+  const router = useRouter();
+
   const { loginModalIsOpen, closeLoginModal } = useSignInModal();
 
   const formRef = useRef<FormHandles>(null);
 
-  const handleSignUpFormSubmit = useCallback(async (data: SignInFormData) => {
+  const handleSignUpFormSubmit = useCallback(async (data: SignUpFormData) => {
     try {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
+        email: Yup.string()
+          .email('Digite um e-mail válido')
+          .required('E-mail obrigatório'),
+        password: Yup.string().required('Senha obrigatória'),
+        confirmPassword: Yup.string().oneOf(
+          [Yup.ref('password'), null],
+          'As senhas não correspondem',
+        ),
         name: Yup.string().required('Nome obrigatório'),
-        email: Yup.string().email().required('E-mail obrigatório'),
         cnpj: Yup.string()
           .max(18, 'O campo deve ter 14 dígitos')
           .min(18, 'O campo deve ter 14 dígitos')
           .required('CNPJ obrigatório'),
-        password: Yup.string().required('Senha obrigatória'),
-        confirmPassword: Yup.string().min(
-          6,
-          'A senha deve ter no mínimo 6 dígitos',
+        type: Yup.string().required('Tipo obrigatório'),
+        description: Yup.string().required('Descrição obrigatória'),
+        establishmentName: Yup.string().required(
+          'Nome do estabelecimento obrigatório',
         ),
       });
 
@@ -58,7 +75,31 @@ const SignUpRestaurant = (): ReactElement => {
         abortEarly: false,
       });
 
-      // history.push("/dashboard");
+      const restaurantData = {
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        cnpj: data.cnpj,
+        type: data.type,
+        description: data.description,
+        establishmentName: data.establishmentName,
+      };
+
+      await api
+        .post('/restaurante', restaurantData)
+        .then(response => {
+          if (!response.data) {
+            return toast.error('Erro ao cadastrar o restaurante');
+          }
+
+          toast.success('Cadastro realizado com sucesso');
+          router.push('/');
+        })
+        .catch(error => {
+          return toast.error(
+            `Erro inesperado. Tente novamente mais tarde. ${error}`,
+          );
+        });
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -81,18 +122,32 @@ const SignUpRestaurant = (): ReactElement => {
         <h1>Cadastre seu restaurante agora mesmo!</h1>
 
         <Form ref={formRef} onSubmit={handleSignUpFormSubmit}>
-          <div className="inputs">
+          <div className="first-section">
             <div>
-              <Input name="email" icon={FiMail} placeholder="E-mail" />
+              <Input
+                name="email"
+                icon={FiMail}
+                placeholder="E-mail do responsável"
+              />
               <Input
                 name="password"
                 icon={FiLock}
                 placeholder="Senha"
                 type="password"
               />
-              <Input name="name" icon={FiUser} placeholder="Nome completo" />
+              <Input
+                name="confirmPassword"
+                icon={FiLock}
+                placeholder="Confirme sua senha"
+                type="password"
+              />
             </div>
             <div>
+              <Input
+                name="name"
+                icon={FiUser}
+                placeholder="Nome do restaurante"
+              />
               <InputWithMask
                 name="cnpj"
                 placeholder="CNPJ"
@@ -117,12 +172,14 @@ const SignUpRestaurant = (): ReactElement => {
                   },
                 ]}
               />
-              <Input
-                name="description"
-                icon={FiAlignLeft}
-                placeholder="Descrição do restaurante"
-              />
             </div>
+          </div>
+          <div className="second-section">
+            <TextArea
+              name="description"
+              icon={FiAlignLeft}
+              placeholder="Descrição do restaurante"
+            />
           </div>
 
           <Button type="submit">Cadastrar-me</Button>

@@ -9,12 +9,12 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  background: var(--input-background);
+  background: var(--second-background);
   padding: 4px 16px;
   width: 100%;
 
   border-radius: 10px;
-  border: 2px solid var(--background);
+  border: 2px solid var(--second-background);
 
   color: vat(--text);
 
@@ -65,8 +65,8 @@ export const Container = styled.div<ContainerProps>`
 
     &:-webkit-autofill {
       background-color: transparent !important;
-      -webkit-box-shadow: 0 0 0 50px var(--input-background) inset;
-      box-shadow: 0 0 0 50px var(--input-background) inset;
+      -webkit-box-shadow: 0 0 0 50px var(--second-background) inset;
+      box-shadow: 0 0 0 50px var(--second-background) inset;
       -webkit-text-fill-color: var(--text) !important;
     }
   }
@@ -85,11 +85,11 @@ export const Error = styled(Tooltip)`
   }
 
   span {
-    background: #c53030;
+    background: #ee6c4d;
     color: #fff;
 
     &::before {
-      border-color: #c53030 transparent;
+      border-color: #ee6c4d transparent;
       visibility: visible;
     }
   }

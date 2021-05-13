@@ -9,12 +9,12 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  background: var(--input-background);
+  background: var(--second-background);
   border-radius: 10px;
   padding: 4px 16px;
   width: 100%;
 
-  border: 2px solid var(--input-background);
+  border: 2px solid var(--second-background);
   color: vat(--text);
 
   display: flex;
@@ -65,7 +65,7 @@ export const Container = styled.div<ContainerProps>`
     &:-webkit-autofill {
       color: var(--text);
       background-color: transparent !important;
-      -webkit-box-shadow: 0 0 0 50px var(--input-background) inset;
+      -webkit-box-shadow: 0 0 0 50px var(--second-background) inset;
       -webkit-text-fill-color: var(--text) !important;
     }
   }

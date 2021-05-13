@@ -17,7 +17,7 @@ export const StylesContainer = styled.div`
     }
 
     form {
-      .inputs {
+      .first-section {
         display: grid;
         grid-gap: 1rem;
         grid-template-columns: repeat(2, 1fr);
@@ -25,6 +25,10 @@ export const StylesContainer = styled.div`
         @media (max-width: 1010px) {
           grid-template-columns: 1fr;
         }
+      }
+
+      .second-section {
+        margin-top: 1rem;
       }
     }
 

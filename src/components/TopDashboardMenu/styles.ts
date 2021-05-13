@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
 export const StylesContainer = styled.header`
-  margin-bottom: 4rem;
-
   button {
     margin: 0 4px 0 16px;
 
@@ -19,7 +17,7 @@ export const StylesContainer = styled.header`
     transition: all 0.2s;
   }
 
-  .signup-button {
+  .signout-button {
     position: relative;
 
     &:hover {
@@ -43,17 +41,6 @@ export const StylesContainer = styled.header`
     }
   }
 
-  .signin-button {
-    background: var(--primary);
-    border: 2px solid var(--primary);
-
-    &:hover {
-      background: transparent;
-      color: var(--text);
-      border: 2px solid var(--primary);
-    }
-  }
-
   > img {
     display: none;
 
@@ -71,22 +58,61 @@ export const StylesContainer = styled.header`
 `;
 
 export const InlineMenu = styled.header`
-  max-width: 1200px;
+  max-width: 100vw;
   width: 100%;
   margin: 0 auto;
   padding: 1rem;
+
+  background: var(--second-background);
+  border-radius: 0 0 8px 8px;
 
   nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    img {
-      display: flex;
+    .user-card {
+      display: grid;
       align-items: center;
+      grid-template-columns: 1fr 8fr 1fr;
 
-      width: 80px;
-      height: 80px;
+      width: 100%;
+      max-width: 250px;
+      padding-right: 8px;
+
+      background: var(--background);
+      border-radius: 50px 24px 24px 50px;
+
+      cursor: pointer;
+      transition: filter 0.1s;
+
+      &:hover {
+        filter: brightness(0.7);
+      }
+
+      .user-avatar {
+        background: var(--background);
+        border-radius: 50%;
+
+        width: 50px;
+        height: 50px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .user-infos {
+        p {
+          font-size: 0.75rem;
+        }
+      }
+    }
+
+    form {
+      width: 100%;
+
+      margin: 0 1rem;
     }
 
     .links {
@@ -95,21 +121,6 @@ export const InlineMenu = styled.header`
 
       font-size: 1.15rem;
       font-weight: bold;
-
-      a {
-        margin: 0 8px;
-        font-weight: 500;
-
-        transition: color 0.1s;
-      }
-
-      .vertical-bar {
-        margin: 0 16px;
-
-        width: 1px;
-        height: 22px;
-        border-right: 1px solid var(--text);
-      }
     }
   }
 

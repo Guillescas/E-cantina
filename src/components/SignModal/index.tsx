@@ -141,7 +141,7 @@ const SignModal = ({
               Sou um cliente
             </MenuItem>
           </MenuUI>
-          <a>Esqueci minha senha</a>
+          <a href="/forgot-password">Esqueci minha senha</a>
         </div>
       </StylesContainer>
     </Modal>
