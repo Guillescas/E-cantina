@@ -10,12 +10,12 @@ interface ContainerProps {
 
 export const Container = styled.div<ContainerProps>`
   background: var(--second-background);
+  border-radius: 10px;
   padding: 4px 16px;
   width: 100%;
 
-  border-radius: 10px;
   border: 2px solid var(--second-background);
-  color: var(--secondary-text);
+  color: vat(--text);
 
   display: flex;
   align-items: center;
@@ -45,11 +45,13 @@ export const Container = styled.div<ContainerProps>`
       color: var(--primary);
     `}
 
-  input {
+  textarea {
     flex: 1;
     border: 0;
     background: transparent !important;
-    color: var(--text);
+    color: #fff;
+
+    resize: vertical;
 
     border: none;
     outline: none;
@@ -63,21 +65,10 @@ export const Container = styled.div<ContainerProps>`
     }
 
     &:-webkit-autofill {
+      color: var(--text);
       background-color: transparent !important;
-      box-shadow: 0 0 0 50px var(--second-background) inset;
       -webkit-box-shadow: 0 0 0 50px var(--second-background) inset;
       -webkit-text-fill-color: var(--text) !important;
-    }
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    /* Firefox */
-    &[type='number'] {
-      -moz-appearance: textfield;
     }
   }
 

@@ -1,70 +1,60 @@
-import React, {
-  useRef,
+import {
   useEffect,
-  ReactElement,
-  InputHTMLAttributes,
-  useCallback,
+  useRef,
   useState,
+  useCallback,
+  ReactElement,
+  TextareaHTMLAttributes,
 } from 'react';
+import { IconBaseProps } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
-import ReactInputMask from 'react-input-mask';
 import { useField } from '@unform/core';
-import { IconBaseProps } from 'react-icons/lib';
 
 import { Container, Error } from './styles';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   name: string;
   icon: React.ComponentType<IconBaseProps>;
-  mask: string;
 }
 
-const InputMask = ({
+const TextArea = ({
   name,
   icon: Icon,
-  mask,
   ...rest
-}: InputProps): ReactElement => {
-  const inputRef = useRef<ReactInputMask>(null);
+}: TextAreaProps): ReactElement => {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
-  const handleInputFocus = useCallback(() => {
+  const { fieldName, defaultValue, error, registerField } = useField(name);
+
+  const handleTextAreaFocus = useCallback(() => {
     setIsFocused(true);
   }, []);
 
-  const handleInputBlur = useCallback(() => {
+  const handleTextAreaBlur = useCallback(() => {
     setIsFocused(false);
 
-    setIsFilled(!!inputRef.current);
+    setIsFilled(!!inputRef.current?.value);
   }, []);
-
-  const { fieldName, registerField, defaultValue, error } = useField(name);
 
   useEffect(() => {
     registerField({
       name: fieldName,
       ref: inputRef.current,
       path: 'value',
-      setValue(ref, value) {
-        ref.setInputValue(value);
-      },
-      clearValue(ref) {
-        ref.setInputValue('');
-      },
     });
   }, [fieldName, registerField]);
 
   return (
     <Container isErrored={!!error} isFilled={isFilled} isFocused={isFocused}>
       {Icon && <Icon size={20} />}
-      <ReactInputMask
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-        mask={mask}
-        ref={inputRef}
+      <textarea
+        onFocus={handleTextAreaFocus}
+        onBlur={handleTextAreaBlur}
         defaultValue={defaultValue}
+        ref={inputRef}
         {...rest}
       />
 
@@ -77,4 +67,4 @@ const InputMask = ({
   );
 };
 
-export default InputMask;
+export default TextArea;

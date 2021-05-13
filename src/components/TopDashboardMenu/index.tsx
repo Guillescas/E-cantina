@@ -1,17 +1,23 @@
 import { MenuItem, Menu as MenuUI } from '@material-ui/core';
+import { FormHandles } from '@unform/core';
+import { Form } from '@unform/web';
 import { useRouter } from 'next/router';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
+import { FiChevronDown, FiSearch, FiUser } from 'react-icons/fi';
 
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
+import Input from '../Input';
 
 import { StylesContainer, BurgerStyles, InlineMenu } from './styles';
 
-const TopMenu = (): ReactElement => {
-  const { openLoginModal } = useSignInModal();
-
+const TopDashboardMenu = (): ReactElement => {
   const router = useRouter();
+
+  const formRef = useRef<FormHandles>(null);
+
+  const { openLoginModal } = useSignInModal();
 
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -28,57 +34,26 @@ const TopMenu = (): ReactElement => {
     <StylesContainer>
       <InlineMenu>
         <nav>
-          <img src="/assets/logo.png" alt="Logo" />
+          <div className="user-card">
+            <div className="user-avatar">
+              <FiUser />
+            </div>
+
+            <div className="user-infos">
+              <h5>Guilherme</h5>
+              <p>gui.illescas@gmail.com</p>
+            </div>
+
+            <FiChevronDown />
+          </div>
+
+          <Form ref={formRef} onSubmit={() => console.log('a')}>
+            <Input name="search" icon={FiSearch} />
+          </Form>
 
           <div className="links">
-            <a>Link 1</a>
-            <a>Link 2</a>
-            <a>Link 3</a>
-
-            <button
-              type="button"
-              className="signup-button"
-              onClick={event => {
-                handleOpenDropdownMenu(event);
-              }}
-            >
-              Criar conta
-            </button>
-            <MenuUI
-              id="simple-menu"
-              keepMounted
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleCloseBurgerMenu}
-            >
-              <MenuItem
-                onClick={() => {
-                  router.push('/signup/restaurant');
-                }}
-              >
-                Sou um restaurante
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  router.push('/signup/establishment');
-                }}
-              >
-                Sou um estabelecimento
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  router.push('/signup/client');
-                }}
-              >
-                Sou um cliente
-              </MenuItem>
-            </MenuUI>
-            <button
-              type="button"
-              className="signin-button"
-              onClick={() => openLoginModal()}
-            >
-              Entrar
+            <button type="button" className="signout-button">
+              Sair
             </button>
           </div>
         </nav>
@@ -89,7 +64,6 @@ const TopMenu = (): ReactElement => {
       <BurgerStyles>
         <Menu
           className="burger-menu"
-          right
           isOpen={isMenuOpen}
           onStateChange={state => stateChangeHandler(state)}
         >
@@ -157,4 +131,4 @@ const TopMenu = (): ReactElement => {
   );
 };
 
-export default TopMenu;
+export default TopDashboardMenu;
