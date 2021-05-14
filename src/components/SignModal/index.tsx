@@ -10,8 +10,11 @@ import { FiLock, FiMail } from 'react-icons/fi';
 import Input from '../Input';
 import Button from '../Button';
 
-import { StylesContainer } from './styles';
 import getvalidationErrors from '../../utils/getValidationErrors';
+
+import { useAuth } from '../../hooks/auth';
+
+import { StylesContainer } from './styles';
 
 interface ISignModalProps {
   isModalOpen: boolean;
@@ -27,6 +30,8 @@ const SignModal = ({
   isModalOpen,
   onRequestClose,
 }: ISignModalProps): ReactElement => {
+  const { signIn } = useAuth();
+
   const loginFormRef = useRef<FormHandles>(null);
 
   const router = useRouter();
@@ -59,10 +64,10 @@ const SignModal = ({
           abortEarly: false,
         });
 
-        // await signIn({
-        //   email: data.email,
-        //   password: data.password,
-        // });
+        await signIn({
+          email: data.email,
+          password: data.password,
+        });
 
         router.push('/dashboard');
       } catch (err) {
@@ -74,7 +79,7 @@ const SignModal = ({
       }
       setIsLoading(false);
     },
-    [router],
+    [router, signIn],
   );
 
   return (
