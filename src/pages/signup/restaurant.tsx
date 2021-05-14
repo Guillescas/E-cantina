@@ -90,7 +90,7 @@ const SignUpRestaurant = (): ReactElement => {
         };
 
         await api
-          .post('/restaurante', restaurantData)
+          .post('/restaurant', restaurantData)
           .then(response => {
             if (!response.data) {
               return toast.error('Erro ao cadastrar o restaurante');
@@ -153,6 +153,11 @@ const SignUpRestaurant = (): ReactElement => {
                 name="name"
                 icon={FiUser}
                 placeholder="Nome do restaurante"
+              />
+              <Input
+                name="establishmentName"
+                icon={FiUser}
+                placeholder="Nome do estabelecimento"
               />
               <InputWithMask
                 name="cnpj"
