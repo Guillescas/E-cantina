@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const StylesContainer = styled.header`
   button {
@@ -15,45 +15,6 @@ export const StylesContainer = styled.header`
     font-size: 0.9rem;
 
     transition: all 0.2s;
-  }
-
-  .signout-button {
-    position: relative;
-
-    &:hover {
-      background: #fff;
-      color: #000;
-      border: 1px solid #fff;
-    }
-  }
-
-  .createAccountOptions {
-    display: flex;
-    flex-direction: column;
-    background: #fff;
-
-    button {
-      border: none;
-      color: var(--background);
-    }
-
-    &:hover {
-    }
-  }
-
-  > img {
-    display: none;
-
-    @media (max-width: 768px) {
-      display: initial;
-      position: absolute;
-
-      left: 36px;
-      top: 16px;
-
-      width: 80px;
-      height: 80px;
-    }
   }
 `;
 
@@ -72,12 +33,14 @@ export const InlineMenu = styled.header`
     justify-content: space-between;
 
     .user-card {
+      position: relative;
       display: grid;
       align-items: center;
-      grid-template-columns: 1fr 8fr 1fr;
+      grid-template-columns: 1fr 13fr 1fr;
 
       width: 100%;
-      max-width: 250px;
+      max-width: 280px;
+
       padding-right: 8px;
 
       background: var(--background);
@@ -109,23 +72,53 @@ export const InlineMenu = styled.header`
       }
     }
 
+    .user-card-dropdown {
+      display: none;
+    }
+
     form {
       width: 100%;
 
       margin: 0 1rem;
-    }
 
-    .links {
-      display: flex;
-      align-items: center;
-
-      font-size: 1.15rem;
-      font-weight: bold;
+      > div {
+        height: 50px;
+      }
     }
   }
 
   @media (max-width: 768px) {
     display: none;
+  }
+`;
+
+interface IUserCardDropdownStylesProps {
+  isOpen: boolean;
+}
+
+export const UserCardDropdown = styled.div<IUserCardDropdownStylesProps>`
+  ${props =>
+    props.isOpen
+      ? css`
+          display: initial;
+        `
+      : css`
+          display: none;
+        `}
+
+  background: var(--background);
+  width: 100%;
+  max-width: 280px;
+
+  padding-right: 8px;
+
+  position: absolute;
+  top: 60px;
+
+  div {
+    border-top: 1px solid var(--text);
+    border-bottom: 1px solid var(--text);
+    border-radius: 0;
   }
 `;
 

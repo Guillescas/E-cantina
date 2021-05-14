@@ -4,13 +4,19 @@ import { Form } from '@unform/web';
 import { useRouter } from 'next/router';
 import { ReactElement, useRef, useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
-import { FiChevronDown, FiSearch, FiUser } from 'react-icons/fi';
+import { FiChevronDown, FiLogOut, FiSearch, FiUser } from 'react-icons/fi';
 
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
+
 import Input from '../Input';
 
-import { StylesContainer, BurgerStyles, InlineMenu } from './styles';
+import {
+  StylesContainer,
+  BurgerStyles,
+  InlineMenu,
+  UserCardDropdown,
+} from './styles';
 
 const TopDashboardMenu = (): ReactElement => {
   const router = useRouter();
@@ -20,6 +26,8 @@ const TopDashboardMenu = (): ReactElement => {
   const { openLoginModal } = useSignInModal();
 
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
+
+  const [isUserCardDropdownOpen, setIsUserCardDropdownOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleOpenDropdownMenu = (event: any) => {
@@ -27,14 +35,18 @@ const TopDashboardMenu = (): ReactElement => {
   };
 
   const handleCloseBurgerMenu = () => {
-    setAnchorEl(null);
+    setIsUserCardDropdownOpen(false);
   };
 
   return (
     <StylesContainer>
       <InlineMenu>
         <nav>
-          <div className="user-card">
+          <div
+            className="user-card"
+            role="button"
+            onClick={() => setIsUserCardDropdownOpen(!isUserCardDropdownOpen)}
+          >
             <div className="user-avatar">
               <FiUser />
             </div>
@@ -46,20 +58,55 @@ const TopDashboardMenu = (): ReactElement => {
 
             <FiChevronDown />
           </div>
+          <UserCardDropdown isOpen={isUserCardDropdownOpen}>
+            <MenuUI
+              id="simple-menu"
+              className="menu-ui"
+              keepMounted
+              anchorEl={anchorEl}
+              open={Boolean(isUserCardDropdownOpen)}
+              onClose={handleCloseBurgerMenu}
+            >
+              <MenuItem
+                onClick={() => {
+                  toggleMenu();
+                  handleCloseBurgerMenu();
+                  router.push('/signup/restaurant');
+                }}
+              >
+                Sou um restaurante
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  toggleMenu();
+                  handleCloseBurgerMenu();
+                  router.push('/signup/establishment');
+                }}
+              >
+                Sou um estabelecimento
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  toggleMenu();
+                  handleCloseBurgerMenu();
+                  router.push('/signup/client');
+                }}
+              >
+                <FiLogOut />
+                Sair
+              </MenuItem>
+            </MenuUI>
+          </UserCardDropdown>
 
           <Form ref={formRef} onSubmit={() => console.log('a')}>
-            <Input name="search" icon={FiSearch} />
+            <Input
+              name="search"
+              icon={FiSearch}
+              placeholder="Busque por um restaurante aqui"
+            />
           </Form>
-
-          <div className="links">
-            <button type="button" className="signout-button">
-              Sair
-            </button>
-          </div>
         </nav>
       </InlineMenu>
-
-      <img src="/assets/logo.png" alt="Logo" />
 
       <BurgerStyles>
         <Menu
@@ -80,7 +127,7 @@ const TopDashboardMenu = (): ReactElement => {
           >
             Criar conta
           </button>
-          <MenuUI
+          {/* <MenuUI
             id="simple-menu"
             keepMounted
             anchorEl={anchorEl}
@@ -114,7 +161,7 @@ const TopDashboardMenu = (): ReactElement => {
             >
               Sou um cliente
             </MenuItem>
-          </MenuUI>
+          </MenuUI> */}
           <button
             type="button"
             className="signin-button"
