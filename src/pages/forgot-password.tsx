@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { FiMail } from 'react-icons/fi';
@@ -20,7 +20,10 @@ interface IForgotPasswordFormData {
 const ForgotPassword = (): ReactElement => {
   const formRef = useRef<FormHandles>();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = useCallback(async (data: IForgotPasswordFormData) => {
+    setIsLoading(true);
     try {
       formRef.current.setErrors({});
 
@@ -40,6 +43,7 @@ const ForgotPassword = (): ReactElement => {
         formRef.current.setErrors(errors);
       }
     }
+    setIsLoading(false);
   }, []);
 
   return (
@@ -53,7 +57,9 @@ const ForgotPassword = (): ReactElement => {
         <Form ref={formRef} onSubmit={handleSubmit}>
           <Input name="email" placeholder="E-mail" icon={FiMail} />
 
-          <Button type="submit">Enviar</Button>
+          <Button type="submit" isLoading={isLoading}>
+            Enviar
+          </Button>
         </Form>
       </div>
     </StylesContainer>

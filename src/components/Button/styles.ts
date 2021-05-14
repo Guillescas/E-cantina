@@ -1,7 +1,11 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
-export const StylesContainer = styled.button`
+interface IButtonStyleProps {
+  disabled: boolean;
+}
+
+export const StylesContainer = styled.button<IButtonStyleProps>`
   width: 100%;
   height: 56px;
   background: var(--primary);
@@ -18,7 +22,15 @@ export const StylesContainer = styled.button`
 
   transition: background-color 0.2s;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &:hover {
-    background: ${shade(0.2, `#8d99ae`)};
+    ${props =>
+      !props.disabled &&
+      css`
+        background: ${shade(0.2, `#8d99ae`)};
+      `}
   }
 `;

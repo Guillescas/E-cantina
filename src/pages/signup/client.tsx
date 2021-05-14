@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
@@ -33,8 +33,11 @@ const Client = (): ReactElement => {
 
   const formRef = useRef<FormHandles>(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSignUpFormSubmit = useCallback(
     async (data: SignInFormData) => {
+      setIsLoading(true);
       try {
         formRef.current?.setErrors({});
 
@@ -81,6 +84,7 @@ const Client = (): ReactElement => {
           formRef.current?.setErrors(errors);
         }
       }
+      setIsLoading(false);
     },
     [router],
   );
@@ -112,7 +116,9 @@ const Client = (): ReactElement => {
             type="password"
           />
 
-          <Button type="submit">Cadastrar-me</Button>
+          <Button type="submit" isLoading={isLoading}>
+            Cadastrar-me
+          </Button>
         </Form>
       </div>
 

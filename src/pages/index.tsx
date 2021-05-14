@@ -3,8 +3,9 @@ import React from 'react';
 import TopMenu from '../components/TopMenu';
 import SignModal from '../components/SignModal';
 
-import { StylesContainer, Content } from '../styles/Pages/Index';
 import { useSignInModal } from '../hooks/signinModal';
+
+import { StylesContainer, Content } from '../styles/Pages/Index';
 
 const Home: React.FC = () => {
   const { loginModalIsOpen, closeLoginModal } = useSignInModal();

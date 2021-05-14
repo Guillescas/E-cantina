@@ -32,6 +32,7 @@ const SignModal = ({
   const router = useRouter();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenDropdownMenu = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -43,6 +44,7 @@ const SignModal = ({
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
+      setIsLoading(true);
       try {
         loginFormRef.current?.setErrors({});
 
@@ -70,10 +72,9 @@ const SignModal = ({
           loginFormRef.current?.setErrors(errors);
         }
       }
+      setIsLoading(false);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-    // [signIn, addToast, history],
+    [router],
   );
 
   return (
@@ -105,7 +106,9 @@ const SignModal = ({
             />
           </div>
 
-          <Button type="submit">Entrar</Button>
+          <Button type="submit" isLoading={isLoading}>
+            Entrar
+          </Button>
         </Form>
 
         <div className="login-links">

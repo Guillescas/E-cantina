@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { ReactElement, useCallback, useRef } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import {
   FiCreditCard,
@@ -53,8 +53,11 @@ const EstablishmentSignUp = (): ReactElement => {
 
   const formRef = useRef<FormHandles>(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSignUpFormSubmit = useCallback(
     async (data: SignUpFormData) => {
+      setIsLoading(true);
       try {
         formRef.current?.setErrors({});
 
@@ -113,14 +116,13 @@ const EstablishmentSignUp = (): ReactElement => {
             );
           });
       } catch (err) {
-        console.log(err);
-
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
           formRef.current?.setErrors(errors);
         }
       }
+      setIsLoading(false);
     },
     [router],
   );
@@ -190,7 +192,9 @@ const EstablishmentSignUp = (): ReactElement => {
             </div>
           </div>
 
-          <Button type="submit">Cadastrar restaurante</Button>
+          <Button type="submit" isLoading={isLoading}>
+            Cadastrar restaurante
+          </Button>
         </Form>
       </div>
 

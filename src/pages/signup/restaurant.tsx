@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { ReactElement, useCallback, useRef } from 'react';
+import { ReactElement, useCallback, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import {
   FiAlignLeft,
@@ -46,69 +46,75 @@ const SignUpRestaurant = (): ReactElement => {
 
   const formRef = useRef<FormHandles>(null);
 
-  const handleSignUpFormSubmit = useCallback(async (data: SignUpFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const [isLoading, setIsLoading] = useState(false);
 
-      const schema = Yup.object().shape({
-        email: Yup.string()
-          .email('Digite um e-mail válido')
-          .required('E-mail obrigatório'),
-        password: Yup.string().required('Senha obrigatória'),
-        confirmPassword: Yup.string().oneOf(
-          [Yup.ref('password'), null],
-          'As senhas não correspondem',
-        ),
-        name: Yup.string().required('Nome obrigatório'),
-        cnpj: Yup.string()
-          .max(18, 'O campo deve ter 14 dígitos')
-          .min(18, 'O campo deve ter 14 dígitos')
-          .required('CNPJ obrigatório'),
-        type: Yup.string().required('Tipo obrigatório'),
-        description: Yup.string().required('Descrição obrigatória'),
-        establishmentName: Yup.string().required(
-          'Nome do estabelecimento obrigatório',
-        ),
-      });
+  const handleSignUpFormSubmit = useCallback(
+    async (data: SignUpFormData) => {
+      setIsLoading(true);
+      try {
+        formRef.current?.setErrors({});
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-
-      const restaurantData = {
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        cnpj: data.cnpj,
-        type: data.type,
-        description: data.description,
-        establishmentName: data.establishmentName,
-      };
-
-      await api
-        .post('/restaurante', restaurantData)
-        .then(response => {
-          if (!response.data) {
-            return toast.error('Erro ao cadastrar o restaurante');
-          }
-
-          toast.success('Cadastro realizado com sucesso');
-          router.push('/');
-        })
-        .catch(error => {
-          return toast.error(
-            `Erro inesperado. Tente novamente mais tarde. ${error}`,
-          );
+        const schema = Yup.object().shape({
+          email: Yup.string()
+            .email('Digite um e-mail válido')
+            .required('E-mail obrigatório'),
+          password: Yup.string().required('Senha obrigatória'),
+          confirmPassword: Yup.string().oneOf(
+            [Yup.ref('password'), null],
+            'As senhas não correspondem',
+          ),
+          name: Yup.string().required('Nome obrigatório'),
+          cnpj: Yup.string()
+            .max(18, 'O campo deve ter 14 dígitos')
+            .min(18, 'O campo deve ter 14 dígitos')
+            .required('CNPJ obrigatório'),
+          type: Yup.string().required('Tipo obrigatório'),
+          description: Yup.string().required('Descrição obrigatória'),
+          establishmentName: Yup.string().required(
+            'Nome do estabelecimento obrigatório',
+          ),
         });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        const restaurantData = {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          cnpj: data.cnpj,
+          type: data.type,
+          description: data.description,
+          establishmentName: data.establishmentName,
+        };
+
+        await api
+          .post('/restaurante', restaurantData)
+          .then(response => {
+            if (!response.data) {
+              return toast.error('Erro ao cadastrar o restaurante');
+            }
+
+            toast.success('Cadastro realizado com sucesso');
+            router.push('/');
+          })
+          .catch(error => {
+            return toast.error(
+              `Erro inesperado. Tente novamente mais tarde. ${error}`,
+            );
+          });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+        }
       }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      setIsLoading(false);
+    },
+    [router],
+  );
 
   return (
     <StylesContainer>
@@ -182,7 +188,9 @@ const SignUpRestaurant = (): ReactElement => {
             />
           </div>
 
-          <Button type="submit">Cadastrar-me</Button>
+          <Button type="submit" isLoading={isLoading}>
+            Cadastrar-me
+          </Button>
         </Form>
       </div>
 
