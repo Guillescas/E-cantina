@@ -1,10 +1,8 @@
-import { MenuItem, Menu as MenuUI } from '@material-ui/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useRouter } from 'next/router';
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useRef } from 'react';
 import { slide as Menu } from 'react-burger-menu';
-import { FiChevronDown, FiLogOut, FiSearch, FiUser } from 'react-icons/fi';
+import { FiSearch, FiUser } from 'react-icons/fi';
 
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
@@ -19,34 +17,17 @@ import {
 } from './styles';
 
 const TopDashboardMenu = (): ReactElement => {
-  const router = useRouter();
-
   const formRef = useRef<FormHandles>(null);
 
   const { openLoginModal } = useSignInModal();
 
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
 
-  const [isUserCardDropdownOpen, setIsUserCardDropdownOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleOpenDropdownMenu = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseBurgerMenu = () => {
-    setIsUserCardDropdownOpen(false);
-  };
-
   return (
     <StylesContainer>
       <InlineMenu>
         <nav>
-          <div
-            className="user-card"
-            role="button"
-            onClick={() => setIsUserCardDropdownOpen(!isUserCardDropdownOpen)}
-          >
+          <div className="user-card">
             <div className="user-avatar">
               <FiUser />
             </div>
@@ -55,48 +36,8 @@ const TopDashboardMenu = (): ReactElement => {
               <h5>Guilherme</h5>
               <p>gui.illescas@gmail.com</p>
             </div>
-
-            <FiChevronDown />
           </div>
-          <UserCardDropdown isOpen={isUserCardDropdownOpen}>
-            <MenuUI
-              id="simple-menu"
-              className="menu-ui"
-              keepMounted
-              anchorEl={anchorEl}
-              open={Boolean(isUserCardDropdownOpen)}
-              onClose={handleCloseBurgerMenu}
-            >
-              <MenuItem
-                onClick={() => {
-                  toggleMenu();
-                  handleCloseBurgerMenu();
-                  router.push('/signup/restaurant');
-                }}
-              >
-                Sou um restaurante
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  toggleMenu();
-                  handleCloseBurgerMenu();
-                  router.push('/signup/establishment');
-                }}
-              >
-                Sou um estabelecimento
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  toggleMenu();
-                  handleCloseBurgerMenu();
-                  router.push('/signup/client');
-                }}
-              >
-                <FiLogOut />
-                Sair
-              </MenuItem>
-            </MenuUI>
-          </UserCardDropdown>
+          <UserCardDropdown />
 
           <Form ref={formRef} onSubmit={() => console.log('a')}>
             <Input
@@ -118,13 +59,7 @@ const TopDashboardMenu = (): ReactElement => {
           <a>Link 2</a>
           <a>Link 3</a>
 
-          <button
-            type="button"
-            className="signup-button"
-            onClick={event => {
-              handleOpenDropdownMenu(event);
-            }}
-          >
+          <button type="button" className="signup-button">
             Criar conta
           </button>
           {/* <MenuUI

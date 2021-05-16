@@ -1,6 +1,9 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const StylesContainer = styled.header`
+  background: var(--second-background);
+  border-radius: 0 0 8px 8px;
+
   button {
     margin: 0 4px 0 16px;
 
@@ -19,13 +22,10 @@ export const StylesContainer = styled.header`
 `;
 
 export const InlineMenu = styled.header`
-  max-width: 100vw;
+  max-width: 1300px;
   width: 100%;
   margin: 0 auto;
-  padding: 1rem;
-
-  background: var(--second-background);
-  border-radius: 0 0 8px 8px;
+  padding: 1rem 0;
 
   nav {
     display: flex;
@@ -46,13 +46,6 @@ export const InlineMenu = styled.header`
       background: var(--background);
       border-radius: 50px 24px 24px 50px;
 
-      cursor: pointer;
-      transition: filter 0.1s;
-
-      &:hover {
-        filter: brightness(0.7);
-      }
-
       .user-avatar {
         background: var(--background);
         border-radius: 50%;
@@ -72,10 +65,6 @@ export const InlineMenu = styled.header`
       }
     }
 
-    .user-card-dropdown {
-      display: none;
-    }
-
     form {
       width: 100%;
 
@@ -92,20 +81,7 @@ export const InlineMenu = styled.header`
   }
 `;
 
-interface IUserCardDropdownStylesProps {
-  isOpen: boolean;
-}
-
-export const UserCardDropdown = styled.div<IUserCardDropdownStylesProps>`
-  ${props =>
-    props.isOpen
-      ? css`
-          display: initial;
-        `
-      : css`
-          display: none;
-        `}
-
+export const UserCardDropdown = styled.div`
   background: var(--background);
   width: 100%;
   max-width: 280px;
@@ -119,6 +95,10 @@ export const UserCardDropdown = styled.div<IUserCardDropdownStylesProps>`
     border-top: 1px solid var(--text);
     border-bottom: 1px solid var(--text);
     border-radius: 0;
+  }
+
+  #simple-menu {
+    background: var(--background);
   }
 `;
 
