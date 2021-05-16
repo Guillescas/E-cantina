@@ -4,10 +4,14 @@ import { ReactElement, useEffect, useState } from 'react';
 
 import { FiHome, FiLogOut, FiUser } from 'react-icons/fi';
 
+import { useAuth } from '../../hooks/auth';
+
 import { StylesContainer } from './styles';
 
 const LeftDashboardMenu = (): ReactElement => {
   const router = useRouter();
+
+  const { signOut } = useAuth();
 
   useEffect(() => {
     setActiveLink(router.asPath);
@@ -35,7 +39,11 @@ const LeftDashboardMenu = (): ReactElement => {
         </div>
       </Link>
 
-      <div className={`item ${activeLink === 'dashboard' && 'selected'}`}>
+      <div
+        className={`item ${activeLink === 'dashboard' && 'selected'}`}
+        role="button"
+        onClick={() => signOut()}
+      >
         <FiLogOut size={22} />
         <p>Sair</p>
       </div>
