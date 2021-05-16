@@ -6,6 +6,7 @@ export const GlobalStyles = createGlobalStyle`
     --second-background: #484848;
 
     --text: #f1f1f1;
+    --second-text: #D9D9D9;
     --hover-text: #a0a0a0;
 
     --primary: #8d99ae;
