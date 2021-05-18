@@ -32,6 +32,18 @@ export const GlobalStyles = createGlobalStyle`
     background: var(--background);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--second-background);
+    }
   }
 
   body, input, textarea, button {
