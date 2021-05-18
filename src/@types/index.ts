@@ -1,15 +1,8 @@
-export interface IUserProps {
-  id: number;
+export interface IClientProps {
+  sub: string;
   email: string;
-  password: string;
   name: string;
-  type: 'restaurant' | 'client' | 'establishment';
-  CNPJ?: string;
-  restaurantType?: string;
-  rating?: number;
-  Address?: IAddressProps;
-  CPF?: string;
-  imageURL: string;
+  type: string;
 }
 
 export interface IAddressProps {
