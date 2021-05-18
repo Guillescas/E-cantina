@@ -23,7 +23,7 @@ const LeftDashboardMenu = (): ReactElement => {
     <StylesContainer>
       <Link href="/dashboard">
         <div className={`item ${activeLink === '/dashboard' && 'selected'}`}>
-          <FiHome size={22} />
+          <FiHome size={20} />
           <p>Dashboard</p>
         </div>
       </Link>
@@ -34,13 +34,13 @@ const LeftDashboardMenu = (): ReactElement => {
             activeLink === '/dashboard/minha-conta' && 'selected'
           }`}
         >
-          <FiUser size={22} />
+          <FiUser size={20} />
           <p>Minha conta</p>
         </div>
       </Link>
 
       <div className="item" role="button" onClick={() => signOut()}>
-        <FiLogOut size={22} />
+        <FiLogOut size={20} />
         <p>Sair</p>
       </div>
     </StylesContainer>
