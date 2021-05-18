@@ -1,11 +1,15 @@
+/* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { createContext, useCallback, useState, useContext } from 'react';
+import jwt_decode from 'jwt-decode';
+
+import { IClientProps } from '../@types';
 
 import api from '../services/api';
 
 interface AuthState {
   token: string;
-  user: object;
+  user: IClientProps;
 }
 
 interface SignInCredentials {
@@ -14,9 +18,18 @@ interface SignInCredentials {
 }
 
 interface AuthContextData {
-  user: object;
+  user: IClientProps;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
+}
+
+interface ITokenResponse {
+  sub: string;
+  email: string;
+  name: string;
+  type: string;
+  iat: number;
+  exp: number;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -40,15 +53,25 @@ export const AuthProvider: React.FC = ({ children }: any) => {
         password,
       })
       .then(response => {
-        console.log(response);
+        const { token } = response.data;
+
+        const decodedJWTToken: ITokenResponse = jwt_decode(token);
+
+        const formattedUserInfosFromToken = {
+          sub: decodedJWTToken.sub,
+          email: decodedJWTToken.email,
+          name: decodedJWTToken.name,
+          type: decodedJWTToken.type,
+        };
+
+        localStorage.setItem('@ECantina:token', token);
+        localStorage.setItem(
+          '@ECantina:user',
+          JSON.stringify(formattedUserInfosFromToken),
+        );
+
+        setData({ token, user: formattedUserInfosFromToken });
       });
-
-    // const { token, user } = response.data;
-
-    // localStorage.setItem('@ECantina:token', token);
-    // localStorage.setItem('@ECantina:user', JSON.stringify(user));
-
-    // setData({ token, user });
   }, []);
 
   const signOut = useCallback(() => {
