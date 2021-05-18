@@ -68,7 +68,7 @@ export const InlineMenu = styled.header`
     form {
       width: 100%;
 
-      margin: 0 1rem;
+      margin: 0 0 0 1rem;
 
       > div {
         height: 50px;
