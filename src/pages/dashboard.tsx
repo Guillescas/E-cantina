@@ -1,4 +1,5 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
 import Loading from '../components/Loading';
@@ -6,6 +7,8 @@ import RestaurantCard from '../components/RestaurantCard';
 import SearchByTypeCard from '../components/SearchByTypeCard';
 import SEO from '../components/SEO';
 import TopDashboardMenu from '../components/TopDashboardMenu';
+import { useAuth } from '../hooks/auth';
+import api from '../services/api';
 
 import {
   StylesContainer,
@@ -18,12 +21,30 @@ interface IRestaurantProps {
   email: string;
   name: string;
   description?: string;
-  category: string;
+  category: {
+    id: number;
+    name: string;
+  };
 }
 
 const Dashboard = (): ReactElement => {
+  const { token } = useAuth();
+
   const [restaurants, setRestaurants] = useState<IRestaurantProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    api
+      .get('/restaurant', {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(response => {
+        setRestaurants(response.data.content);
+      })
+      .catch(error => {
+        return toast.error(error);
+      });
+  }, [token]);
 
   return (
     <StylesContainer>
@@ -58,6 +79,7 @@ const Dashboard = (): ReactElement => {
           {restaurants.map(restaurant => (
             <RestaurantCard
               key={restaurant.id}
+              id={restaurant.id}
               name={restaurant.name}
               description={restaurant.description}
             />
