@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { createContext, useCallback, useState, useContext } from 'react';
 import jwt_decode from 'jwt-decode';
+import Cookie from 'js-cookie';
 
 import { IClientProps } from '../@types';
 
@@ -36,8 +37,8 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }: any) => {
   const [data, setData] = useState<AuthState>(() => {
-    const token = localStorage.getItem('@ECantina:token');
-    const user = localStorage.getItem('@ECantina:user');
+    const token = Cookie.get('@ECantina:token');
+    const user = Cookie.get('@ECantina:user');
 
     if (token && user) {
       return { token, user: JSON.parse(user) };
@@ -64,8 +65,8 @@ export const AuthProvider: React.FC = ({ children }: any) => {
           type: decodedJWTToken.type,
         };
 
-        localStorage.setItem('@ECantina:token', token);
-        localStorage.setItem(
+        Cookie.set('@ECantina:token', token);
+        Cookie.set(
           '@ECantina:user',
           JSON.stringify(formattedUserInfosFromToken),
         );
@@ -75,8 +76,8 @@ export const AuthProvider: React.FC = ({ children }: any) => {
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem('@ECantina:token');
-    localStorage.removeItem('@ECantina:user');
+    Cookie.remove('@ECantina:token');
+    Cookie.remove('@ECantina:user');
 
     setData({} as AuthState);
   }, []);
