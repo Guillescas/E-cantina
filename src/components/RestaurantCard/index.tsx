@@ -3,17 +3,22 @@ import { FiChevronRight } from 'react-icons/fi';
 
 import { StylesContainer } from './styles';
 
-const RestaurantCard = (): ReactElement => {
+interface IRestaurantCardProps {
+  name: string;
+  description: string;
+}
+
+const RestaurantCard = ({
+  name,
+  description,
+}: IRestaurantCardProps): ReactElement => {
   return (
     <StylesContainer>
-      <img src="/assets/restaurant.jpeg" alt="Imagem de restaurante" />
+      <img src="/assets/restaurant.jpeg" alt={`Imagem de ${name}`} />
 
       <div className="infos">
-        <h2>Restaurante do seu zé</h2>
-        <p>
-          Um restaurante com comidas divesificadas e um bom lugar para conversas
-          e reuniões.
-        </p>
+        <h2>{name}</h2>
+        <p>{description}</p>
       </div>
 
       <div className="icon">
