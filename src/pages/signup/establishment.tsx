@@ -7,7 +7,6 @@ import {
   FiHash,
   FiHome,
   FiImage,
-  FiList,
   FiLock,
   FiMail,
   FiPlus,
@@ -29,7 +28,6 @@ import { useSignInModal } from '../../hooks/signinModal';
 import api from '../../services/api';
 
 import { StylesContainer } from '../../styles/Pages/EstablishmentSignUp';
-import Select from '../../components/Select';
 
 interface SignUpFormData {
   email: string;
@@ -43,7 +41,6 @@ interface SignUpFormData {
   cnpj: string;
   capacity: number;
   rent: number;
-  type: string;
 }
 
 const EstablishmentSignUp = (): ReactElement => {
@@ -65,7 +62,9 @@ const EstablishmentSignUp = (): ReactElement => {
           email: Yup.string()
             .email('Digite um e-mail válido')
             .required('E-mail obrigatório'),
-          password: Yup.string().required('Senha obrigatória'),
+          password: Yup.string()
+            .min(8, 'A senha precisa ter no mínimo 8 caracteres')
+            .required('Senha obrigatória'),
           confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), null], 'As senhas não correspondem')
             .required('Você precisa confirmar sua senha'),
@@ -78,7 +77,6 @@ const EstablishmentSignUp = (): ReactElement => {
           street: Yup.string().required('Rua obrigatória'),
           number: Yup.number().required('Número obrigatório'),
           neighborhood: Yup.string().required('Bairro obrigatório'),
-          type: Yup.string().required('Tipo obrigatório'),
         });
 
         await schema.validate(data, {
@@ -97,7 +95,6 @@ const EstablishmentSignUp = (): ReactElement => {
           cnpj: data.cnpj,
           capacity: data.capacity,
           rent: data.rent,
-          type: data.type,
         };
 
         await api
@@ -171,7 +168,6 @@ const EstablishmentSignUp = (): ReactElement => {
                 icon={FiCreditCard}
                 mask="99.999.999/9999-99"
               />
-              <Select name="type" icon={FiList} options={[]} />
             </div>
             <div>
               <InputWithMask

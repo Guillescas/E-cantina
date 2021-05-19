@@ -44,7 +44,9 @@ const Client = (): ReactElement => {
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome obrigatório'),
           email: Yup.string().email().required('E-mail obrigatório'),
-          password: Yup.string().required('Senha obrigatória'),
+          password: Yup.string()
+            .min(8, 'A senha precisa ter no mínimo 8 caracteres')
+            .required('Senha obrigatória'),
           confirmPassword: Yup.string().oneOf(
             [Yup.ref('password'), null],
             'As senhas não correspondem',

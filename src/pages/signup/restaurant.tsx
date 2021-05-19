@@ -33,10 +33,10 @@ interface SignUpFormData {
   email: string;
   password: string;
   name: string;
-  cnpj: string;
-  type: string;
-  description: string;
   establishmentName: string;
+  cnpj: string;
+  category: string;
+  description: string;
 }
 
 const SignUpRestaurant = (): ReactElement => {
@@ -58,7 +58,9 @@ const SignUpRestaurant = (): ReactElement => {
           email: Yup.string()
             .email('Digite um e-mail válido')
             .required('E-mail obrigatório'),
-          password: Yup.string().required('Senha obrigatória'),
+          password: Yup.string()
+            .min(8, 'A senha precisa ter no mínimo 8 caracteres')
+            .required('Senha obrigatória'),
           confirmPassword: Yup.string().oneOf(
             [Yup.ref('password'), null],
             'As senhas não correspondem',
@@ -68,7 +70,7 @@ const SignUpRestaurant = (): ReactElement => {
             .max(18, 'O campo deve ter 14 dígitos')
             .min(18, 'O campo deve ter 14 dígitos')
             .required('CNPJ obrigatório'),
-          type: Yup.string().required('Tipo obrigatório'),
+          category: Yup.string().required('Categoria obrigatória'),
           description: Yup.string().required('Descrição obrigatória'),
           establishmentName: Yup.string().required(
             'Nome do estabelecimento obrigatório',
@@ -84,7 +86,7 @@ const SignUpRestaurant = (): ReactElement => {
           password: data.password,
           name: data.name,
           cnpj: data.cnpj,
-          type: data.type,
+          category: data.category,
           description: data.description,
           establishmentName: data.establishmentName,
         };
@@ -166,20 +168,50 @@ const SignUpRestaurant = (): ReactElement => {
                 mask="99.999.999/9999-99"
               />
               <Select
-                name="type"
+                name="category"
                 icon={FiList}
                 options={[
                   {
-                    optionLabel: 'Selecione uma opção',
+                    optionLabel: 'Qual a categoria do restaurante?',
                     optionValue: '',
-                    selected: true,
                     disabled: true,
+                    selected: true,
                   },
                   {
-                    optionLabel: 'Lanchonete',
-                    optionValue: 'lanchonete',
-                    selected: false,
+                    optionLabel: 'Lanches',
+                    optionValue: 'lanches',
                     disabled: false,
+                    selected: false,
+                  },
+                  {
+                    optionLabel: 'Japonês',
+                    optionValue: 'japones',
+                    disabled: false,
+                    selected: false,
+                  },
+                  {
+                    optionLabel: 'Vegetariano',
+                    optionValue: 'vegetariano',
+                    disabled: false,
+                    selected: false,
+                  },
+                  {
+                    optionLabel: 'Brasileiro',
+                    optionValue: 'brasileiro',
+                    disabled: false,
+                    selected: false,
+                  },
+                  {
+                    optionLabel: 'Bebidas',
+                    optionValue: 'bebidas',
+                    disabled: false,
+                    selected: false,
+                  },
+                  {
+                    optionLabel: 'Outro',
+                    optionValue: 'outro',
+                    disabled: false,
+                    selected: false,
                   },
                 ]}
               />
