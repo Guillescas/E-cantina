@@ -4,6 +4,7 @@ import { ReactElement, useCallback, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import {
   FiCreditCard,
+  FiDollarSign,
   FiHash,
   FiHome,
   FiImage,
@@ -73,10 +74,12 @@ const EstablishmentSignUp = (): ReactElement => {
             .max(18, 'O campo deve ter 14 dígitos')
             .min(18, 'O campo deve ter 14 dígitos')
             .required('CNPJ obrigatório'),
+          capacity: Yup.number().required('Capacidade obrigatória'),
           cep: Yup.string().required('Cep obrigatório'),
           street: Yup.string().required('Rua obrigatória'),
           number: Yup.number().required('Número obrigatório'),
           neighborhood: Yup.string().required('Bairro obrigatório'),
+          rent: Yup.number().required('Preço do aluguel obrigatório'),
         });
 
         await schema.validate(data, {
@@ -168,6 +171,12 @@ const EstablishmentSignUp = (): ReactElement => {
                 icon={FiCreditCard}
                 mask="99.999.999/9999-99"
               />
+              <Input
+                name="capacity"
+                placeholder="Capacidade do estabelecimento"
+                icon={FiCreditCard}
+                type="number"
+              />
             </div>
             <div>
               <InputWithMask
@@ -185,6 +194,12 @@ const EstablishmentSignUp = (): ReactElement => {
               />
               <Input name="complement" icon={FiPlus} placeholder="Complement" />
               <Input name="neighborhood" icon={FiImage} placeholder="Bairro" />
+              <Input
+                name="rent"
+                icon={FiDollarSign}
+                placeholder="Preço do aluguel"
+                type="number"
+              />
             </div>
           </div>
 
