@@ -46,7 +46,7 @@ const LeftDashboardMenu = (): ReactElement => {
         </div>
       </Link>
 
-      <div className="item" role="button" onClick={() => signOut()}>
+      <div className="item" role="button" onClick={signOut}>
         <FiLogOut size={20} />
         <p>Sair</p>
       </div>

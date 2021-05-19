@@ -68,8 +68,6 @@ const SignModal = ({
           email: data.email,
           password: data.password,
         });
-
-        router.push('/dashboard');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(err);
@@ -79,7 +77,7 @@ const SignModal = ({
       }
       setIsLoading(false);
     },
-    [router, signIn],
+    [signIn],
   );
 
   return (
