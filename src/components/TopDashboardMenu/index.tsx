@@ -27,7 +27,10 @@ interface IRestaurantProps {
   email: string;
   name: string;
   description?: string;
-  category: string;
+  category: {
+    id: number;
+    name: string;
+  };
 }
 
 interface ISearchRestaurantFormData {
@@ -35,8 +38,8 @@ interface ISearchRestaurantFormData {
 }
 
 interface ITopDashboardMenuProps {
-  setRestaurants: (restaurants: IRestaurantProps[]) => void;
-  setIsLoading: (isLoading: boolean) => void;
+  setRestaurants?: (restaurants: IRestaurantProps[]) => void;
+  setIsLoading?: (isLoading: boolean) => void;
 }
 
 const TopDashboardMenu = ({
@@ -84,7 +87,7 @@ const TopDashboardMenu = ({
 
       setIsLoading(false);
     },
-    [setIsLoading, setRestaurants],
+    [setIsLoading, setRestaurants, token],
   );
 
   return (
