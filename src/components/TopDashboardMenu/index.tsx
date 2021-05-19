@@ -1,11 +1,16 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useCallback, useRef } from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import { FiSearch, FiUser } from 'react-icons/fi';
+import { toast } from 'react-toastify';
+import * as Yup from 'yup';
 
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
+import { useAuth } from '../../hooks/auth';
+
+import api from '../../services/api';
 
 import Input from '../Input';
 
@@ -15,13 +20,72 @@ import {
   InlineMenu,
   UserCardDropdown,
 } from './styles';
+import getvalidationErrors from '../../utils/getValidationErrors';
 
-const TopDashboardMenu = (): ReactElement => {
+interface IRestaurantProps {
+  id: number;
+  email: string;
+  name: string;
+  description?: string;
+  category: string;
+}
+
+interface ISearchRestaurantFormData {
+  name: string;
+}
+
+interface ITopDashboardMenuProps {
+  setRestaurants: (restaurants: IRestaurantProps[]) => void;
+  setIsLoading: (isLoading: boolean) => void;
+}
+
+const TopDashboardMenu = ({
+  setRestaurants,
+  setIsLoading,
+}: ITopDashboardMenuProps): ReactElement => {
+  const { user, token } = useAuth();
+  const { openLoginModal } = useSignInModal();
+  const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
+
   const formRef = useRef<FormHandles>(null);
 
-  const { openLoginModal } = useSignInModal();
+  const handleSubmit = useCallback(
+    async (data: ISearchRestaurantFormData) => {
+      setIsLoading(true);
+      try {
+        formRef.current?.setErrors({});
 
-  const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome do restaurante obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        api
+          .get(`/restaurant?name=${data.name}`, {
+            headers: { authorization: `Bearer ${token}` },
+          })
+          .then(response => {
+            setRestaurants(response.data.content);
+          })
+          .catch(error => {
+            console.log(error);
+            return toast.error('Houve um erro inesperado. Tente mais tarde');
+          });
+      } catch (error) {
+        if (error instanceof Yup.ValidationError) {
+          const errors = getvalidationErrors(error);
+
+          formRef.current?.setErrors(errors);
+        }
+      }
+
+      setIsLoading(false);
+    },
+    [setIsLoading, setRestaurants],
+  );
 
   return (
     <StylesContainer>
@@ -33,15 +97,15 @@ const TopDashboardMenu = (): ReactElement => {
             </div>
 
             <div className="user-infos">
-              <h5>Guilherme</h5>
-              <p>gui.illescas@gmail.com</p>
+              <h5>{user && user.name}</h5>
+              <p>{user && user.email}</p>
             </div>
           </div>
           <UserCardDropdown />
 
-          <Form ref={formRef} onSubmit={() => console.log('a')}>
+          <Form ref={formRef} onSubmit={handleSubmit}>
             <Input
-              name="search"
+              name="name"
               icon={FiSearch}
               placeholder="Busque por um restaurante aqui"
             />
