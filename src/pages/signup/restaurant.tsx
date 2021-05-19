@@ -184,6 +184,12 @@ const SignUpRestaurant = (): ReactElement => {
                     selected: false,
                   },
                   {
+                    optionLabel: 'Pizzaria',
+                    optionValue: 'pizzaria',
+                    disabled: false,
+                    selected: false,
+                  },
+                  {
                     optionLabel: 'Japonês',
                     optionValue: 'japones',
                     disabled: false,
