@@ -1,8 +1,10 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
+import Loading from '../components/Loading';
 import RestaurantCard from '../components/RestaurantCard';
 import SearchByTypeCard from '../components/SearchByTypeCard';
+import SEO from '../components/SEO';
 import TopDashboardMenu from '../components/TopDashboardMenu';
 
 import {
@@ -11,10 +13,25 @@ import {
   ContentList,
 } from '../styles/Pages/Dashboard';
 
+interface IRestaurantProps {
+  id: number;
+  email: string;
+  name: string;
+  description?: string;
+  category: string;
+}
+
 const Dashboard = (): ReactElement => {
+  const [restaurants, setRestaurants] = useState<IRestaurantProps[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <StylesContainer>
-      <TopDashboardMenu />
+      <SEO title="Dashboard" />
+      <TopDashboardMenu
+        setIsLoading={setIsLoading}
+        setRestaurants={setRestaurants}
+      />
 
       <Content>
         <LeftDashboardMenu />
@@ -37,7 +54,15 @@ const Dashboard = (): ReactElement => {
             <SearchByTypeCard categoryName="Bebidas" imagePath="drink.jpeg" />
           </div>
 
-          <RestaurantCard />
+          {isLoading && <Loading />}
+          {restaurants.map(restaurant => (
+            <RestaurantCard
+              key={restaurant.id}
+              name={restaurant.name}
+              description={restaurant.description}
+            />
+          ))}
+          {restaurants === [] && <h2>Não foi encontrado nenhum restaurante</h2>}
         </ContentList>
       </Content>
     </StylesContainer>
