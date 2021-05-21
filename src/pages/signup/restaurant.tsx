@@ -5,14 +5,15 @@ import * as Yup from 'yup';
 import {
   FiAlignLeft,
   FiCreditCard,
+  FiHome,
   FiList,
   FiLock,
   FiMail,
-  FiUser,
 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
+import { IoMdRestaurant } from 'react-icons/io';
 import InputWithMask from '../../components/InputWithMask';
 import Select from '../../components/Select';
 import TopMenu from '../../components/TopMenu';
@@ -20,6 +21,7 @@ import SignModal from '../../components/SignModal';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import TextArea from '../../components/TextArea';
+import SEO from '../../components/SEO';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -124,6 +126,7 @@ const SignUpRestaurant = (): ReactElement => {
         isModalOpen={loginModalIsOpen}
         onRequestClose={closeLoginModal}
       />
+      <SEO title="Cadastrar um restaurante" />
       <div>
         <TopMenu />
 
@@ -135,17 +138,20 @@ const SignUpRestaurant = (): ReactElement => {
               <Input
                 name="email"
                 icon={FiMail}
+                label="E-mail do responsável"
                 placeholder="E-mail do responsável"
               />
               <Input
                 name="password"
                 icon={FiLock}
+                label="Senha"
                 placeholder="Senha"
                 type="password"
               />
               <Input
                 name="confirmPassword"
                 icon={FiLock}
+                label="Confirme sua senha"
                 placeholder="Confirme sua senha"
                 type="password"
               />
@@ -153,29 +159,36 @@ const SignUpRestaurant = (): ReactElement => {
             <div>
               <Input
                 name="name"
-                icon={FiUser}
+                icon={IoMdRestaurant}
+                label="Nome do restaurante"
                 placeholder="Nome do restaurante"
               />
-              <Input
+              <Select
                 name="establishmentName"
-                icon={FiUser}
+                icon={FiHome}
+                label="Nome do estabelecimento"
                 placeholder="Nome do estabelecimento"
+                options={[]}
               />
               <InputWithMask
                 name="cnpj"
+                label="CNPJ"
                 placeholder="CNPJ"
                 icon={FiCreditCard}
                 mask="99.999.999/9999-99"
               />
               <Select
                 name="category"
+                label="Qual a categoria do restaurante?"
+                placeholder="Qual a categoria do restaurante?"
                 icon={FiList}
                 options={[
                   {
-                    optionLabel: 'Qual a categoria do restaurante?',
+                    optionLabel: 'Selecione uma opção',
                     optionValue: '',
                     disabled: true,
                     selected: true,
+                    hidden: true,
                   },
                   {
                     optionLabel: 'Lanches',
@@ -227,6 +240,7 @@ const SignUpRestaurant = (): ReactElement => {
             <TextArea
               name="description"
               icon={FiAlignLeft}
+              label="Descrição do restaurante"
               placeholder="Descrição do restaurante"
             />
           </div>

@@ -13,6 +13,7 @@ import {
   FiPlus,
 } from 'react-icons/fi';
 import { IoMdRestaurant } from 'react-icons/io';
+import { BiRuler } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
@@ -21,6 +22,7 @@ import TopMenu from '../../components/TopMenu';
 import SignModal from '../../components/SignModal';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import SEO from '../../components/SEO';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -133,6 +135,7 @@ const EstablishmentSignUp = (): ReactElement => {
         isModalOpen={loginModalIsOpen}
         onRequestClose={closeLoginModal}
       />
+      <SEO title="Cadastrar um estabelecimento" />
       <div>
         <TopMenu />
 
@@ -143,60 +146,84 @@ const EstablishmentSignUp = (): ReactElement => {
             <Input
               name="name"
               icon={IoMdRestaurant}
+              label="Nome do estabelecimento"
               placeholder="Nome do estabelecimento"
             />
           </div>
           <div className="second-section">
-            <div>
+            <div className="inputs">
               <Input
                 name="email"
                 icon={FiMail}
+                label="E-mail do responsável"
                 placeholder="E-mail do responsável"
               />
               <Input
+                label="Senha"
+                placeholder="Senha"
                 name="password"
                 icon={FiLock}
-                placeholder="Senha"
                 type="password"
               />
               <Input
+                label="Confirme sua senha"
+                placeholder="Confirme sua senha"
                 name="confirmPassword"
                 icon={FiLock}
-                placeholder="Confirme sua senha"
                 type="password"
               />
               <InputWithMask
                 name="cnpj"
+                label="CNPJ"
                 placeholder="CNPJ"
                 icon={FiCreditCard}
                 mask="99.999.999/9999-99"
               />
               <Input
                 name="capacity"
+                label="Capacidade do estabelecimento"
                 placeholder="Capacidade do estabelecimento"
-                icon={FiCreditCard}
+                icon={BiRuler}
                 type="number"
               />
             </div>
             <div>
               <InputWithMask
+                label="CEP"
+                placeholder="CEP"
                 name="cep"
                 icon={FiHome}
-                placeholder="CEP"
                 mask="99999-999"
               />
-              <Input name="street" icon={FiHome} placeholder="Endereço" />
               <Input
+                label="Endereço"
+                placeholder="Endereço"
+                name="street"
+                icon={FiHome}
+              />
+              <Input
+                label="Número"
+                placeholder="Número"
                 name="number"
                 icon={FiHash}
-                placeholder="Número"
                 type="number"
               />
-              <Input name="complement" icon={FiPlus} placeholder="Complement" />
-              <Input name="neighborhood" icon={FiImage} placeholder="Bairro" />
+              <Input
+                name="complement"
+                icon={FiPlus}
+                label="Complemento"
+                placeholder="Complemento"
+              />
+              <Input
+                name="neighborhood"
+                icon={FiImage}
+                label="Bairro"
+                placeholder="Bairro"
+              />
               <Input
                 name="rent"
                 icon={FiDollarSign}
+                label="Preço do aluguel"
                 placeholder="Preço do aluguel"
                 type="number"
               />

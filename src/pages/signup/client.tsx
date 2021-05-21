@@ -10,6 +10,7 @@ import TopMenu from '../../components/TopMenu';
 import SignModal from '../../components/SignModal';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import SEO from '../../components/SEO';
 
 import api from '../../services/api';
 
@@ -97,23 +98,36 @@ const Client = (): ReactElement => {
         isModalOpen={loginModalIsOpen}
         onRequestClose={closeLoginModal}
       />
+      <SEO title="Cadastre-se" />
       <div>
         <TopMenu />
 
         <h1>Cadastre-se agora mesmo!</h1>
 
         <Form ref={formRef} onSubmit={handleSignUpFormSubmit}>
-          <Input name="name" icon={FiUser} placeholder="Nome completo" />
-          <Input name="email" icon={FiMail} placeholder="E-mail" />
+          <Input
+            name="name"
+            icon={FiUser}
+            label="Nome completo"
+            placeholder="Nome completo"
+          />
+          <Input
+            name="email"
+            icon={FiMail}
+            label="E-mail"
+            placeholder="E-mail"
+          />
           <Input
             name="password"
             icon={FiLock}
+            label="Senha"
             placeholder="Senha"
             type="password"
           />
           <Input
             name="confirmPassword"
             icon={FiLock}
+            label="Confirme sua senha"
             placeholder="Confirme sua senha"
             type="password"
           />
