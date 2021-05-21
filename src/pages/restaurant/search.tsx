@@ -44,18 +44,13 @@ const Search = (): ReactElement => {
   useEffect(() => {
     api
       .get(`/restaurant?nameRestaurant=${restaurantName.keyword}`, {
-        headers: { authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then(response => {
         console.log(response.status);
         setRestaurants(response.data.content);
       })
-      .catch(error => {
-        if (error.response.status === 403) {
-          signOut();
-          return toast.info('Seu token foi expirado. Faça login novamente');
-        }
-
+      .catch(() => {
         return toast.error('Houve um erro inesperado. Tente mais tarde');
       });
   }, [token, restaurantName, signOut]);
@@ -63,10 +58,7 @@ const Search = (): ReactElement => {
   return (
     <StylesContainer>
       <SEO title="Dashboard" />
-      <TopDashboardMenu
-        setIsLoading={setIsLoading}
-        setRestaurants={setRestaurants}
-      />
+      <TopDashboardMenu setIsLoading={setIsLoading} />
 
       <Content>
         <LeftDashboardMenu />
@@ -101,7 +93,18 @@ const Search = (): ReactElement => {
             </button>
           </div>
 
-          {isLoading && <Loading />}
+          {isLoading && (
+            <div className="loading">
+              <Loading />
+            </div>
+          )}
+
+          {restaurants.length === 0 && (
+            <div className="no-restaurants">
+              <p>Não foi encontrado nenhum restaurante :(</p>
+            </div>
+          )}
+
           {restaurants.map(restaurant => (
             <RestaurantCard
               key={restaurant.id}
@@ -110,7 +113,6 @@ const Search = (): ReactElement => {
               description={restaurant.description}
             />
           ))}
-          {restaurants === [] && <h2>Não foi encontrado nenhum restaurante</h2>}
         </ContentList>
       </Content>
     </StylesContainer>
