@@ -46,6 +46,24 @@ export const ContentList = styled.div`
     }
   }
 
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    margin: 2rem 0;
+  }
+
+  .no-restaurants {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    margin: 2rem 0;
+  }
+
   .search-result-bar {
     display: flex;
     align-items: center;

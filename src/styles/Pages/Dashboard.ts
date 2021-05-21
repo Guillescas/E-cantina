@@ -45,4 +45,13 @@ export const ContentList = styled.div`
       background: #888;
     }
   }
+
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    margin: 2rem 0;
+  }
 `;

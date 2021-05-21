@@ -7,7 +7,9 @@ import RestaurantCard from '../components/RestaurantCard';
 import SearchByTypeCard from '../components/SearchByTypeCard';
 import SEO from '../components/SEO';
 import TopDashboardMenu from '../components/TopDashboardMenu';
+
 import { useAuth } from '../hooks/auth';
+
 import api from '../services/api';
 
 import {
@@ -28,7 +30,7 @@ interface IRestaurantProps {
 }
 
 const Dashboard = (): ReactElement => {
-  const { token } = useAuth();
+  const { token, signOut } = useAuth();
 
   const [restaurants, setRestaurants] = useState<IRestaurantProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +38,7 @@ const Dashboard = (): ReactElement => {
   useEffect(() => {
     api
       .get('/restaurant', {
-        headers: { authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then(response => {
         setRestaurants(response.data.content);
@@ -44,15 +46,12 @@ const Dashboard = (): ReactElement => {
       .catch(error => {
         return toast.error(error);
       });
-  }, [token]);
+  }, [signOut, token]);
 
   return (
     <StylesContainer>
       <SEO title="Dashboard" />
-      <TopDashboardMenu
-        setIsLoading={setIsLoading}
-        setRestaurants={setRestaurants}
-      />
+      <TopDashboardMenu setIsLoading={setIsLoading} />
 
       <Content>
         <LeftDashboardMenu />
@@ -75,7 +74,12 @@ const Dashboard = (): ReactElement => {
             <SearchByTypeCard categoryName="Bebidas" imagePath="drink.jpeg" />
           </div>
 
-          {isLoading && <Loading />}
+          {isLoading && (
+            <div className="loading">
+              <Loading />
+            </div>
+          )}
+
           {restaurants.map(restaurant => (
             <RestaurantCard
               key={restaurant.id}
@@ -84,7 +88,6 @@ const Dashboard = (): ReactElement => {
               description={restaurant.description}
             />
           ))}
-          {restaurants === [] && <h2>Não foi encontrado nenhum restaurante</h2>}
         </ContentList>
       </Content>
     </StylesContainer>

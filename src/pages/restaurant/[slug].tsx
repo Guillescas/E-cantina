@@ -2,8 +2,8 @@ import { ReactElement, useEffect, useState } from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { AiTwotoneFire } from 'react-icons/ai';
 import { GetServerSideProps } from 'next';
-
 import { toast } from 'react-toastify';
+
 import LeftDashboardMenu from '../../components/LeftDashboardMenu';
 import ProductCard from '../../components/ProductCard';
 import TopDashboardMenu from '../../components/TopDashboardMenu';
@@ -37,7 +37,7 @@ interface IrestaurantUrlPropsProps {
 const Restaurant = (
   restaurantUrlProps: IrestaurantUrlPropsProps,
 ): ReactElement => {
-  const { token } = useAuth();
+  const { token, signOut } = useAuth();
   const { id } = restaurantUrlProps;
 
   const [restaurant, setRestaurant] = useState<IRestaurantProps>();
@@ -45,7 +45,7 @@ const Restaurant = (
   useEffect(() => {
     api
       .get(`/restaurant/${id}`, {
-        headers: { authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then(response => {
         setRestaurant(response.data);
@@ -53,7 +53,7 @@ const Restaurant = (
       .catch(error => {
         return toast.error(error);
       });
-  }, [id, token]);
+  }, [id, signOut, token]);
 
   return (
     <StylesContainer>
