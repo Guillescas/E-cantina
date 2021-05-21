@@ -26,7 +26,7 @@ interface ISearchRestaurantFormData {
 }
 
 interface ITopDashboardMenuProps {
-  setIsLoading: (props: boolean) => void;
+  setIsLoading?: (props: boolean) => void;
 }
 
 const TopDashboardMenu = ({
