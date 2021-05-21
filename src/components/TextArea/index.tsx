@@ -15,11 +15,13 @@ import { Container, Error } from './styles';
 interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   name: string;
   icon: React.ComponentType<IconBaseProps>;
+  label: string;
 }
 
 const TextArea = ({
   name,
   icon: Icon,
+  label,
   ...rest
 }: TextAreaProps): ReactElement => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -57,6 +59,7 @@ const TextArea = ({
         ref={inputRef}
         {...rest}
       />
+      <label>{label}</label>
 
       {error && (
         <Error title={error}>

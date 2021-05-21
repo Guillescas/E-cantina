@@ -15,9 +15,15 @@ import { Container, Error } from './styles';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   icon: React.ComponentType<IconBaseProps>;
+  label: string;
 }
 
-const Input = ({ name, icon: Icon, ...rest }: InputProps): ReactElement => {
+const Input = ({
+  name,
+  icon: Icon,
+  label,
+  ...rest
+}: InputProps): ReactElement => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [isFocused, setIsFocused] = useState(false);
@@ -53,6 +59,7 @@ const Input = ({ name, icon: Icon, ...rest }: InputProps): ReactElement => {
         ref={inputRef}
         {...rest}
       />
+      {label && <label>{label}</label>}
 
       {error && (
         <Error title={error}>

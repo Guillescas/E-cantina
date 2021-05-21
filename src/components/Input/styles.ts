@@ -9,6 +9,8 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
+  position: relative;
+
   background: var(--second-background);
   border-radius: 10px;
   padding: 4px 16px;
@@ -58,6 +60,21 @@ export const Container = styled.div<ContainerProps>`
 
     padding: 1rem 0.75rem;
 
+    transition: all 0.1s linear;
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -webkit-appearance: none;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type='number'] {
+      -moz-appearance: textfield;
+    }
+
     &::placeholder {
       color: chartreuse(--hover-text);
     }
@@ -65,9 +82,38 @@ export const Container = styled.div<ContainerProps>`
     &:-webkit-autofill {
       color: var(--text);
       background-color: transparent !important;
+      box-shadow: 0 0 0 50px var(--second-background) inset;
       -webkit-box-shadow: 0 0 0 50px var(--second-background) inset;
       -webkit-text-fill-color: var(--text) !important;
     }
+
+    &::placeholder {
+      color: transparent;
+    }
+
+    &:focus + label,
+    &:not(:placeholder-shown) + label {
+      font-size: 14px;
+      top: -4px;
+      margin-left: 2px;
+      color: var(--primary);
+    }
+  }
+
+  label {
+    position: absolute;
+    top: calc(50% - 14px);
+    left: 56px;
+
+    padding: 5px;
+    box-sizing: border-box;
+
+    color: var(--hover-text);
+
+    pointer-events: none;
+    transition: all 0.1s linear;
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
   }
 
   svg {
@@ -86,6 +132,7 @@ export const Error = styled(Tooltip)`
   span {
     background: #ee6c4d;
     color: #fff;
+    z-index: 10;
 
     &::before {
       border-color: #ee6c4d transparent;

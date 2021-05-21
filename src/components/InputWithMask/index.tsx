@@ -17,12 +17,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   icon: React.ComponentType<IconBaseProps>;
   mask: string;
+  label: string;
 }
 
 const InputMask = ({
   name,
   icon: Icon,
   mask,
+  label,
   ...rest
 }: InputProps): ReactElement => {
   const inputRef = useRef<ReactInputMask>(null);
@@ -67,6 +69,7 @@ const InputMask = ({
         defaultValue={defaultValue}
         {...rest}
       />
+      <label>{label}</label>
 
       {error && (
         <Error title={error}>

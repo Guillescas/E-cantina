@@ -17,18 +17,22 @@ interface IOptionsProps {
   optionLabel: string;
   disabled: boolean;
   selected: boolean;
+  hidden?: boolean;
 }
 
 interface ISelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   name: string;
   icon: React.ComponentType<IconBaseProps>;
   options: IOptionsProps[];
+  label?: string;
 }
 
 const Select = ({
   name,
   icon: Icon,
   options,
+  label,
+  hidden,
   ...rest
 }: ISelectProps): ReactElement => {
   const inputRef = useRef<HTMLSelectElement>(null);
@@ -68,6 +72,7 @@ const Select = ({
       >
         {options.map(option => (
           <option
+            hidden={hidden}
             value={option.optionValue}
             disabled={option.disabled}
             selected={option.selected}
@@ -76,6 +81,7 @@ const Select = ({
           </option>
         ))}
       </select>
+      {label && <label>{label}</label>}
 
       {error && (
         <Error title={error}>
