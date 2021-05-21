@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
-
 import { FiHome, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
 
 import { useAuth } from '../../hooks/auth';
@@ -35,12 +34,8 @@ const LeftDashboardMenu = (): ReactElement => {
         </div>
       </Link>
 
-      <Link href="/dashboard/minha-conta">
-        <div
-          className={`item ${
-            activeLink === '/dashboard/minha-conta' && 'selected'
-          }`}
-        >
+      <Link href="/account">
+        <div className={`item ${activeLink === '/account' && 'selected'}`}>
           <FiUser size={20} />
           <p>Minha conta</p>
         </div>

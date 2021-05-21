@@ -3,16 +3,16 @@ import { Form } from '@unform/web';
 import { ReactElement, useCallback, useRef } from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import { FiSearch, FiUser } from 'react-icons/fi';
-import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import { useRouter } from 'next/router';
 
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
 import { useAuth } from '../../hooks/auth';
 
-import api from '../../services/api';
+import InputWithLabel from '../InputWithoutLabel';
 
-import Input from '../Input';
+import getvalidationErrors from '../../utils/getValidationErrors';
 
 import {
   StylesContainer,
@@ -20,41 +20,30 @@ import {
   InlineMenu,
   UserCardDropdown,
 } from './styles';
-import getvalidationErrors from '../../utils/getValidationErrors';
-
-interface IRestaurantProps {
-  id: number;
-  email: string;
-  name: string;
-  description?: string;
-  category: {
-    id: number;
-    name: string;
-  };
-}
 
 interface ISearchRestaurantFormData {
   name: string;
 }
 
 interface ITopDashboardMenuProps {
-  setRestaurants?: (restaurants: IRestaurantProps[]) => void;
-  setIsLoading?: (isLoading: boolean) => void;
+  setIsLoading: (props: boolean) => void;
 }
 
 const TopDashboardMenu = ({
-  setRestaurants,
   setIsLoading,
 }: ITopDashboardMenuProps): ReactElement => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const { openLoginModal } = useSignInModal();
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
+
+  const router = useRouter();
 
   const formRef = useRef<FormHandles>(null);
 
   const handleSubmit = useCallback(
     async (data: ISearchRestaurantFormData) => {
       setIsLoading(true);
+
       try {
         formRef.current?.setErrors({});
 
@@ -66,17 +55,10 @@ const TopDashboardMenu = ({
           abortEarly: false,
         });
 
-        api
-          .get(`/restaurant?name=${data.name}`, {
-            headers: { authorization: `Bearer ${token}` },
-          })
-          .then(response => {
-            setRestaurants(response.data.content);
-          })
-          .catch(error => {
-            console.log(error);
-            return toast.error('Houve um erro inesperado. Tente mais tarde');
-          });
+        router.push({
+          pathname: '/restaurant/search',
+          query: { keyword: data.name },
+        });
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(error);
@@ -84,10 +66,9 @@ const TopDashboardMenu = ({
           formRef.current?.setErrors(errors);
         }
       }
-
       setIsLoading(false);
     },
-    [setIsLoading, setRestaurants, token],
+    [router, setIsLoading],
   );
 
   return (
@@ -107,7 +88,7 @@ const TopDashboardMenu = ({
           <UserCardDropdown />
 
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <Input
+            <InputWithLabel
               name="name"
               icon={FiSearch}
               placeholder="Busque por um restaurante aqui"

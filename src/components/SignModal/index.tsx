@@ -94,9 +94,10 @@ const SignModal = ({
           <div>
             <Input
               name="email"
+              placeholder="email"
               icon={FiMail}
               type="text"
-              placeholder="E-mail"
+              label="E-mail"
             />
           </div>
 
@@ -106,6 +107,7 @@ const SignModal = ({
               icon={FiLock}
               type="password"
               placeholder="Senha"
+              label="Senha"
             />
           </div>
 
