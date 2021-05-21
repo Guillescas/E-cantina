@@ -1,6 +1,11 @@
 /* eslint-disable camelcase */
-/* eslint-disable @typescript-eslint/ban-types */
-import React, { createContext, useCallback, useState, useContext } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useState,
+  useContext,
+  ReactNode,
+} from 'react';
 import jwt_decode from 'jwt-decode';
 import Cookie from 'js-cookie';
 import { useRouter } from 'next/router';
@@ -36,9 +41,13 @@ interface AuthContextData {
   signOut(): void;
 }
 
+interface IAuthProviderProps {
+  children: ReactNode;
+}
+
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export const AuthProvider: React.FC = ({ children }: any) => {
+export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   const router = useRouter();
 
   const [data, setData] = useState<AuthState>(() => {
@@ -58,6 +67,7 @@ export const AuthProvider: React.FC = ({ children }: any) => {
         email,
         password,
       };
+
       api
         .post('/login', userData)
         .then(response => {
@@ -83,6 +93,7 @@ export const AuthProvider: React.FC = ({ children }: any) => {
           router.push('/dashboard');
         })
         .catch(error => {
+          console.log(error);
           return toast.error('Ocorreu um erro ao realizar login');
         });
     },
