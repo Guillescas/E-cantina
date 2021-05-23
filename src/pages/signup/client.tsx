@@ -12,11 +12,11 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import SEO from '../../components/SEO';
 
-import api from '../../services/api';
-
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import { useSignInModal } from '../../hooks/signinModal';
+
+import { api } from '../../services/apiClient';
 
 import { StylesContainer } from '../../styles/Pages/ClientSignUp';
 
