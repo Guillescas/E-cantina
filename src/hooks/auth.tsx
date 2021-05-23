@@ -7,17 +7,15 @@ import React, {
   ReactNode,
 } from 'react';
 import jwt_decode from 'jwt-decode';
-import Cookie from 'js-cookie';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
 
-import { IClientProps } from '../@types';
-
-import api from '../services/api';
+import { api } from '../services/apiClient';
 
 interface AuthState {
-  token: string;
-  user: IClientProps;
+  token: { [key: string]: string };
+  user: { [key: string]: string };
 }
 
 interface SignInCredentials {
@@ -35,8 +33,8 @@ interface ITokenResponse {
 }
 
 interface AuthContextData {
-  token: string;
-  user: IClientProps;
+  token: any;
+  user: any;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
 }
@@ -51,11 +49,11 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   const router = useRouter();
 
   const [data, setData] = useState<AuthState>(() => {
-    const token = Cookie.get('@ECantina:token');
-    const user = Cookie.get('@ECantina:user');
+    const token = parseCookies(undefined, '@ECantina:token');
+    const user = parseCookies(undefined, '@ECantina:user');
 
     if (token && user) {
-      return { token, user: JSON.parse(user) };
+      return { token, user };
     }
 
     return {} as AuthState;
@@ -82,10 +80,18 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
             type: decodedJWTToken.type,
           };
 
-          Cookie.set('@ECantina:token', token);
-          Cookie.set(
+          setCookie(undefined, '@ECantina:token', token, {
+            maxAge: 60 * 60 * 24 * 30, // 30 dias
+            path: '/',
+          });
+          setCookie(
+            undefined,
             '@ECantina:user',
             JSON.stringify(formattedUserInfosFromToken),
+            {
+              maxAge: 60 * 60 * 24 * 30, // 30 dias
+              path: '/',
+            },
           );
 
           setData({ token, user: formattedUserInfosFromToken });
@@ -103,8 +109,8 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   const signOut = useCallback(async () => {
     await router.push('/');
 
-    Cookie.remove('@ECantina:token');
-    Cookie.remove('@ECantina:user');
+    destroyCookie(undefined, '@ECantina:token');
+    destroyCookie(undefined, '@ECantina:user');
 
     setData({} as AuthState);
   }, [router]);

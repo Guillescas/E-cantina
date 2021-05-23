@@ -12,7 +12,9 @@ import TopDashboardMenu from '../../components/TopDashboardMenu';
 
 import { useAuth } from '../../hooks/auth';
 
-import api from '../../services/api';
+import { api } from '../../services/apiClient';
+
+import { withSSRAuth } from '../../utils/withSSRAuth';
 
 import {
   StylesContainer,
@@ -43,9 +45,7 @@ const Search = (): ReactElement => {
 
   useEffect(() => {
     api
-      .get(`/restaurant?nameRestaurant=${restaurantName.keyword}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .get(`/restaurant?nameRestaurant=${restaurantName.keyword}`)
       .then(response => {
         console.log(response.status);
         setRestaurants(response.data.content);
@@ -120,3 +120,9 @@ const Search = (): ReactElement => {
 };
 
 export default Search;
+
+export const getServerSideProps = withSSRAuth(async () => {
+  return {
+    props: {},
+  };
+});

@@ -27,7 +27,7 @@ import getValidationErrors from '../../utils/getValidationErrors';
 
 import { useSignInModal } from '../../hooks/signinModal';
 
-import api from '../../services/api';
+import { api } from '../../services/apiClient';
 
 import { StylesContainer } from '../../styles/Pages/RestaurantSignUp';
 

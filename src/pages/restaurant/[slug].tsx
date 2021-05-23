@@ -11,7 +11,9 @@ import VerticalProductCard from '../../components/VerticalProductCard';
 
 import { useAuth } from '../../hooks/auth';
 
-import api from '../../services/api';
+import { api } from '../../services/apiClient';
+
+import { withSSRAuth } from '../../utils/withSSRAuth';
 
 import {
   StylesContainer,
@@ -44,9 +46,7 @@ const Restaurant = (
 
   useEffect(() => {
     api
-      .get(`/restaurant/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .get(`/restaurant/${id}`)
       .then(response => {
         setRestaurant(response.data);
       })
@@ -113,14 +113,14 @@ const Restaurant = (
 
 export default Restaurant;
 
-export const getServerSideProps: GetServerSideProps = async ({
-  params,
-}: any) => {
-  const { slug } = params;
+export const getServerSideProps: GetServerSideProps = withSSRAuth(
+  async ({ params }: any) => {
+    const { slug } = params;
 
-  return {
-    props: {
-      id: slug,
-    },
-  };
-};
+    return {
+      props: {
+        id: slug,
+      },
+    };
+  },
+);
