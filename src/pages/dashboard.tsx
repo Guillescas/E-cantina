@@ -10,7 +10,9 @@ import TopDashboardMenu from '../components/TopDashboardMenu';
 
 import { useAuth } from '../hooks/auth';
 
-import api from '../services/api';
+import { api } from '../services/apiClient';
+
+import { withSSRAuth } from '../utils/withSSRAuth';
 
 import {
   StylesContainer,
@@ -37,9 +39,7 @@ const Dashboard = (): ReactElement => {
 
   useEffect(() => {
     api
-      .get('/restaurant', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .get('/restaurant')
       .then(response => {
         setRestaurants(response.data.content);
       })
@@ -95,3 +95,9 @@ const Dashboard = (): ReactElement => {
 };
 
 export default Dashboard;
+
+export const getServerSideProps = withSSRAuth(async () => {
+  return {
+    props: {},
+  };
+});
