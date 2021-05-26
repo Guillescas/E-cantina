@@ -22,7 +22,10 @@ const RestaurantCard = ({
 
         <div className="infos">
           <h2>{name}</h2>
-          <p>{description}</p>
+          <p>
+            oaisdgoagdO ADGYAOSDY AOSDYGAODYUGAOSUYoygasodyugasod yasgdo
+            yasgoasdyoyug
+          </p>
         </div>
 
         <div className="icon">

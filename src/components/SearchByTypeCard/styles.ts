@@ -1,6 +1,10 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const StylesContainer = styled.div`
+interface IStylesContainerProps {
+  color: string;
+}
+
+export const StylesContainer = styled.div<IStylesContainerProps>`
   position: relative;
 
   max-width: 180px;
@@ -17,6 +21,11 @@ export const StylesContainer = styled.div`
   cursor: pointer;
 
   transition: filter 0.1s;
+
+  ${props => css`
+    border: 2px solid #${props.color};
+  `}
+  border-radius: 0.75rem;
 
   &:hover {
     filter: brightness(0.8);

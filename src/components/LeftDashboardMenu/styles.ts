@@ -4,8 +4,7 @@ export const StylesContainer = styled.div`
   max-width: 280px;
   width: 100%;
 
-  min-height: 500px;
-  max-height: 500px;
+  height: 100%;
 
   background: var(--second-background);
   border-radius: 0.75rem;
