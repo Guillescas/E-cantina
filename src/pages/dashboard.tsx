@@ -8,8 +8,6 @@ import SearchByTypeCard from '../components/SearchByTypeCard';
 import SEO from '../components/SEO';
 import TopDashboardMenu from '../components/TopDashboardMenu';
 
-import { useAuth } from '../hooks/auth';
-
 import { api } from '../services/apiClient';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
@@ -32,8 +30,6 @@ interface IRestaurantProps {
 }
 
 const Dashboard = (): ReactElement => {
-  const { token, signOut } = useAuth();
-
   const [restaurants, setRestaurants] = useState<IRestaurantProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,16 +37,18 @@ const Dashboard = (): ReactElement => {
     api
       .get('/restaurant')
       .then(response => {
+        console.log(response.data);
         setRestaurants(response.data.content);
       })
       .catch(error => {
         return toast.error(error);
       });
-  }, [signOut, token]);
+  }, []);
 
   return (
     <StylesContainer>
       <SEO title="Dashboard" />
+
       <TopDashboardMenu setIsLoading={setIsLoading} />
 
       <Content>
@@ -61,17 +59,28 @@ const Dashboard = (): ReactElement => {
             <SearchByTypeCard
               categoryName="Lanches"
               imagePath="hamburger.jpeg"
+              color="db5a40"
             />
-            <SearchByTypeCard categoryName="Japonês" imagePath="japa.jpeg" />
+            <SearchByTypeCard
+              categoryName="Japonês"
+              imagePath="japa.jpeg"
+              color="8C52FF"
+            />
             <SearchByTypeCard
               categoryName="Vegetariana"
               imagePath="vegan.jpeg"
+              color="7ED957"
             />
             <SearchByTypeCard
               categoryName="Brasileira"
               imagePath="brasiliam.jpeg"
+              color="FF914D"
             />
-            <SearchByTypeCard categoryName="Bebidas" imagePath="drink.jpeg" />
+            <SearchByTypeCard
+              categoryName="Bebidas"
+              imagePath="drink.jpeg"
+              color="FFDE59"
+            />
           </div>
 
           {isLoading && (

@@ -11,6 +11,9 @@ export const StylesContainer = styled.div`
 
   cursor: pointer;
 
+  background: var(--background);
+  color: var(--second-text);
+
   &:hover {
     .icon {
       transform: translateX(0.5rem);
