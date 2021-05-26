@@ -1,9 +1,11 @@
+import Cookies from 'js-cookie';
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
   GetServerSidePropsResult,
 } from 'next';
-import { parseCookies } from 'nookies';
+import { destroyCookie, parseCookies } from 'nookies';
+import { toast } from 'react-toastify';
 
 export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
   return async (
@@ -12,16 +14,32 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
     const cookies = parseCookies(ctx);
 
     if (!cookies['@ECantina:token']) {
+      destroyCookie(undefined, '@ECantina:token');
+
       return {
         redirect: {
-          destination: '/FAQ',
+          destination: '/',
           permanent: false,
         },
       };
     }
 
-    const recivedFn = await fn(ctx);
+    try {
+      const recivedFn = await fn(ctx);
 
-    return recivedFn;
+      return recivedFn;
+    } catch (error) {
+      destroyCookie(ctx, '@ECantina:token');
+      Cookies.remove('@ECantina:user');
+
+      toast.info('Seu token foi expirado. Faça login novamente');
+
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
+    }
   };
 }
