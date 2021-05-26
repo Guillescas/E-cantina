@@ -10,12 +10,15 @@ import jwt_decode from 'jwt-decode';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { destroyCookie, parseCookies, setCookie } from 'nookies';
+import Cookies from 'js-cookie';
+
+import { IClientProps } from '../@types';
 
 import { api } from '../services/apiClient';
 
 interface AuthState {
-  token: { [key: string]: string };
-  user: { [key: string]: string };
+  token: string;
+  user: IClientProps;
 }
 
 interface SignInCredentials {
@@ -33,10 +36,11 @@ interface ITokenResponse {
 }
 
 interface AuthContextData {
-  token: any;
-  user: any;
+  token: string;
+  user: IClientProps;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
+  isAuthenticated: boolean;
 }
 
 interface IAuthProviderProps {
@@ -49,15 +53,16 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   const router = useRouter();
 
   const [data, setData] = useState<AuthState>(() => {
-    const token = parseCookies(undefined, '@ECantina:token');
-    const user = parseCookies(undefined, '@ECantina:user');
+    const { '@ECantina:token': token } = parseCookies();
+    const user = Cookies.get('@ECantina:user');
 
     if (token && user) {
-      return { token, user };
+      return { token, user: JSON.parse(user) };
     }
 
     return {} as AuthState;
   });
+  const isAuthenticated = !!data.user;
 
   const signIn = useCallback(
     async ({ email, password }) => {
@@ -67,39 +72,34 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
       };
 
       api
-        .post('/login', userData)
-        .then(response => {
+        .post('/authentication', userData)
+        .then(async response => {
           const { token } = response.data;
 
-          const decodedJWTToken: ITokenResponse = jwt_decode(token);
-
+          const decodedJWTToken: ITokenResponse = await jwt_decode(token);
           const formattedUserInfosFromToken = {
             sub: decodedJWTToken.sub,
             email: decodedJWTToken.email,
             name: decodedJWTToken.name,
             type: decodedJWTToken.type,
           };
-
-          setCookie(undefined, '@ECantina:token', token, {
-            maxAge: 60 * 60 * 24 * 30, // 30 dias
-            path: '/',
-          });
-          setCookie(
-            undefined,
-            '@ECantina:user',
-            JSON.stringify(formattedUserInfosFromToken),
-            {
-              maxAge: 60 * 60 * 24 * 30, // 30 dias
-              path: '/',
-            },
-          );
-
           setData({ token, user: formattedUserInfosFromToken });
 
+          setCookie(undefined, '@ECantina:token', token, {
+            maxAge: 60 * 60 * 24, // 1 dia
+            path: '/',
+          });
+          Cookies.set(
+            '@ECantina:user',
+            JSON.stringify(formattedUserInfosFromToken),
+          );
+
+          api.defaults.headers.Authorization = `Bearer ${token}`;
+        })
+        .then(() => {
           router.push('/dashboard');
         })
-        .catch(error => {
-          console.log(error);
+        .catch(() => {
           return toast.error('Ocorreu um erro ao realizar login');
         });
     },
@@ -110,14 +110,20 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
     await router.push('/');
 
     destroyCookie(undefined, '@ECantina:token');
-    destroyCookie(undefined, '@ECantina:user');
+    Cookies.remove('@ECantina:user');
 
     setData({} as AuthState);
   }, [router]);
 
   return (
     <AuthContext.Provider
-      value={{ token: data.token, user: data.user, signIn, signOut }}
+      value={{
+        token: data.token,
+        user: data.user,
+        signIn,
+        signOut,
+        isAuthenticated,
+      }}
     >
       {children}
     </AuthContext.Provider>
