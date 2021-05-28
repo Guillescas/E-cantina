@@ -76,6 +76,8 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
         .then(async response => {
           const { token } = response.data;
 
+          api.defaults.headers.Authorization = `Bearer ${token}`;
+
           const decodedJWTToken: ITokenResponse = await jwt_decode(token);
           const formattedUserInfosFromToken = {
             sub: decodedJWTToken.sub,
@@ -93,10 +95,10 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
             '@ECantina:user',
             JSON.stringify(formattedUserInfosFromToken),
           );
-
-          api.defaults.headers.Authorization = `Bearer ${token}`;
         })
         .then(() => {
+          destroyCookie(undefined, '@ECantinaReturnMessage');
+          destroyCookie(undefined, '@ECantinaReturnMessage');
           router.push('/dashboard');
         })
         .catch(() => {
@@ -107,12 +109,12 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   );
 
   const signOut = useCallback(async () => {
-    await router.push('/');
-
     destroyCookie(undefined, '@ECantina:token');
     Cookies.remove('@ECantina:user');
 
     setData({} as AuthState);
+
+    await router.push('/');
   }, [router]);
 
   return (
