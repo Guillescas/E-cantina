@@ -1,8 +1,11 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import Cookie from 'js-cookie';
 import Router from 'next/router';
-import { destroyCookie, parseCookies } from 'nookies';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { toast } from 'react-toastify';
+
+import { AuthTokenErrorInvalid } from './errors/AuthTokenErrorInvalid';
+import { AuthTokenErrorExpired } from './errors/AuthTokenErrorExpired';
 
 export function setupAPIClient(ctx = undefined): AxiosInstance {
   const cookies = parseCookies(ctx);
@@ -20,14 +23,33 @@ export function setupAPIClient(ctx = undefined): AxiosInstance {
       return response;
     },
     (error: AxiosError) => {
-      if (error.response.status === 403) {
-        destroyCookie(undefined, '@ECantina:token');
+      console.log(error.response.data);
+      if (error.response.status === 401) {
+        destroyCookie(ctx, '@ECantina:token');
         Cookie.remove('@ECantina:user');
 
-        toast.info('Seu token foi expirado. Faça login novamente');
+        if (process.browser) {
+          toast.error('Sua sessão foi expirada. Faça login novamente :)');
+          Router.push('/');
+        } else {
+          return Promise.reject(new AuthTokenErrorExpired());
+        }
+      }
+
+      if (error.response.status === 403) {
+        destroyCookie(ctx, '@ECantina:token');
+        Cookie.remove('@ECantina:user');
+
+        setCookie(ctx, '@ECantinaReturnMessage', error.response.data, {
+          maxAge: 60 * 60 * 24 * 30, // 30 dias
+          path: '/',
+        });
 
         if (process.browser) {
-          Router.push('/dashboard');
+          toast.error('Token inválido. Faça login novamente');
+          Router.push('/');
+        } else {
+          return Promise.reject(new AuthTokenErrorInvalid());
         }
       }
 

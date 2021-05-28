@@ -1,4 +1,4 @@
-export class AuthTokenError extends Error {
+export class AuthTokenErrorExpired extends Error {
   constructor() {
     super('Error with authentication token.');
   }
