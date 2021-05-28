@@ -31,8 +31,18 @@ interface ITokenResponse {
   email: string;
   name: string;
   type: string;
-  iat: number;
-  exp: number;
+}
+
+interface IUpdateUserInfosProps {
+  name: string;
+  email: string;
+  cpf: string;
+  password: string;
+}
+
+interface IUpdateUserProps {
+  dataOfUser: IUpdateUserInfosProps;
+  setIsUserEditingFields: (isUserEditingFields: boolean) => void;
 }
 
 interface AuthContextData {
@@ -41,6 +51,7 @@ interface AuthContextData {
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
   isAuthenticated: boolean;
+  updateUser(props: IUpdateUserProps): Promise<void>;
 }
 
 interface IAuthProviderProps {
@@ -52,6 +63,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   const router = useRouter();
 
+  // FIXME - Separar token de user
   const [data, setData] = useState<AuthState>(() => {
     const { '@ECantina:token': token } = parseCookies();
     const user = Cookies.get('@ECantina:user');
@@ -64,48 +76,115 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   });
   const isAuthenticated = !!data.user;
 
-  const signIn = useCallback(
-    async ({ email, password }) => {
-      const userData = {
-        email,
-        password,
-      };
+  const signIn = useCallback(async ({ email, password }) => {
+    const userData = {
+      email,
+      password,
+    };
 
+    api
+      .post('/authentication', userData)
+      .then(async response => {
+        const { token } = response.data;
+
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+
+        const decodedJWTToken: ITokenResponse = await jwt_decode(token);
+        const formattedUserInfosFromToken = {
+          sub: decodedJWTToken.sub,
+          email: decodedJWTToken.email,
+          name: decodedJWTToken.name,
+          type: decodedJWTToken.type,
+        };
+        setData({ token, user: formattedUserInfosFromToken });
+
+        setCookie(undefined, '@ECantina:token', token, {
+          maxAge: 60 * 60 * 24, // 1 dia
+          path: '/',
+        });
+        Cookies.set(
+          '@ECantina:user',
+          JSON.stringify(formattedUserInfosFromToken),
+        );
+      })
+      .then(() => {
+        destroyCookie(undefined, '@ECantinaReturnMessage');
+        destroyCookie(undefined, '@ECantinaReturnMessage');
+      })
+      .catch(() => {
+        return toast.error('Ocorreu um erro ao realizar login');
+      });
+  }, []);
+
+  const updateUser = useCallback(
+    async ({ dataOfUser, setIsUserEditingFields }: IUpdateUserProps) => {
       api
-        .post('/authentication', userData)
+        .patch(`/client/${data.user.sub}`, dataOfUser)
         .then(async response => {
-          const { token } = response.data;
+          if (!response.data) {
+            return toast.error('Erro ao atualizar o usuário');
+          }
 
-          api.defaults.headers.Authorization = `Bearer ${token}`;
-
-          const decodedJWTToken: ITokenResponse = await jwt_decode(token);
-          const formattedUserInfosFromToken = {
-            sub: decodedJWTToken.sub,
-            email: decodedJWTToken.email,
-            name: decodedJWTToken.name,
-            type: decodedJWTToken.type,
-          };
-          setData({ token, user: formattedUserInfosFromToken });
-
-          setCookie(undefined, '@ECantina:token', token, {
-            maxAge: 60 * 60 * 24, // 1 dia
-            path: '/',
+          setData({
+            token: data.token,
+            user: {
+              name: dataOfUser.name,
+              email: dataOfUser.email,
+              ...data.user,
+            },
           });
-          Cookies.set(
-            '@ECantina:user',
-            JSON.stringify(formattedUserInfosFromToken),
-          );
         })
         .then(() => {
-          destroyCookie(undefined, '@ECantinaReturnMessage');
-          destroyCookie(undefined, '@ECantinaReturnMessage');
-          router.push('/dashboard');
+          api
+            .post('/authentication', {
+              email: dataOfUser.email,
+              password: dataOfUser.password,
+            })
+            .then(async response => {
+              const { token } = response.data;
+
+              api.defaults.headers.Authorization = `Bearer ${token}`;
+
+              const decodedJWTToken: ITokenResponse = await jwt_decode(token);
+              const formattedUserInfosFromToken = {
+                sub: decodedJWTToken.sub,
+                email: decodedJWTToken.email,
+                name: decodedJWTToken.name,
+                type: decodedJWTToken.type,
+              };
+              setData({ token, user: formattedUserInfosFromToken });
+
+              setCookie(undefined, '@ECantina:token', token, {
+                maxAge: 60 * 60 * 24, // 1 dia
+                path: '/',
+              });
+              Cookies.set(
+                '@ECantina:user',
+                JSON.stringify(formattedUserInfosFromToken),
+              );
+            })
+            .then(() => {
+              destroyCookie(undefined, '@ECantinaReturnMessage');
+              destroyCookie(undefined, '@ECantinaReturnMessage');
+
+              toast.success('Dados atualizados com sucesso');
+              setIsUserEditingFields(false);
+            })
+            .catch(error => {
+              if (error.response.data.message === 'Bad credentials') {
+                return toast.error('Senha incorreta. Tente novamente');
+              }
+
+              return toast.error('Ocorreu um erro atualizar os dados');
+            });
         })
-        .catch(() => {
-          return toast.error('Ocorreu um erro ao realizar login');
+        .catch(error => {
+          return toast.error(
+            `Erro inesperado. Tente novamente mais tarde ${error}`,
+          );
         });
     },
-    [router],
+    [data.token, data.user],
   );
 
   const signOut = useCallback(async () => {
@@ -114,7 +193,7 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
 
     setData({} as AuthState);
 
-    await router.push('/');
+    router.push('/');
   }, [router]);
 
   return (
@@ -125,6 +204,7 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
         signIn,
         signOut,
         isAuthenticated,
+        updateUser,
       }}
     >
       {children}
