@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { parseCookies } from 'nookies';
+import { toast } from 'react-toastify';
 
 import TopMenu from '../components/TopMenu';
 import SignModal from '../components/SignModal';
@@ -9,6 +11,12 @@ import { StylesContainer, Content } from '../styles/Pages/Index';
 
 const Home: React.FC = () => {
   const { loginModalIsOpen, closeLoginModal } = useSignInModal();
+
+  const cookies = parseCookies(undefined);
+
+  useEffect(() => {
+    toast.info(cookies['@ECantinaReturnMessage']);
+  }, [cookies]);
 
   return (
     <StylesContainer>

@@ -9,6 +9,7 @@ import RestaurantCard from '../../components/RestaurantCard';
 import SearchByTypeCard from '../../components/SearchByTypeCard';
 import SEO from '../../components/SEO';
 import TopDashboardMenu from '../../components/TopDashboardMenu';
+import ButtonWithIcon from '../../components/ButtonWithIcon';
 
 import { useAuth } from '../../hooks/auth';
 
@@ -68,17 +69,28 @@ const Search = (): ReactElement => {
             <SearchByTypeCard
               categoryName="Lanches"
               imagePath="hamburger.jpeg"
+              color="db5a40"
             />
-            <SearchByTypeCard categoryName="Japonês" imagePath="japa.jpeg" />
+            <SearchByTypeCard
+              categoryName="Japonês"
+              imagePath="japa.jpeg"
+              color="8C52FF"
+            />
             <SearchByTypeCard
               categoryName="Vegetariana"
               imagePath="vegan.jpeg"
+              color="7ED957"
             />
             <SearchByTypeCard
               categoryName="Brasileira"
               imagePath="brasiliam.jpeg"
+              color="FF914D"
             />
-            <SearchByTypeCard categoryName="Bebidas" imagePath="drink.jpeg" />
+            <SearchByTypeCard
+              categoryName="Bebidas"
+              imagePath="drink.jpeg"
+              color="FFDE59"
+            />
           </div>
 
           <div className="search-result-bar">
@@ -87,10 +99,7 @@ const Search = (): ReactElement => {
               <strong>{restaurantName.keyword}</strong>{' '}
             </h2>
 
-            <button type="button">
-              <span>Cancelar pesquisa</span>
-              <FiX className="icon" size={16} />
-            </button>
+            <ButtonWithIcon icon={FiX}>Cancelar pesquisa</ButtonWithIcon>
           </div>
 
           {isLoading && (

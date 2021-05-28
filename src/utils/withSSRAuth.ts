@@ -1,11 +1,14 @@
-import Cookies from 'js-cookie';
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
   GetServerSidePropsResult,
 } from 'next';
-import { destroyCookie, parseCookies } from 'nookies';
-import { toast } from 'react-toastify';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
+
+import { api } from '../services/apiClient';
+
+import { AuthTokenErrorInvalid } from '../services/errors/AuthTokenErrorInvalid';
+import { AuthTokenErrorExpired } from '../services/errors/AuthTokenErrorExpired';
 
 export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
   return async (
@@ -25,14 +28,41 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
     }
 
     try {
+      await api.get('/authentication', {
+        headers: {
+          Authorization: `Bearer ${cookies['@ECantina:token']}`,
+        },
+      });
+
       const recivedFn = await fn(ctx);
 
       return recivedFn;
     } catch (error) {
-      destroyCookie(ctx, '@ECantina:token');
-      Cookies.remove('@ECantina:user');
+      if (error instanceof AuthTokenErrorInvalid) {
+        setCookie(
+          ctx,
+          '@ECantinaReturnMessage',
+          'Token inválido. Faça login para usar a plataforma',
+          {
+            maxAge: 5, // 5 segundos
+            path: '/',
+          },
+        );
+      }
 
-      toast.info('Seu token foi expirado. Faça login novamente');
+      if (error instanceof AuthTokenErrorExpired) {
+        setCookie(
+          ctx,
+          '@ECantinaReturnMessage',
+          'Sua sessão foi expirada. Faça login novamente :)',
+          {
+            maxAge: 5, // 5 segundos
+            path: '/',
+          },
+        );
+      }
+
+      destroyCookie(ctx, '@ECantina:token');
 
       return {
         redirect: {

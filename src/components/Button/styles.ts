@@ -7,12 +7,12 @@ interface IButtonStyleProps {
 
 export const StylesContainer = styled.button<IButtonStyleProps>`
   width: 100%;
-  height: 56px;
+  height: 48px;
   background: var(--primary);
 
-  border-radius: 10px;
+  border-radius: 0.75rem;
   border: 0;
-  padding: 0 16px;
+  padding: 0 0.75rem;
 
   color: var(--background);
   font-weight: 500;

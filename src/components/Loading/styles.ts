@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 
 export const StylesContainer = styled.div`
+  box-sizing: border-box;
+  max-height: 100%;
+
   .sk-chase {
-    width: 40px;
-    height: 40px;
-    position: relative;
+    width: 30px;
+    height: 30px;
+    /* position: relative; */
     animation: sk-chase 2.5s infinite linear both;
   }
 

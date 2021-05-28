@@ -35,9 +35,8 @@ const Dashboard = (): ReactElement => {
 
   useEffect(() => {
     api
-      .get('/restaurant')
+      .get('/restaurant?nameRestaurant=')
       .then(response => {
-        console.log(response.data);
         setRestaurants(response.data.content);
       })
       .catch(error => {

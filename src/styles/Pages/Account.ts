@@ -25,24 +25,28 @@ export const ContentList = styled.div`
   margin-left: 1rem;
   padding: 1rem;
 
-  .categories {
-    margin-bottom: 2rem;
-    overflow-x: auto;
-
+  .title {
     display: flex;
-    gap: 0 1rem;
-    padding-bottom: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
 
-    ::-webkit-scrollbar {
-      height: 3px;
+    margin-bottom: 4rem;
+
+    h1 {
+      flex: 1;
+    }
+  }
+
+  form {
+    .inputs {
+      display: grid;
+      align-items: end;
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #888;
+    button {
+      margin-top: 1rem;
+      width: 100%;
     }
   }
 `;
