@@ -18,8 +18,10 @@ export const StylesContainer = styled.div`
   }
 
   img {
-    width: 180px;
-    height: 100px;
+    max-width: 12rem;
+    max-height: 12rem;
+
+    object-fit: cover;
 
     border-radius: 0.75rem 0 0 0.75rem;
     margin-right: 1rem;

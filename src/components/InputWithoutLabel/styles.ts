@@ -9,7 +9,7 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  background: var(--second-background);
+  background: var(--background);
   border-radius: 10px;
   padding: 4px 16px;
   width: 100%;

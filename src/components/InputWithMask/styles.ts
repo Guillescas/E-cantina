@@ -11,7 +11,7 @@ interface ContainerProps {
 export const Container = styled.div<ContainerProps>`
   position: relative;
 
-  background: var(--second-background);
+  background: var(--background);
   padding: 4px 16px;
   width: 100%;
 
