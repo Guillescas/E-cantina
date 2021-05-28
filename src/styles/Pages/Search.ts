@@ -98,10 +98,8 @@ export const ContentList = styled.div`
         padding-bottom: 1px;
         transition: all 0.2s;
       }
-    }
 
-    &:hover {
-      button {
+      &:hover {
         width: 166px;
 
         .icon {
