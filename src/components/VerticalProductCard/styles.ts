@@ -17,9 +17,11 @@ export const StylesContainer = styled.div`
     }
   }
 
-  img {
+  #vertocal-product-card-image {
     max-width: 12rem;
+    width: 100%;
     max-height: 12rem;
+    height: 100%;
 
     object-fit: cover;
 
@@ -31,13 +33,15 @@ export const StylesContainer = styled.div`
     flex: 1;
 
     h2 {
-      margin-top: 0.5rem;
+      margin: 0.5rem 0;
     }
 
     span {
       color: var(--primary);
       font-weight: bold;
       font-size: 1.5rem;
+
+      min-height: 1rem;
     }
   }
 

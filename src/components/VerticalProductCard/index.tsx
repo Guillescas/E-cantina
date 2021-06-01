@@ -7,7 +7,11 @@ import { StylesContainer } from './styles';
 const VerticalProductCard = (): ReactElement => {
   return (
     <StylesContainer>
-      <img src="/assets/hamburger.jpeg" alt="Imagem de" />
+      <img
+        src="/assets/hamburger.jpeg"
+        alt="Imagem de"
+        id="vertocal-product-card-image"
+      />
 
       <div className="infos">
         <h2>Cheese burger</h2>

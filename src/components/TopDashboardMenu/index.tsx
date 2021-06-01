@@ -10,7 +10,7 @@ import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
 import { useAuth } from '../../hooks/auth';
 
-import InputWithLabel from '../InputWithoutLabel';
+import InputWithLabel from '../Inputs/InputWithoutLabel';
 
 import getvalidationErrors from '../../utils/getValidationErrors';
 
