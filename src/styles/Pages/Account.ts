@@ -30,7 +30,7 @@ export const ContentList = styled.div`
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
 
     h1 {
       flex: 1;
@@ -44,9 +44,34 @@ export const ContentList = styled.div`
       grid-template-columns: repeat(2, 1fr);
     }
 
-    button {
-      margin-top: 1rem;
-      width: 100%;
+    .finish-update-container {
+      margin-top: 2rem;
+
+      span {
+        display: flex;
+        align-items: left;
+        justify-content: left;
+
+        margin-bottom: 0.5rem;
+        padding-left: 4px;
+
+        svg {
+          margin-right: 0.5rem;
+        }
+      }
+
+      .finish-update-user-infos {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+
+        button {
+          margin: 0;
+          height: 59px;
+        }
+      }
     }
   }
 `;

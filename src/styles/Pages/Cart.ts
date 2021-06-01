@@ -14,7 +14,7 @@ export const Content = styled.div`
   position: relative;
 `;
 
-export const ContentList = styled.div`
+export const CartContent = styled.div`
   background: var(--second-background);
   border-radius: 0.75rem;
 
@@ -25,33 +25,28 @@ export const ContentList = styled.div`
   margin-left: 1rem;
   padding: 1rem;
 
-  .categories {
-    margin-bottom: 2rem;
-    overflow-x: auto;
+  table {
+    text-align: left;
+    margin-top: 3rem;
 
-    display: flex;
-    gap: 0 1rem;
-    padding-bottom: 0.5rem;
+    width: 100%;
 
-    ::-webkit-scrollbar {
-      height: 3px;
+    th {
+      padding: 0.25rem 0 1rem;
     }
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
+    th,
+    td {
+      padding: 0 1rem;
     }
 
-    ::-webkit-scrollbar-thumb {
-      background: #888;
+    img {
+      max-width: 6rem;
+      border-radius: 0.5rem;
     }
   }
 
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-    margin: 2rem 0;
+  .checkout-button {
+    margin-top: 2rem;
   }
 `;
