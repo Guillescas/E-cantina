@@ -14,6 +14,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
   return async (
     ctx: GetServerSidePropsContext,
   ): Promise<GetServerSidePropsResult<P>> => {
+    // TODO - Colocar IDs nos toast
     const cookies = parseCookies(ctx);
 
     if (!cookies['@ECantina:token']) {
