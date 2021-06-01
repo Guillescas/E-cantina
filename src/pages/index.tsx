@@ -3,7 +3,7 @@ import { parseCookies } from 'nookies';
 import { toast } from 'react-toastify';
 
 import TopMenu from '../components/TopMenu';
-import SignModal from '../components/SignModal';
+import SignModal from '../components/Modals/SignModal';
 
 import { useSignInModal } from '../hooks/signinModal';
 
@@ -15,7 +15,9 @@ const Home: React.FC = () => {
   const cookies = parseCookies(undefined);
 
   useEffect(() => {
-    toast.info(cookies['@ECantinaReturnMessage']);
+    toast.info(cookies['@ECantinaReturnMessage'], {
+      toastId: 1,
+    });
   }, [cookies]);
 
   return (

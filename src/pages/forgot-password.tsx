@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 
 import { toast } from 'react-toastify';
 import Button from '../components/Button';
-import Input from '../components/Input';
+import Input from '../components/Inputs/Input';
 import TopMenu from '../components/TopMenu';
 
 import getvalidationErrors from '../utils/getValidationErrors';
@@ -55,7 +55,12 @@ const ForgotPassword = (): ReactElement => {
         <h2>Não se preocupe, estamos aqui para te ajudar :)</h2>
 
         <Form ref={formRef} onSubmit={handleSubmit}>
-          <Input name="email" placeholder="E-mail" icon={FiMail} />
+          <Input
+            name="email"
+            placeholder="E-mail"
+            label="E-mail"
+            icon={FiMail}
+          />
 
           <Button type="submit" isLoading={isLoading}>
             Enviar

@@ -48,7 +48,6 @@ const Search = (): ReactElement => {
     api
       .get(`/restaurant?nameRestaurant=${restaurantName.keyword}`)
       .then(response => {
-        console.log(response.status);
         setRestaurants(response.data.content);
       })
       .catch(() => {

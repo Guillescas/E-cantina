@@ -9,8 +9,6 @@ import ProductCard from '../../components/ProductCard';
 import TopDashboardMenu from '../../components/TopDashboardMenu';
 import VerticalProductCard from '../../components/VerticalProductCard';
 
-import { useAuth } from '../../hooks/auth';
-
 import { api } from '../../services/apiClient';
 
 import { withSSRAuth } from '../../utils/withSSRAuth';
@@ -32,6 +30,14 @@ interface IRestaurantProps {
   };
 }
 
+interface IProductProps {
+  id: number;
+  name: string;
+  type: string;
+  description?: string;
+  price: number;
+}
+
 interface IrestaurantUrlPropsProps {
   id: string;
 }
@@ -39,10 +45,10 @@ interface IrestaurantUrlPropsProps {
 const Restaurant = (
   restaurantUrlProps: IrestaurantUrlPropsProps,
 ): ReactElement => {
-  const { token, signOut } = useAuth();
   const { id } = restaurantUrlProps;
 
   const [restaurant, setRestaurant] = useState<IRestaurantProps>();
+  const [products, setProducts] = useState<IProductProps[]>([]);
 
   useEffect(() => {
     api
@@ -53,7 +59,18 @@ const Restaurant = (
       .catch(error => {
         return toast.error(error);
       });
-  }, [id, signOut, token]);
+  }, [id]);
+
+  useEffect(() => {
+    api
+      .get(`/product`)
+      .then(response => {
+        setProducts(response.data.content);
+      })
+      .catch(error => {
+        return toast.error(error);
+      });
+  }, []);
 
   return (
     <StylesContainer>
@@ -88,13 +105,15 @@ const Restaurant = (
                 Promoção <AiTwotoneFire />
               </h1>
               <div className="cards">
-                <ProductCard />
-                <ProductCard />
-                <ProductCard />
-                <ProductCard />
-                <ProductCard />
-                <ProductCard />
-                <ProductCard />
+                {products &&
+                  products.map(product => (
+                    <ProductCard
+                      key={product.id}
+                      name={product.name}
+                      description={product.description}
+                      price={product.price}
+                    />
+                  ))}
               </div>
             </div>
 

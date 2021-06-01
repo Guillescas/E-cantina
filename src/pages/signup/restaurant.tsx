@@ -14,13 +14,13 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
 import { IoMdRestaurant } from 'react-icons/io';
-import InputWithMask from '../../components/InputWithMask';
-import Select from '../../components/Select';
+import InputWithMask from '../../components/Inputs/InputWithMask';
+import Select from '../../components/Inputs/Select';
 import TopMenu from '../../components/TopMenu';
-import SignModal from '../../components/SignModal';
-import Input from '../../components/Input';
+import SignModal from '../../components/Modals/SignModal';
+import Input from '../../components/Inputs/Input';
 import Button from '../../components/Button';
-import TextArea from '../../components/TextArea';
+import TextArea from '../../components/Inputs/TextArea';
 import SEO from '../../components/SEO';
 
 import getValidationErrors from '../../utils/getValidationErrors';

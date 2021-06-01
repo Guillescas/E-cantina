@@ -3,12 +3,20 @@ import { Form } from '@unform/web';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
-import { FiCreditCard, FiEdit2, FiMail, FiSave, FiUser } from 'react-icons/fi';
+import {
+  FiAlertCircle,
+  FiCreditCard,
+  FiEdit2,
+  FiLock,
+  FiMail,
+  FiUser,
+} from 'react-icons/fi';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
 import SEO from '../components/SEO';
 import TopDashboardMenu from '../components/TopDashboardMenu';
-import Input from '../components/Input';
+import Input from '../components/Inputs/Input';
+import InputWithMask from '../components/Inputs/InputWithMask';
 import ButtonWithIcon from '../components/ButtonWithIcon';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
@@ -19,13 +27,13 @@ import { api } from '../services/apiClient';
 import { useAuth } from '../hooks/auth';
 
 import { StylesContainer, Content, ContentList } from '../styles/Pages/Account';
+import Button from '../components/Button';
 
 interface IUpdateUserInfosFormData {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  confirmPassword: string;
   cpf: string;
 }
 
@@ -37,31 +45,36 @@ interface IUserResponse {
 }
 
 const Account = (): ReactElement => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isUserEditingFields, setIsUserEditingFields] = useState(false);
 
   const formRef = useRef<FormHandles>(null);
 
   useEffect(() => {
     api
-      .get(`/client/${user.sub}`)
+      .get(`/client/${user?.sub}`)
       .then(response => {
         const userData: IUserResponse = response.data;
 
         const separatedName = userData.name.split(' ');
+        const formattedFirstName = separatedName[0];
+        const formattedLastName = separatedName
+          .filter(name => name !== separatedName[0])
+          .toString()
+          .replace(',', ' ');
 
         if (!userData.cpf) {
           formRef.current?.setData({
-            firstName: separatedName[0],
-            lastName: separatedName[separatedName.length - 1],
+            firstName: formattedFirstName,
+            lastName: formattedLastName,
             email: userData.email,
           });
         } else {
           formRef.current?.setData({
-            firstName: separatedName[0],
-            lastName: separatedName[separatedName.length - 1],
+            firstName: formattedFirstName,
+            lastName: formattedLastName,
             email: userData.email,
             cpf: userData.cpf,
           });
@@ -70,7 +83,7 @@ const Account = (): ReactElement => {
       .catch(() => {
         toast.error('Erro inesperado. Tente novamente mais tarde');
       });
-  }, [user]);
+  }, [user, updateUser]);
 
   const handleSignUpFormSubmit = useCallback(
     async (data: IUpdateUserInfosFormData) => {
@@ -84,6 +97,7 @@ const Account = (): ReactElement => {
           email: Yup.string()
             .email('Por favor insira um e-mail válido')
             .required('E-mail obrigatório'),
+          password: Yup.string().required('Senha obrigatória'),
         });
 
         await schema.validate(data, {
@@ -94,33 +108,21 @@ const Account = (): ReactElement => {
           name: `${data.firstName} ${data.lastName}`,
           email: data.email,
           cpf: data.cpf,
+          password: data.password,
         };
 
-        await api
-          .post('/client', userData)
-          .then(response => {
-            if (!response.data) {
-              return toast.error('Erro ao cadastrar o usuário');
-            }
-
-            toast.success('Cadastro realizado com sucesso');
-          })
-          .catch(error => {
-            return toast.error(
-              `Erro inesperado. Tente novamente mais tarde ${error}`,
-            );
-          });
+        await updateUser({ dataOfUser: userData, setIsUserEditingFields });
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(err);
 
           formRef.current?.setErrors(errors);
         }
       }
+
       setIsLoading(false);
     },
-    [],
+    [updateUser],
   );
 
   return (
@@ -166,19 +168,35 @@ const Account = (): ReactElement => {
                 icon={FiMail}
                 disabled={!isUserEditingFields}
               />
-              <Input
+              <InputWithMask
                 name="cpf"
                 placeholder="CPF"
                 label="CPF"
+                mask="999.999.999-99"
                 icon={FiCreditCard}
                 disabled={!isUserEditingFields}
               />
             </div>
 
             {isUserEditingFields && (
-              <ButtonWithIcon type="submit" isLoading={isLoading} icon={FiSave}>
-                Salvar
-              </ButtonWithIcon>
+              <div className="finish-update-container">
+                <span>
+                  <FiAlertCircle size={18} />
+                  Insira sua senha para salvar as alterações
+                </span>
+                <div className="finish-update-user-infos">
+                  <Input
+                    name="password"
+                    type="password"
+                    icon={FiLock}
+                    label="Senha"
+                  />
+
+                  <Button type="submit" isLoading={isLoading}>
+                    Salvar
+                  </Button>
+                </div>
+              </div>
             )}
           </Form>
         </ContentList>

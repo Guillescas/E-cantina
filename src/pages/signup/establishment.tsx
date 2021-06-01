@@ -17,10 +17,10 @@ import { BiRuler } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
-import InputWithMask from '../../components/InputWithMask';
+import InputWithMask from '../../components/Inputs/InputWithMask';
 import TopMenu from '../../components/TopMenu';
-import SignModal from '../../components/SignModal';
-import Input from '../../components/Input';
+import SignModal from '../../components/Modals/SignModal';
+import Input from '../../components/Inputs/Input';
 import Button from '../../components/Button';
 import SEO from '../../components/SEO';
 
