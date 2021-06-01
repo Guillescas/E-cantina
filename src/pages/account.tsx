@@ -18,6 +18,8 @@ import TopDashboardMenu from '../components/TopDashboardMenu';
 import Input from '../components/Inputs/Input';
 import InputWithMask from '../components/Inputs/InputWithMask';
 import ButtonWithIcon from '../components/ButtonWithIcon';
+import Button from '../components/Button';
+import Dropzone from '../components/Inputs/Dropzone';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
 import getvalidationErrors from '../utils/getValidationErrors';
@@ -27,7 +29,6 @@ import { api } from '../services/apiClient';
 import { useAuth } from '../hooks/auth';
 
 import { StylesContainer, Content, ContentList } from '../styles/Pages/Account';
-import Button from '../components/Button';
 
 interface IUpdateUserInfosFormData {
   firstName: string;
@@ -51,6 +52,7 @@ const Account = (): ReactElement => {
   const [isUserEditingFields, setIsUserEditingFields] = useState(false);
 
   const formRef = useRef<FormHandles>(null);
+  const uploadFileFormRef = useRef<FormHandles>(null);
 
   useEffect(() => {
     api
@@ -125,6 +127,45 @@ const Account = (): ReactElement => {
     [updateUser],
   );
 
+  async function handleFileUpload(data: any): Promise<void> {
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+
+      formData.append('image', data.image[0]);
+      formData.append('userId', user.sub);
+
+      console.log(data.image[0]);
+
+      uploadFileFormRef.current?.setErrors({});
+
+      const schema = Yup.object().shape({
+        image: Yup.mixed().required('Nome obrigatório'),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      fetch('http://localhost:8080/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      toast.success('Imagem alterada com sucesso');
+      uploadFileFormRef.current.clearField('image');
+    } catch (err) {
+      console.log(err);
+      if (err instanceof Yup.ValidationError) {
+        const errors = getvalidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+      }
+    }
+
+    setIsLoading(false);
+  }
+
   return (
     <StylesContainer>
       <SEO title="Minha conta" />
@@ -198,6 +239,27 @@ const Account = (): ReactElement => {
                 </div>
               </div>
             )}
+          </Form>
+
+          <p className="upload-image-p">Altere sua imagem de perfil aqui</p>
+          <Form
+            ref={uploadFileFormRef}
+            onSubmit={handleFileUpload}
+            className="file-upload-form"
+          >
+            <div className="dropzone-area">
+              <Dropzone name="image" />
+
+              <div className="user-image-infos">
+                <Button type="submit" isLoading={isLoading}>
+                  Salvar imagem
+                </Button>
+              </div>
+            </div>
+
+            <div className="user-image">
+              <FiUser size={32} />
+            </div>
           </Form>
         </ContentList>
       </Content>

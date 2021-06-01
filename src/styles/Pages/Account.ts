@@ -74,4 +74,27 @@ export const ContentList = styled.div`
       }
     }
   }
+
+  .upload-image-p {
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .file-upload-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .user-image {
+      background: var(--background);
+      width: 123px;
+      height: 123px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 `;
