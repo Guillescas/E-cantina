@@ -25,24 +25,46 @@ export const CartContent = styled.div`
   margin-left: 1rem;
   padding: 1rem;
 
-  table {
-    text-align: left;
-    margin-top: 3rem;
+  .table-container {
+    overflow-x: auto;
 
-    width: 100%;
-
-    th {
-      padding: 0.25rem 0 1rem;
+    ::-webkit-scrollbar {
+      height: 8px;
     }
 
-    th,
-    td {
-      padding: 0 1rem;
+    ::-webkit-scrollbar-track {
+      background: var(--background);
     }
 
-    img {
-      max-width: 6rem;
-      border-radius: 0.5rem;
+    ::-webkit-scrollbar-thumb {
+      background: var(--hover-text);
+    }
+
+    table {
+      text-align: left;
+      margin-top: 3rem;
+
+      width: 100%;
+      min-width: 950px;
+      border-collapse: collapse;
+
+      th {
+        padding: 0.25rem 0 1rem;
+      }
+
+      th,
+      td {
+        padding: 0 1rem;
+      }
+
+      img {
+        max-width: 6rem;
+        border-radius: 0.5rem;
+      }
+
+      button {
+        margin: 0;
+      }
     }
   }
 
