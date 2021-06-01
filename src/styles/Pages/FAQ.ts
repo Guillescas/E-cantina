@@ -58,11 +58,11 @@ export const StylesContainer = styled.div`
   }
 `;
 
-interface IStylesAwnserProps {
+interface IStylesAnswerProps {
   isBoxFAQOpen: boolean;
 }
 
-export const StylesAwnser = styled.div<IStylesAwnserProps>`
+export const StylesAnswer = styled.div<IStylesAnswerProps>`
   max-height: 0;
   ${props =>
     props.isBoxFAQOpen
@@ -92,7 +92,11 @@ export const StylesAwnser = styled.div<IStylesAwnserProps>`
   }
 `;
 
-export const StylesAwnser2 = styled.div<IStylesAwnserProps>`
+interface IStylesAnswerProps2 {
+  isBoxFAQOpen2: boolean;
+}
+
+export const StylesAnswer2 = styled.div<IStylesAnswerProps2>`
   max-height: 0;
   ${props =>
     props.isBoxFAQOpen2
@@ -122,7 +126,11 @@ export const StylesAwnser2 = styled.div<IStylesAwnserProps>`
   }
 `;
 
-export const StylesAwnser3 = styled.div<IStylesAwnserProps>`
+interface IStylesAnswerProps3 {
+  isBoxFAQOpen3: boolean;
+}
+
+export const StylesAnswer3 = styled.div<IStylesAnswerProps3>`
   max-height: 0;
   ${props =>
     props.isBoxFAQOpen3
@@ -152,7 +160,11 @@ export const StylesAwnser3 = styled.div<IStylesAwnserProps>`
   }
 `;
 
-export const StylesAwnser4 = styled.div<IStylesAwnserProps>`
+interface IStylesAnswerProps4 {
+  isBoxFAQOpen4: boolean;
+}
+
+export const StylesAnswer4 = styled.div<IStylesAnswerProps4>`
   max-height: 0;
   ${props =>
     props.isBoxFAQOpen4
@@ -182,7 +194,11 @@ export const StylesAwnser4 = styled.div<IStylesAwnserProps>`
   }
 `;
 
-export const StylesAwnser5 = styled.div<IStylesAwnserProps>`
+interface IStylesAnswerProps5 {
+  isBoxFAQOpen5: boolean;
+}
+
+export const StylesAnswer5 = styled.div<IStylesAnswerProps5>`
   max-height: 0;
   ${props =>
     props.isBoxFAQOpen5
@@ -212,7 +228,11 @@ export const StylesAwnser5 = styled.div<IStylesAwnserProps>`
   }
 `;
 
-export const StylesAwnser6 = styled.div<IStylesAwnserProps>`
+interface IStylesAnswerProps6 {
+  isBoxFAQOpen6: boolean;
+}
+
+export const StylesAnswer6 = styled.div<IStylesAnswerProps6>`
   max-height: 0;
   ${props =>
     props.isBoxFAQOpen6
