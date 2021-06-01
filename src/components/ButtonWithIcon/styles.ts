@@ -12,7 +12,7 @@ export const StylesContainer = styled.button`
 
   background: var(--primary);
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
 
   transition: width 0.2s;
 

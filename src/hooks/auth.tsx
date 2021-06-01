@@ -31,6 +31,7 @@ interface ITokenResponse {
   email: string;
   name: string;
   type: string;
+  urlImage: string;
 }
 
 interface IUpdateUserInfosProps {
@@ -95,6 +96,7 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
           email: decodedJWTToken.email,
           name: decodedJWTToken.name,
           type: decodedJWTToken.type,
+          urlImage: decodedJWTToken.urlImage,
         };
         setData({ token, user: formattedUserInfosFromToken });
 
@@ -151,6 +153,7 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
                 email: decodedJWTToken.email,
                 name: decodedJWTToken.name,
                 type: decodedJWTToken.type,
+                urlImage: decodedJWTToken.urlImage,
               };
               setData({ token, user: formattedUserInfosFromToken });
 

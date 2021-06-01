@@ -77,7 +77,10 @@ const TopDashboardMenu = ({
         <nav>
           <div className="user-card">
             <div className="user-avatar">
-              <FiUser />
+              <img
+                src={`http://localhost:8080${user && user.urlImage}`}
+                alt={`Imagem de ${user && user.name}`}
+              />
             </div>
 
             <div className="user-infos">
