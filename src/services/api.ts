@@ -23,7 +23,10 @@ export function setupAPIClient(ctx = undefined): AxiosInstance {
       return response;
     },
     (error: AxiosError) => {
-      console.log(error.response.data);
+      if (!error.response) {
+        return Promise.reject(error);
+      }
+
       if (error.response.status === 401) {
         destroyCookie(ctx, '@ECantina:token');
         Cookie.remove('@ECantina:user');
