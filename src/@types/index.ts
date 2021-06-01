@@ -3,6 +3,7 @@ export interface IClientProps {
   email: string;
   name: string;
   type: string;
+  urlImage: string;
 }
 
 export interface IAddressProps {

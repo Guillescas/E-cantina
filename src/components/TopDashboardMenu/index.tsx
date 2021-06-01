@@ -2,7 +2,7 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { ReactElement, useCallback, useRef } from 'react';
 import { slide as Menu } from 'react-burger-menu';
-import { FiSearch, FiUser } from 'react-icons/fi';
+import { FiSearch } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
 
