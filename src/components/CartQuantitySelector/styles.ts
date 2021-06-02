@@ -31,7 +31,7 @@ export const Button = styled.button`
   background: var(--primary);
 
   border: 0;
-  padding: 0 0.75rem;
+  padding: 0 0.5rem;
 
   color: var(--background);
   font-weight: 500;

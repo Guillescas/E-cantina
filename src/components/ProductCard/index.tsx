@@ -8,16 +8,22 @@ import ProductModal from '../Modals/ProductModal';
 import { StylesContainer } from './styles';
 
 interface IProductProps {
+  id: number;
+  type: string;
   name: string;
-  description?: string;
+  description: string;
   price: number;
+  urlImage?: string;
+  amount: number;
+  observation?: string;
+  cartItemId: number;
 }
 
-const ProductCard = ({
-  name,
-  description,
-  price,
-}: IProductProps): ReactElement => {
+interface IProductCardProps {
+  product: IProductProps;
+}
+
+const ProductCard = ({ product }: IProductCardProps): ReactElement => {
   const {
     productModalIsOpen,
     closeProductModal,
@@ -29,15 +35,17 @@ const ProductCard = ({
       <ProductModal
         isModalOpen={productModalIsOpen}
         onRequestClose={closeProductModal}
-        name={name}
-        price={price}
-        description={description}
+        setModalProductIsOpen={setModalProductIsOpen}
+        product={product}
       />
 
-      <img src="/assets/hamburger.jpeg" alt={`Imagem de ${name}`} />
-      <h2>{name}</h2>
-      <p>{description}</p>
-      <span>{formatPrice(price)}</span>
+      <img
+        src="/assets/hamburger.jpeg"
+        alt={`Imagem de ${product && product.name}`}
+      />
+      <h2>{product && product.name}</h2>
+      <p>{product && product.description}</p>
+      <span>{formatPrice(product && product.price)}</span>
 
       <button type="button" onClick={() => setModalProductIsOpen(true)}>
         <FiPlus />

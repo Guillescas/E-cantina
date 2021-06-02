@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { ReactElement, useCallback, useRef, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import {
   FiAlignLeft,
@@ -41,6 +41,11 @@ interface SignUpFormData {
   description: string;
 }
 
+interface IEstablishmentData {
+  optionValue: string;
+  optionLabel: string;
+}
+
 const SignUpRestaurant = (): ReactElement => {
   const router = useRouter();
 
@@ -49,6 +54,29 @@ const SignUpRestaurant = (): ReactElement => {
   const formRef = useRef<FormHandles>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [establishments, setEstablishment] = useState<IEstablishmentData[]>([]);
+
+  useEffect(() => {
+    api
+      .get('/establishment?size=1000')
+      .then(response => {
+        const establishmentsFromApi: any[] = response.data.content;
+
+        const formattedEstablishmentsFromApi = establishmentsFromApi.map(
+          establishmentFromApi => {
+            return {
+              optionValue: establishmentFromApi.name,
+              optionLabel: establishmentFromApi.name,
+            };
+          },
+        );
+
+        setEstablishment(formattedEstablishmentsFromApi);
+      })
+      .catch(() => {
+        toast.error('Erro ao encontrar estabelecimentos');
+      });
+  }, []);
 
   const handleSignUpFormSubmit = useCallback(
     async (data: SignUpFormData) => {
@@ -168,7 +196,7 @@ const SignUpRestaurant = (): ReactElement => {
                 icon={FiHome}
                 label="Nome do estabelecimento"
                 placeholder="Nome do estabelecimento"
-                options={[]}
+                options={establishments}
               />
               <InputWithMask
                 name="cnpj"
@@ -183,13 +211,6 @@ const SignUpRestaurant = (): ReactElement => {
                 placeholder="Qual a categoria do restaurante?"
                 icon={FiList}
                 options={[
-                  {
-                    optionLabel: 'Selecione uma opção',
-                    optionValue: '',
-                    disabled: true,
-                    selected: true,
-                    hidden: true,
-                  },
                   {
                     optionLabel: 'Lanches',
                     optionValue: 'lanches',

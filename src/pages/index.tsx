@@ -15,9 +15,11 @@ const Home: React.FC = () => {
   const cookies = parseCookies(undefined);
 
   useEffect(() => {
-    toast.info(cookies['@ECantinaReturnMessage'], {
-      toastId: 1,
-    });
+    if (cookies['@ECantinaReturnMessage']) {
+      toast.info(cookies['@ECantinaReturnMessage'], {
+        toastId: 1,
+      });
+    }
   }, [cookies]);
 
   return (
