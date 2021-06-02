@@ -18,7 +18,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
     const cookies = parseCookies(ctx);
 
     if (!cookies['@ECantina:token']) {
-      destroyCookie(undefined, '@ECantina:token');
+      destroyCookie(ctx, '@ECantina:token');
 
       return {
         redirect: {
@@ -40,6 +40,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
       return recivedFn;
     } catch (error) {
       if (error instanceof AuthTokenErrorInvalid) {
+        destroyCookie(ctx, '@ECantina:token');
         setCookie(
           ctx,
           '@ECantinaReturnMessage',
@@ -52,6 +53,7 @@ export function withSSRAuth<P>(fn: GetServerSideProps<P>) {
       }
 
       if (error instanceof AuthTokenErrorExpired) {
+        destroyCookie(ctx, '@ECantina:token');
         setCookie(
           ctx,
           '@ECantinaReturnMessage',
