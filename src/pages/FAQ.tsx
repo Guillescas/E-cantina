@@ -1,12 +1,12 @@
 import { ReactElement, useState } from 'react';
 import {
   StylesContainer,
-  StylesAwnser,
-  StylesAwnser2,
-  StylesAwnser3,
-  StylesAwnser4,
-  StylesAwnser5,
-  StylesAwnser6,
+  StylesAnswer,
+  StylesAnswer2,
+  StylesAnswer3,
+  StylesAnswer4,
+  StylesAnswer5,
+  StylesAnswer6,
 } from '../styles/Pages/FAQ';
 import TopMenu from '../components/TopMenu';
 
@@ -33,7 +33,7 @@ const FAQ = (): ReactElement => {
                 >
                   O que é nosso site faz?
                 </a>
-                <StylesAwnser isBoxFAQOpen={isBoxFAQOpen}>
+                <StylesAnswer isBoxFAQOpen={isBoxFAQOpen}>
                   <p>
                     Nosso site auxilia clientes de restaurantes e lanchonetes
                     para que eles consigam adquirir os produtos desses
@@ -41,7 +41,7 @@ const FAQ = (): ReactElement => {
                     entrar em filas e podendo realizar o pagamento no local,
                     deixando o processo mais rápido e fluído;
                   </p>
-                </StylesAwnser>
+                </StylesAnswer>
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@ const FAQ = (): ReactElement => {
                 >
                   Como funciona nosso site?
                 </a>
-                <StylesAwnser2 isBoxFAQOpen2={isBoxFAQOpen2}>
+                <StylesAnswer2 isBoxFAQOpen2={isBoxFAQOpen2}>
                   <p>
                     O cliente do restaurante faz pelo site seu pedido,
                     informando qual é o produto desejado e realizando seu
@@ -65,7 +65,7 @@ const FAQ = (): ReactElement => {
                     verifica se o QR code condiz com o pedido, se sim a
                     lanchonete/restaurante entrega o produto ao pedinte;
                   </p>
-                </StylesAwnser2>
+                </StylesAnswer2>
               </div>
             </div>
           </div>
@@ -79,13 +79,13 @@ const FAQ = (): ReactElement => {
                 >
                   É preciso fazer algum cadastro?
                 </a>
-                <StylesAwnser3 isBoxFAQOpen3={isBoxFAQOpen3}>
+                <StylesAnswer3 isBoxFAQOpen3={isBoxFAQOpen3}>
                   <p>
                     Sim, o cadastro é necessário tanto para o cliente quanto
                     para o restaurante, com funcionalidades próprias para cada
                     um;
                   </p>
-                </StylesAwnser3>
+                </StylesAnswer3>
               </div>
             </div>
           </div>
@@ -99,12 +99,12 @@ const FAQ = (): ReactElement => {
                 >
                   O site realiza as entregas?
                 </a>
-                <StylesAwnser4 isBoxFAQOpen4={isBoxFAQOpen4}>
+                <StylesAnswer4 isBoxFAQOpen4={isBoxFAQOpen4}>
                   <p>
                     Não, nós não fazemos entregas, o intuito é facilitar o
                     processo de compra nos estabelecimentos;
                   </p>
-                </StylesAwnser4>
+                </StylesAnswer4>
               </div>
             </div>
           </div>
@@ -118,7 +118,7 @@ const FAQ = (): ReactElement => {
                 >
                   Como funcionam os métodos de pagamento?
                 </a>
-                <StylesAwnser5 isBoxFAQOpen5={isBoxFAQOpen5}>
+                <StylesAnswer5 isBoxFAQOpen5={isBoxFAQOpen5}>
                   <p>
                     O pagamento pode ser realizado tanto por cartão de crédito
                     ou débito, assim pode ser informado dentro do nosso site, já
@@ -127,7 +127,7 @@ const FAQ = (): ReactElement => {
                     informação em mãos e receberá o dinheiro na hora da retirada
                     do produto;
                   </p>
-                </StylesAwnser5>
+                </StylesAnswer5>
               </div>
             </div>
           </div>
@@ -141,12 +141,12 @@ const FAQ = (): ReactElement => {
                 >
                   Como entrar em contato com o suporte?
                 </a>
-                <StylesAwnser6 isBoxFAQOpen6={isBoxFAQOpen6}>
+                <StylesAnswer6 isBoxFAQOpen6={isBoxFAQOpen6}>
                   <p>
                     Se caso acontecer algum problema, envie um e-mail para
                     ecantinapucpr@gmail.com que resolveremos o problema.
                   </p>
-                </StylesAwnser6>
+                </StylesAnswer6>
               </div>
             </div>
           </div>
