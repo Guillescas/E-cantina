@@ -8,8 +8,4 @@ export const StylesContainer = styled.div`
   min-width: 100vw;
   max-width: 100vw;
   width: 100%;
-
-  > img {
-    
-  }
 `;

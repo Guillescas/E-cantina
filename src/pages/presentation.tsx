@@ -1,10 +1,11 @@
 import { ReactElement, useState } from 'react';
+import { StylesContainer } from '../styles/Pages/Presentation';
 
 const Presentation = (): ReactElement => {
   return (
-    <nav>
+    <StylesContainer>
       <img src="/assets/logo.png" alt="Logo" />
-    </nav>
+    </StylesContainer>
   );
 };
 
