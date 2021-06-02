@@ -32,10 +32,14 @@ interface IRestaurantProps {
 
 interface IProductProps {
   id: number;
-  name: string;
   type: string;
-  description?: string;
+  name: string;
+  description: string;
   price: number;
+  urlImage?: string;
+  amount: number;
+  observation?: string;
+  cartItemId: number;
 }
 
 interface IrestaurantUrlPropsProps {
@@ -107,12 +111,7 @@ const Restaurant = (
               <div className="cards">
                 {products &&
                   products.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      name={product.name}
-                      description={product.description}
-                      price={product.price}
-                    />
+                    <ProductCard key={product.id} product={product} />
                   ))}
               </div>
             </div>

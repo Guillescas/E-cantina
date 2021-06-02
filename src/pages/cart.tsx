@@ -1,23 +1,26 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import { FiTrash2 } from 'react-icons/fi';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
 import SEO from '../components/SEO';
 import TopDashboardMenu from '../components/TopDashboardMenu';
-import QuantitySelector from '../components/QuantitySelector';
 import ButtonWithIcon from '../components/ButtonWithIcon';
 import Button from '../components/Button';
+import CartQuantitySelector from '../components/CartQuantitySelector';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
+import { formatPrice } from '../utils/formatPriceToBR';
+
+import { useCart } from '../hooks/cart';
 
 import { StylesContainer, Content, CartContent } from '../styles/Pages/Cart';
 
 const Cart = (): ReactElement => {
-  const router = useRouter();
+  const { cart, removeProduct } = useCart();
 
-  const [quantity, setQuantity] = useState(1);
+  const router = useRouter();
 
   return (
     <StylesContainer>
@@ -35,27 +38,31 @@ const Cart = (): ReactElement => {
                 <th />
                 <th>Produto</th>
                 <th>Observações</th>
+                <th>Preço</th>
                 <th>Quantidade</th>
                 <th>Ação</th>
               </tr>
-              <tr>
-                <td>
-                  <img src="/assets/hamburger.jpeg" alt="A" />
-                </td>
-                <td>Alfreds Futterkiste</td>
-                <td>
-                  Alfreds Futterkiste asdyg asdy gaosudg asudog asodug oduaydg{' '}
-                </td>
-                <td>
-                  <QuantitySelector
-                    quantity={quantity}
-                    setQuantity={setQuantity}
-                  />
-                </td>
-                <td>
-                  <ButtonWithIcon icon={FiTrash2}>Remover</ButtonWithIcon>
-                </td>
-              </tr>
+              {cart.map(cartItem => (
+                <tr key={cartItem.id}>
+                  <td>
+                    <img src="/assets/hamburger.jpeg" alt="A" />
+                  </td>
+                  <td>{cartItem.name}</td>
+                  <td>{cartItem.observation}</td>
+                  <td>{formatPrice(cartItem.price)}</td>
+                  <td>
+                    <CartQuantitySelector product={cartItem} />
+                  </td>
+                  <td>
+                    <ButtonWithIcon
+                      icon={FiTrash2}
+                      onClick={() => removeProduct(cartItem.cartItemId)}
+                    >
+                      Remover
+                    </ButtonWithIcon>
+                  </td>
+                </tr>
+              ))}
             </table>
           </div>
 
