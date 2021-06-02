@@ -87,14 +87,23 @@ export const ContentList = styled.div`
 
     .user-image {
       background: var(--background);
-      width: 123px;
-      height: 123px;
+      width: 200px;
+      height: 200px;
 
       border-radius: 50%;
 
       display: flex;
       align-items: center;
       justify-content: center;
+
+      img {
+        width: 200px;
+        max-width: 100%;
+        height: 200px;
+        max-height: 100%;
+
+        border-radius: 50%;
+      }
     }
   }
 `;

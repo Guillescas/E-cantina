@@ -250,15 +250,35 @@ const Account = (): ReactElement => {
             <div className="dropzone-area">
               <Dropzone name="image" />
 
-              <div className="user-image-infos">
-                <Button type="submit" isLoading={isLoading}>
-                  Salvar imagem
-                </Button>
+              <div className="finish-update-container">
+                <span>
+                  <FiAlertCircle size={18} />
+                  Insira sua senha para salvar as alterações
+                </span>
+                <div className="finish-update-user-infos">
+                  <Input
+                    name="password"
+                    type="password"
+                    icon={FiLock}
+                    label="Senha"
+                  />
+
+                  <Button type="submit" isLoading={isLoading}>
+                    Salvar
+                  </Button>
+                </div>
               </div>
             </div>
 
             <div className="user-image">
-              <FiUser size={32} />
+              {user.urlImage === undefined ? (
+                <FiUser />
+              ) : (
+                <img
+                  src={`http://localhost:8080${user && user.urlImage}`}
+                  alt={`Imagem de ${user && user.name}`}
+                />
+              )}
             </div>
           </Form>
         </ContentList>
