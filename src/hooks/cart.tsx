@@ -12,8 +12,10 @@ interface IProduct {
   name: string;
   description: string;
   price: number;
-  urlImage: string;
+  urlImage?: string;
   amount: number;
+  observation?: string;
+  cartItemId: number;
 }
 
 interface UpdateProductAmount {
@@ -49,47 +51,33 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const addProduct = async (product: IProduct) => {
     try {
-      const productExists = cart.find(
-        cartProduct => cartProduct.id === product.id,
-      );
+      const cartItemId = cart.length + 1;
 
-      if (!productExists) {
-        setCart([...cart, product]);
-        Cookies.set('@ECantina:cart', [...cart, product]);
+      const updatedProduct = {
+        ...product,
+        cartItemId,
+      };
+      setCart([...cart, updatedProduct]);
+      Cookies.set('@ECantina:cart', [...cart, updatedProduct]);
 
-        toast.success('Produto adicionado ao carrinho');
-      } else {
-        const amount = productExists.amount + 1;
-
-        const updatedCart = cart.map(cartProduct => {
-          if (cartProduct.id === product.id) {
-            cartProduct.amount = amount;
-            return cartProduct;
-          }
-
-          return product;
-        });
-
-        setCart(updatedCart);
-        Cookies.set('@ECantina:cart', [...cart, updatedCart]);
-
-        toast.success('Produto adicionado ao carrinho');
-      }
+      toast.success('Produto adicionado ao carrinho');
     } catch (error) {
-      // #zica
       toast.error('Erro inesperado. Favor contate o suporte');
-      console.log(error);
     }
   };
 
-  const removeProduct = async (productId: number) => {
-    const productExists = cart.find(product => product.id === productId);
+  const removeProduct = async (cartProductItemId: number) => {
+    const productExists = cart.find(
+      product => product.cartItemId === cartProductItemId,
+    );
 
     if (!productExists) {
       return toast.error('Erro na remoção do produto');
     }
 
-    const updatedCart = cart.filter(product => product.id !== productId);
+    const updatedCart = cart.filter(
+      product => product.cartItemId !== cartProductItemId,
+    );
 
     setCart(updatedCart);
     Cookies.set('@ECantina:cart', updatedCart);
@@ -105,7 +93,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       }
 
       const updatedCart = cart.map(cartProduct => {
-        if (cartProduct.id === product.id) {
+        if (cartProduct.cartItemId === product.cartItemId) {
           cartProduct.amount = amount;
 
           return cartProduct;
