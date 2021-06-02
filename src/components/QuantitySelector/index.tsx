@@ -21,6 +21,7 @@ const QuantitySelector = ({
   const handleAddQuantity = () => {
     if (quantity < 50) {
       setQuantity(quantity + 1);
+      console.log(quantity);
     }
   };
 
@@ -35,7 +36,7 @@ const QuantitySelector = ({
         <FiMinus size={22} />
       </Button>
 
-      <input type="text" disabled value={quantity} />
+      <div className="value">{quantity}</div>
 
       <Button
         className="plus"
