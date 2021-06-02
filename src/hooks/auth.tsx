@@ -15,6 +15,7 @@ import Cookies from 'js-cookie';
 import { IClientProps } from '../@types';
 
 import { api } from '../services/apiClient';
+import { useSignInModal } from './signinModal';
 
 interface AuthState {
   token: string;
@@ -63,6 +64,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   const router = useRouter();
+  const { setModalLoginIsOpen } = useSignInModal();
 
   // FIXME - Separar token de user
   const [data, setData] = useState<AuthState>(() => {
@@ -112,6 +114,9 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
       .then(() => {
         destroyCookie(undefined, '@ECantinaReturnMessage');
         destroyCookie(undefined, '@ECantinaReturnMessage');
+      })
+      .then(() => {
+        router.push('/dashboard');
       })
       .catch(() => {
         return toast.error('Ocorreu um erro ao realizar login');
@@ -196,8 +201,9 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
 
     setData({} as AuthState);
 
+    setModalLoginIsOpen(false);
     router.push('/');
-  }, [router]);
+  }, [router, setModalLoginIsOpen]);
 
   return (
     <AuthContext.Provider

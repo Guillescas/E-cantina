@@ -13,6 +13,7 @@ import Button from '../../Button';
 import getvalidationErrors from '../../../utils/getValidationErrors';
 
 import { useAuth } from '../../../hooks/auth';
+import { useSignInModal } from '../../../hooks/signinModal';
 
 import { StylesContainer } from './styles';
 
@@ -31,6 +32,7 @@ const SignModal = ({
   onRequestClose,
 }: ISignModalProps): ReactElement => {
   const { signIn } = useAuth();
+  const { setModalLoginIsOpen } = useSignInModal();
 
   const loginFormRef = useRef<FormHandles>(null);
 
@@ -69,7 +71,7 @@ const SignModal = ({
           password: data.password,
         });
 
-        router.push('/dashboard');
+        setModalLoginIsOpen(false);
       } catch (err) {
         console.log(err);
         if (err instanceof Yup.ValidationError) {
@@ -80,7 +82,7 @@ const SignModal = ({
       }
       setIsLoading(false);
     },
-    [router, signIn],
+    [setModalLoginIsOpen, signIn],
   );
 
   return (
