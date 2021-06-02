@@ -2,7 +2,7 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { ReactElement, useCallback, useRef } from 'react';
 import { slide as Menu } from 'react-burger-menu';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiUser } from 'react-icons/fi';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
 
@@ -77,10 +77,14 @@ const TopDashboardMenu = ({
         <nav>
           <div className="user-card">
             <div className="user-avatar">
-              <img
-                src={`http://localhost:8080${user && user.urlImage}`}
-                alt={`Imagem de ${user && user.name}`}
-              />
+              {user && user.urlImage === undefined ? (
+                <FiUser />
+              ) : (
+                <img
+                  src={`http://localhost:8080${user && user.urlImage}`}
+                  alt={`Imagem de ${user && user.name}`}
+                />
+              )}
             </div>
 
             <div className="user-infos">

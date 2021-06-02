@@ -15,8 +15,8 @@ import { Container, Error } from './styles';
 interface IOptionsProps {
   optionValue: string;
   optionLabel: string;
-  disabled: boolean;
-  selected: boolean;
+  disabled?: boolean;
+  selected?: boolean;
   hidden?: boolean;
 }
 
@@ -70,6 +70,9 @@ const Select = ({
         ref={inputRef}
         {...rest}
       >
+        <option value="" disabled selected>
+          Selecione uma opção
+        </option>
         {options.map(option => (
           <option
             hidden={hidden}

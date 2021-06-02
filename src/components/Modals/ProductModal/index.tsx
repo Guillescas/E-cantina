@@ -2,73 +2,69 @@ import { ReactElement, useCallback, useRef, useState } from 'react';
 import Modal from 'react-modal';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import * as Yup from 'yup';
-import { useRouter } from 'next/router';
 import { FiAlignLeft } from 'react-icons/fi';
 
 import TextArea from '../../Inputs/TextArea';
 import QuantitySelector from '../../QuantitySelector';
+import Button from '../../Button';
 
-import getvalidationErrors from '../../../utils/getValidationErrors';
+import { formatPrice } from '../../../utils/formatPriceToBR';
+
+import { useCart } from '../../../hooks/cart';
 
 import { StylesContainer } from './styles';
-import Button from '../../Button';
-import { formatPrice } from '../../../utils/formatPriceToBR';
+
+interface IProductProps {
+  id: number;
+  type: string;
+  name: string;
+  description: string;
+  price: number;
+  urlImage?: string;
+  amount: number;
+  observation?: string;
+  cartItemId: number;
+}
 
 interface IProductModalProps {
   isModalOpen: boolean;
   onRequestClose: () => void;
-  name: string;
-  price: number;
-  description: string;
-}
-
-interface IOrderFormData {
-  observation: string;
-  quantity: string;
+  setModalProductIsOpen: (isOpen: boolean) => void;
+  product: IProductProps;
 }
 
 const ProductModal = ({
   isModalOpen,
   onRequestClose,
-  name,
-  price,
-  description,
+  setModalProductIsOpen,
+  product,
 }: IProductModalProps): ReactElement => {
-  const loginFormRef = useRef<FormHandles>(null);
+  const { addProduct } = useCart();
 
-  const router = useRouter();
+  const loginFormRef = useRef<FormHandles>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [observation, setObservation] = useState('');
 
-  const handleSubmit = useCallback(
-    async (data: IOrderFormData) => {
-      setIsLoading(true);
-      try {
-        loginFormRef.current?.setErrors({});
+  const handleSubmit = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const formattedProsuct = {
+        ...product,
+        observation,
+        amount: quantity,
+      };
 
-        const schema = Yup.object().shape({
-          quantity: Yup.number().required('Quantidade obrigatória'),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        router.push('/dashboard');
-      } catch (err) {
-        console.log(err);
-        if (err instanceof Yup.ValidationError) {
-          const errors = getvalidationErrors(err);
-
-          loginFormRef.current?.setErrors(errors);
-        }
-      }
-      setIsLoading(false);
-    },
-    [router],
-  );
+      addProduct(formattedProsuct);
+      setModalProductIsOpen(false);
+      setObservation('');
+      setQuantity(1);
+    } catch (err) {
+      console.log(err);
+    }
+    setIsLoading(false);
+  }, [addProduct, observation, product, quantity, setModalProductIsOpen]);
 
   return (
     <Modal
@@ -82,10 +78,10 @@ const ProductModal = ({
 
         <div className="resume">
           <p>
-            <span>Produto: </span> {name && name}
+            <span>Produto: </span> {product && product.name}
           </p>
           <p>
-            <span>Descrição: </span> {description && description}
+            <span>Descrição: </span> {product && product.description}
           </p>
         </div>
 
@@ -96,6 +92,8 @@ const ProductModal = ({
               placeholder="observation"
               icon={FiAlignLeft}
               label="Observações"
+              value={observation}
+              onChange={event => setObservation(event.target.value)}
             />
           </div>
 
@@ -105,7 +103,7 @@ const ProductModal = ({
           <div className="resume">
             <p>
               <span>Total: </span>{' '}
-              {price && formatPrice(Number(price) * quantity)}
+              {product && formatPrice(Number(product.price) * quantity)}
             </p>
           </div>
 

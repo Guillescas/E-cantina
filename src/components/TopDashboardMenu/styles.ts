@@ -40,8 +40,11 @@ export const InlineMenu = styled.header`
 
       width: 100%;
       max-width: 280px;
+      height: 100%;
+      max-height: 48px;
+      min-height: 48px;
 
-      padding-right: 8px;
+      padding: 0 8px;
 
       background: var(--background);
       border-radius: 50px 24px 24px 50px;
@@ -50,16 +53,16 @@ export const InlineMenu = styled.header`
         background: var(--background);
         border-radius: 50%;
 
-        width: 50px;
-        height: 50px;
-
         display: flex;
         align-items: center;
         justify-content: center;
 
         img {
-          max-width: 100%;
-          max-height: 100%;
+          max-width: 32px;
+          max-height: 32px;
+
+          border-radius: 50%;
+          margin-right: 0.5rem;
 
           object-fit: contain;
         }
