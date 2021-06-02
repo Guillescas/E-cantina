@@ -68,6 +68,51 @@ export const CartContent = styled.div`
     }
   }
 
+  .resume {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+
+    margin-top: 3rem;
+
+    .coupon-area {
+      h2 {
+        margin-bottom: 2rem;
+      }
+
+      button {
+        margin-top: 1rem;
+      }
+    }
+
+    table {
+      width: 100%;
+      text-align: left;
+      margin: 1rem 0;
+
+      border-collapse: collapse;
+      border-spacing: 1rem 0;
+
+      tr {
+        border-bottom: 1px solid var(--text);
+
+        th {
+          padding: 1rem 0 0.5rem 0;
+          width: 40%;
+        }
+
+        td {
+          padding: 1rem 0 0.5rem 0;
+          flex: 1;
+        }
+      }
+    }
+
+    button {
+      margin: 0;
+    }
+  }
+
   .checkout-button {
     margin-top: 2rem;
   }

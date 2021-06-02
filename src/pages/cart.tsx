@@ -1,7 +1,11 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { FiTrash2 } from 'react-icons/fi';
+import { IoTicket } from 'react-icons/io5';
+import { Form } from '@unform/web';
+import { FormHandles } from '@unform/core';
+import * as Yup from 'yup';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
 import SEO from '../components/SEO';
@@ -9,18 +13,69 @@ import TopDashboardMenu from '../components/TopDashboardMenu';
 import ButtonWithIcon from '../components/ButtonWithIcon';
 import Button from '../components/Button';
 import CartQuantitySelector from '../components/CartQuantitySelector';
+import Input from '../components/Inputs/Input';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
 import { formatPrice } from '../utils/formatPriceToBR';
+import getvalidationErrors from '../utils/getValidationErrors';
 
 import { useCart } from '../hooks/cart';
 
 import { StylesContainer, Content, CartContent } from '../styles/Pages/Cart';
 
+interface IFormData {
+  discountCoupon: string;
+}
+
 const Cart = (): ReactElement => {
   const { cart, removeProduct } = useCart();
 
+  const formRef = useRef<FormHandles>(null);
+
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [discount, setDiscount] = useState<number>(0);
+
   const router = useRouter();
+
+  useEffect(() => {
+    const totalProductsPrice = cart.map(product => {
+      return product.price * product.amount;
+    });
+
+    setTotalPrice(totalProductsPrice.reduce((a, b) => a + b, 0));
+  }, [cart]);
+
+  const handleDiscountCouponFormSubmit = async (data: IFormData) => {
+    try {
+      formRef.current?.setErrors({});
+
+      const schema = Yup.object().shape({
+        name: Yup.string().required('Nome obrigatório'),
+        email: Yup.string().email().required('E-mail obrigatório'),
+        password: Yup.string()
+          .min(8, 'A senha precisa ter no mínimo 8 caracteres')
+          .required('Senha obrigatória'),
+        confirmPassword: Yup.string().oneOf(
+          [Yup.ref('password'), null],
+          'As senhas não correspondem',
+        ),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      const userData = {
+        discountCoupon: data.discountCoupon,
+      };
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getvalidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+      }
+    }
+  };
 
   return (
     <StylesContainer>
@@ -66,12 +121,47 @@ const Cart = (): ReactElement => {
             </table>
           </div>
 
-          <Button
-            className="checkout-button"
-            onClick={() => router.push('/checkout')}
-          >
-            Ir para pagamento
-          </Button>
+          <div className="resume">
+            <div className="coupon-area">
+              <h2>Inserir cupom de desconto</h2>
+              <Form ref={formRef} onSubmit={handleDiscountCouponFormSubmit}>
+                <Input
+                  name="discountCoupon"
+                  label="Insira seu cupom"
+                  placeholder="Insira seu cupom"
+                  icon={IoTicket}
+                />
+
+                <Button type="submit">Inserir</Button>
+              </Form>
+            </div>
+
+            <div>
+              <h2>Resumo da compra</h2>
+
+              <table>
+                <tr>
+                  <th>Total de itens:</th>
+                  <td>{cart.length}</td>
+                </tr>
+                <tr>
+                  <th>Desconto:</th>
+                  <td>{formatPrice(Number(discount))}</td>
+                </tr>
+                <tr>
+                  <th>Preço final:</th>
+                  <td>{formatPrice(Number(totalPrice))}</td>
+                </tr>
+              </table>
+
+              <Button
+                className="checkout-button"
+                onClick={() => router.push('/checkout')}
+              >
+                Ir para pagamento
+              </Button>
+            </div>
+          </div>
         </CartContent>
       </Content>
     </StylesContainer>
