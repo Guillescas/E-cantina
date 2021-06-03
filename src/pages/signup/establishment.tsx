@@ -231,7 +231,7 @@ const EstablishmentSignUp = (): ReactElement => {
           </div>
 
           <Button type="submit" isLoading={isLoading}>
-            Cadastrar restaurante
+            Cadastrar estabelecimento
           </Button>
         </Form>
       </div>

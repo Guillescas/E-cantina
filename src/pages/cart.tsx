@@ -50,15 +50,7 @@ const Cart = (): ReactElement => {
       formRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-        email: Yup.string().email().required('E-mail obrigatório'),
-        password: Yup.string()
-          .min(8, 'A senha precisa ter no mínimo 8 caracteres')
-          .required('Senha obrigatória'),
-        confirmPassword: Yup.string().oneOf(
-          [Yup.ref('password'), null],
-          'As senhas não correspondem',
-        ),
+        discountCoupon: Yup.string().required('Cupom obrigatório'),
       });
 
       await schema.validate(data, {
@@ -99,7 +91,7 @@ const Cart = (): ReactElement => {
               </tr>
               {cart.map(cartItem => (
                 <tr key={cartItem.id}>
-                  <td>
+                  <td className="image">
                     <img src="/assets/hamburger.jpeg" alt="A" />
                   </td>
                   <td>{cartItem.name}</td>

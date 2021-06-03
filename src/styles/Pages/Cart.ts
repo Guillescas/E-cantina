@@ -48,6 +48,10 @@ export const CartContent = styled.div`
       min-width: 950px;
       border-collapse: collapse;
 
+      .image {
+        width: 1.5rem;
+      }
+
       th {
         padding: 0.25rem 0 1rem;
       }
