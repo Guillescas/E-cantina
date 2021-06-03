@@ -10,6 +10,8 @@ export const GlobalStyles = createGlobalStyle`
     --hover-text: #a0a0a0;
 
     --primary: #8d99ae;
+
+    --secondary: #ed6d51;
   }
 
   * {
