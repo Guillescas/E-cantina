@@ -67,14 +67,14 @@ const Restaurant = (
 
   useEffect(() => {
     api
-      .get(`/product`)
+      .get(`/product?restaurantId=${id}`)
       .then(response => {
         setProducts(response.data.content);
       })
       .catch(error => {
         return toast.error(error);
       });
-  }, []);
+  }, [id]);
 
   return (
     <StylesContainer>
