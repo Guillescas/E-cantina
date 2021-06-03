@@ -9,13 +9,14 @@ export const StylesContainer = styled.div`
   min-width: 100vw;
   max-width: 100vw;
   width: 100%;
-  height: 70vh;
+  height: 65vh;
 
   > img {
-    height: 18rem;
+    height: 19rem;
   }
 
   > p {
-    font
+    margin-top: 3rem;
+    font-size: 1.5rem;
   }
 `;
