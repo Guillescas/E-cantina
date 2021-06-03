@@ -53,6 +53,13 @@ export const InlineMenu = styled.header`
         background: var(--background);
         border-radius: 50%;
 
+        min-width: 32px;
+        max-width: 32px;
+        width: 100%;
+        min-height: 32px;
+        max-height: 32px;
+        height: 100%;
+
         display: flex;
         align-items: center;
         justify-content: center;
@@ -62,13 +69,15 @@ export const InlineMenu = styled.header`
           max-height: 32px;
 
           border-radius: 50%;
-          margin-right: 0.5rem;
+          margin: 0.5rem 0;
 
-          object-fit: contain;
+          object-fit: cover;
         }
       }
 
       .user-infos {
+        margin-left: 0.5rem;
+
         p {
           font-size: 0.75rem;
         }

@@ -50,9 +50,14 @@ const Account = (): ReactElement => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isUserEditingFields, setIsUserEditingFields] = useState(false);
+  const [userImageUrl, setUserImageUrl] = useState('');
 
   const formRef = useRef<FormHandles>(null);
   const uploadFileFormRef = useRef<FormHandles>(null);
+
+  useEffect(() => {
+    setUserImageUrl(user.urlImage);
+  }, [user]);
 
   useEffect(() => {
     api
@@ -271,11 +276,11 @@ const Account = (): ReactElement => {
             </div>
 
             <div className="user-image">
-              {user.urlImage === undefined ? (
+              {userImageUrl === '' ? (
                 <FiUser />
               ) : (
                 <img
-                  src={`http://localhost:8080${user && user.urlImage}`}
+                  src={`http://localhost:8080${userImageUrl}`}
                   alt={`Imagem de ${user && user.name}`}
                 />
               )}

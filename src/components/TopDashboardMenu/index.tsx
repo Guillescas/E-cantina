@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { ReactElement, useCallback, useRef } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import { FiSearch, FiUser } from 'react-icons/fi';
 import * as Yup from 'yup';
@@ -36,9 +36,15 @@ const TopDashboardMenu = ({
   const { openLoginModal } = useSignInModal();
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
 
+  const [userImageUrl, setUserImageUrl] = useState('');
+
   const router = useRouter();
 
   const formRef = useRef<FormHandles>(null);
+
+  useEffect(() => {
+    setUserImageUrl(user.urlImage);
+  }, [user]);
 
   const handleSubmit = useCallback(
     async (data: ISearchRestaurantFormData) => {
@@ -77,11 +83,11 @@ const TopDashboardMenu = ({
         <nav>
           <div className="user-card">
             <div className="user-avatar">
-              {user && user.urlImage === undefined ? (
+              {userImageUrl === '' ? (
                 <FiUser />
               ) : (
                 <img
-                  src={`http://localhost:8080${user && user.urlImage}`}
+                  src={`http://localhost:8080${userImageUrl}`}
                   alt={`Imagem de ${user && user.name}`}
                 />
               )}
