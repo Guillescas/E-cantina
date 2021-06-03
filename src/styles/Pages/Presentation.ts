@@ -55,7 +55,7 @@ export const StylesContainer = styled.div`
       font-size: 1.5rem;
 
       > span {
-        text-decoration: line-through var(--secondary) 2px;
+        text-decoration: line-through var(--secondary) 4px;
       }
     }
   }
