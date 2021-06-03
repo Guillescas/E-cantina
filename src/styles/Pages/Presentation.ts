@@ -19,7 +19,7 @@ export const StylesContainer = styled.div`
 
     padding: 2rem 4rem 0.75rem 4rem;
 
-    border: 2px solid tomato;
+    border: 2px solid var(--secondary);
     border-radius: 0.75rem;
 
     > img {
@@ -49,8 +49,14 @@ export const StylesContainer = styled.div`
   }
 
   > .text {
-    margin-top: 3rem;
-    color: var(--background);
-    font-size: 1rem;
+    margin-top: 3.5rem;
+
+    > p {
+      font-size: 1.5rem;
+
+      > span {
+        text-decoration: line-through var(--secondary) 2px;
+      }
+    }
   }
 `;

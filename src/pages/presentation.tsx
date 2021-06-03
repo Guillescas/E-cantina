@@ -12,7 +12,9 @@ const Presentation = (): ReactElement => {
       </div>
 
       <div className="text">
-        <p>Uma aplicação desenvolvida para resolver um problema</p>
+        <p>
+          Uma aplicação desenvolvida para resolver um <span>problema</span>
+        </p>
       </div>
     </StylesContainer>
   );
