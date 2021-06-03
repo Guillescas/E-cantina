@@ -1,11 +1,15 @@
-import React from 'react';
+import { ReactElement } from 'react';
 
-const NotFound:React.FC = () => {
+import { StylesContainer } from '../styles/Pages/404';
+
+const NotFound = (): ReactElement => {
   return (
     <StylesContainer>
-      <img src="" alt="notFound" />
+      <img src="/assets/notFound.svg" alt="notFound" />
+
+      <p>Página não encontrada, tente novamente mais tarde</p>
     </StylesContainer>
   );
-}
+};
 
 export default NotFound;
