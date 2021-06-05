@@ -20,10 +20,10 @@ export const ContentList = styled.div`
 
   width: 100%;
   max-width: 1000px;
-  min-height: 1200px;
+  min-height: 500px;
 
   margin-left: 1rem;
-  padding: 1rem;
+  padding: 1rem 1rem 1.5rem;
 
   .title {
     display: flex;
@@ -65,12 +65,17 @@ export const ContentList = styled.div`
         grid-template-columns: repeat(2, 1fr);
         align-items: center;
         justify-content: center;
+
         gap: 0.25rem;
 
         button {
           margin: 0;
           height: 59px;
         }
+      }
+
+      .user-image {
+        padding-left: 5rem;
       }
     }
   }
@@ -81,28 +86,36 @@ export const ContentList = styled.div`
   }
 
   .file-upload-form {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 1rem;
+
+    .dropzone-area {
+      width: 100%;
+    }
 
     .user-image {
-      background: var(--background);
-      width: 200px;
+      width: 100%;
       height: 200px;
 
       border-radius: 50%;
 
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
 
-      img {
+      img,
+      svg {
         width: 200px;
         max-width: 100%;
         height: 200px;
         max-height: 100%;
 
         border-radius: 50%;
+      }
+
+      img {
+        object-fit: cover;
       }
     }
   }

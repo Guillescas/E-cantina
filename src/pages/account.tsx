@@ -9,6 +9,7 @@ import {
   FiEdit2,
   FiLock,
   FiMail,
+  FiSave,
   FiUser,
 } from 'react-icons/fi';
 
@@ -34,8 +35,12 @@ interface IUpdateUserInfosFormData {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
   cpf: string;
+}
+
+interface IUpdateUserImageFormData {
+  image: any;
+  password: string;
 }
 
 interface IUserResponse {
@@ -46,16 +51,20 @@ interface IUserResponse {
 }
 
 const Account = (): ReactElement => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, updateUserImage } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isUserEditingFields, setIsUserEditingFields] = useState(false);
+  const [isUserUpdatingImage, setIsUserUpdatingImage] = useState(false);
   const [userImageUrl, setUserImageUrl] = useState('');
 
   const formRef = useRef<FormHandles>(null);
   const uploadFileFormRef = useRef<FormHandles>(null);
 
   useEffect(() => {
+    if (!user.urlImage) {
+      return setUserImageUrl('');
+    }
     setUserImageUrl(user.urlImage);
   }, [user]);
 
@@ -77,6 +86,7 @@ const Account = (): ReactElement => {
             firstName: formattedFirstName,
             lastName: formattedLastName,
             email: userData.email,
+            cpf: '',
           });
         } else {
           formRef.current?.setData({
@@ -104,7 +114,6 @@ const Account = (): ReactElement => {
           email: Yup.string()
             .email('Por favor insira um e-mail válido')
             .required('E-mail obrigatório'),
-          password: Yup.string().required('Senha obrigatória'),
         });
 
         await schema.validate(data, {
@@ -115,7 +124,6 @@ const Account = (): ReactElement => {
           name: `${data.firstName} ${data.lastName}`,
           email: data.email,
           cpf: data.cpf,
-          password: data.password,
         };
 
         await updateUser({ dataOfUser: userData, setIsUserEditingFields });
@@ -132,7 +140,9 @@ const Account = (): ReactElement => {
     [updateUser],
   );
 
-  async function handleFileUpload(data: any): Promise<void> {
+  async function handleFileUpload(
+    data: IUpdateUserImageFormData,
+  ): Promise<void> {
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -140,31 +150,52 @@ const Account = (): ReactElement => {
       formData.append('image', data.image[0]);
       formData.append('userId', user.sub);
 
-      console.log(data.image[0]);
-
       uploadFileFormRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        image: Yup.mixed().required('Nome obrigatório'),
+        image: Yup.mixed().required('Imagem obrigatória'),
+        password: Yup.string().required('Senha obrigatória'),
       });
 
       await schema.validate(data, {
         abortEarly: false,
       });
 
-      fetch('http://localhost:8080/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      if (!data.image[0]) {
+        toast.info('Você deve selecionar uma imagem para completar este passo');
+        throw new Error();
+      }
 
-      toast.success('Imagem alterada com sucesso');
+      api
+        .post('http://localhost:8080/upload', formData, {
+          headers: {
+            'Content-Type':
+              'multipart/form-data; boundary=----WebKitFormBoundaryLl5fBkPZH3nO3InH',
+          },
+        })
+        .then(response => {
+          setTimeout(async () => {
+            await updateUserImage({
+              dataOfUser: response.data.urlImage,
+              setIsUserUpdatingImage,
+            });
+          }, 1000);
+        })
+        .then(() => {
+          toast.success('Imagem alterada com sucesso');
+        })
+        .catch(() => {
+          toast.error('Erro inesperado. Tente novamente mais tarde', {
+            toastId: 2,
+          });
+        });
       uploadFileFormRef.current.clearField('image');
     } catch (err) {
-      console.log(err);
       if (err instanceof Yup.ValidationError) {
+        console.log(err);
         const errors = getvalidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+        uploadFileFormRef.current?.setErrors(errors);
       }
     }
 
@@ -182,21 +213,32 @@ const Account = (): ReactElement => {
         <ContentList>
           <div className="title">
             <h1>Informações pessoais</h1>
-            <ButtonWithIcon
-              type="button"
-              icon={FiEdit2}
-              onClick={() => setIsUserEditingFields(true)}
-            >
-              Editar informações
-            </ButtonWithIcon>
+
+            {isUserEditingFields ? (
+              <ButtonWithIcon
+                type="button"
+                icon={FiSave}
+                onClick={() => formRef.current.submitForm()}
+              >
+                Salvar
+              </ButtonWithIcon>
+            ) : (
+              <ButtonWithIcon
+                type="button"
+                icon={FiEdit2}
+                onClick={() => setIsUserEditingFields(true)}
+              >
+                Editar informações
+              </ButtonWithIcon>
+            )}
           </div>
 
           <Form onSubmit={handleSignUpFormSubmit} ref={formRef}>
             <div className="inputs">
               <Input
                 name="firstName"
-                placeholder="Nome"
-                label="Nome"
+                placeholder="Primeiro nome"
+                label="Primeiro nome"
                 icon={FiUser}
                 disabled={!isUserEditingFields}
               />
@@ -224,7 +266,7 @@ const Account = (): ReactElement => {
               />
             </div>
 
-            {isUserEditingFields && (
+            {/* {isUserEditingFields && (
               <div className="finish-update-container">
                 <span>
                   <FiAlertCircle size={18} />
@@ -236,6 +278,7 @@ const Account = (): ReactElement => {
                     type="password"
                     icon={FiLock}
                     label="Senha"
+                    placeholder="Senha"
                   />
 
                   <Button type="submit" isLoading={isLoading}>
@@ -243,7 +286,7 @@ const Account = (): ReactElement => {
                   </Button>
                 </div>
               </div>
-            )}
+            )} */}
           </Form>
 
           <p className="upload-image-p">Altere sua imagem de perfil aqui</p>
@@ -253,26 +296,32 @@ const Account = (): ReactElement => {
             className="file-upload-form"
           >
             <div className="dropzone-area">
-              <Dropzone name="image" />
+              <Dropzone
+                name="image"
+                setIsUserUpdatingImage={setIsUserUpdatingImage}
+              />
 
-              <div className="finish-update-container">
-                <span>
-                  <FiAlertCircle size={18} />
-                  Insira sua senha para salvar as alterações
-                </span>
-                <div className="finish-update-user-infos">
-                  <Input
-                    name="password"
-                    type="password"
-                    icon={FiLock}
-                    label="Senha"
-                  />
+              {isUserUpdatingImage && (
+                <div className="finish-update-container">
+                  <span>
+                    <FiAlertCircle size={18} />
+                    Insira sua senha para salvar as alterações
+                  </span>
+                  <div className="finish-update-user-infos">
+                    <Input
+                      name="password"
+                      type="password"
+                      icon={FiLock}
+                      label="Senha"
+                      placeholder="Senha"
+                    />
 
-                  <Button type="submit" isLoading={isLoading}>
-                    Salvar
-                  </Button>
+                    <Button type="submit" isLoading={isLoading}>
+                      Salvar
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="user-image">
