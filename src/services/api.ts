@@ -40,11 +40,14 @@ export function setupAPIClient(ctx = undefined): AxiosInstance {
       }
 
       if (error.response.status === 403) {
+        if (error.response.config.url === '/authentication') {
+          return toast.error('Usuário ou senha inválidos');
+        }
         destroyCookie(ctx, '@ECantina:token');
         Cookie.remove('@ECantina:user');
 
-        setCookie(ctx, '@ECantinaReturnMessage', error.response.data, {
-          maxAge: 60 * 60 * 24 * 30, // 30 dias
+        setCookie(ctx, '@ECantinaReturnMessage', error.response.data.message, {
+          maxAge: 5, // 3 segundos
           path: '/',
         });
 
@@ -53,6 +56,12 @@ export function setupAPIClient(ctx = undefined): AxiosInstance {
           Router.push('/');
         } else {
           return Promise.reject(new AuthTokenErrorInvalid());
+        }
+      }
+
+      if (error.response.status === 404) {
+        if (process.browser) {
+          toast.error(error.response.data.message);
         }
       }
 
