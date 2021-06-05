@@ -78,15 +78,15 @@ export const Container = styled.div<ContainerProps>`
     }
 
     &::placeholder {
-      color: chartreuse(--hover-text);
+      color: var(--hover-text);
     }
 
     &:-webkit-autofill {
-      color: var(--text);
-      background-color: transparent !important;
-      box-shadow: 0 0 0 50px var(--second-background) inset;
-      -webkit-box-shadow: 0 0 0 50px var(--second-background) inset;
+      background-color: var(--background) !important;
+      box-shadow: 0 0 0 50px var(--background) inset;
+      -webkit-box-shadow: 0 0 0 50px var(--background) inset;
       -webkit-text-fill-color: var(--text) !important;
+      color: var(--text) !important;
     }
 
     &::placeholder {
