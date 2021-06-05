@@ -13,7 +13,6 @@ import Button from '../../Button';
 import getvalidationErrors from '../../../utils/getValidationErrors';
 
 import { useAuth } from '../../../hooks/auth';
-import { useSignInModal } from '../../../hooks/signinModal';
 
 import { StylesContainer } from './styles';
 
@@ -32,7 +31,6 @@ const SignModal = ({
   onRequestClose,
 }: ISignModalProps): ReactElement => {
   const { signIn } = useAuth();
-  const { setModalLoginIsOpen } = useSignInModal();
 
   const loginFormRef = useRef<FormHandles>(null);
 
@@ -52,6 +50,7 @@ const SignModal = ({
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
       setIsLoading(true);
+
       try {
         loginFormRef.current?.setErrors({});
 
@@ -70,10 +69,7 @@ const SignModal = ({
           email: data.email,
           password: data.password,
         });
-
-        setModalLoginIsOpen(false);
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(err);
 
@@ -82,7 +78,7 @@ const SignModal = ({
       }
       setIsLoading(false);
     },
-    [setModalLoginIsOpen, signIn],
+    [signIn, setIsLoading],
   );
 
   return (
@@ -95,10 +91,16 @@ const SignModal = ({
       <StylesContainer>
         <h2>Login</h2>
 
-        <Form ref={loginFormRef} onSubmit={handleSubmit}>
+        <Form
+          ref={loginFormRef}
+          onSubmit={data => {
+            handleSubmit(data);
+          }}
+        >
           <div>
             <Input
               name="email"
+              autoComplete="email"
               placeholder="email"
               icon={FiMail}
               type="text"
@@ -109,6 +111,7 @@ const SignModal = ({
           <div>
             <Input
               name="password"
+              autoComplete="password"
               icon={FiLock}
               type="password"
               placeholder="Senha"
