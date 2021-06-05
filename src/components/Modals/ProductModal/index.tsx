@@ -31,6 +31,7 @@ interface IProductModalProps {
   onRequestClose: () => void;
   setModalProductIsOpen: (isOpen: boolean) => void;
   product: IProductProps;
+  restaurantId: number;
 }
 
 const ProductModal = ({
@@ -38,6 +39,7 @@ const ProductModal = ({
   onRequestClose,
   setModalProductIsOpen,
   product,
+  restaurantId,
 }: IProductModalProps): ReactElement => {
   const { addProduct } = useCart();
 
@@ -50,21 +52,29 @@ const ProductModal = ({
   const handleSubmit = useCallback(async () => {
     setIsLoading(true);
     try {
-      const formattedProsuct = {
+      const formattedProduct = {
         ...product,
+        restaurantId,
         observation,
         amount: quantity,
       };
 
-      addProduct(formattedProsuct);
+      addProduct(formattedProduct);
       setModalProductIsOpen(false);
       setObservation('');
       setQuantity(1);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
     setIsLoading(false);
-  }, [addProduct, observation, product, quantity, setModalProductIsOpen]);
+  }, [
+    addProduct,
+    observation,
+    product,
+    quantity,
+    restaurantId,
+    setModalProductIsOpen,
+  ]);
 
   return (
     <Modal
@@ -76,7 +86,7 @@ const ProductModal = ({
       <StylesContainer>
         <h2>Adicionar produto ao carrinho</h2>
 
-        <div className="resume">
+        <div className="">
           <p>
             <span>Produto: </span> {product && product.name}
           </p>
