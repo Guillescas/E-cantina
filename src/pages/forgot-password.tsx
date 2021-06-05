@@ -8,8 +8,11 @@ import { toast } from 'react-toastify';
 import Button from '../components/Button';
 import Input from '../components/Inputs/Input';
 import TopMenu from '../components/TopMenu';
+import SignModal from '../components/Modals/SignModal';
 
 import getvalidationErrors from '../utils/getValidationErrors';
+
+import { useSignInModal } from '../hooks/signinModal';
 
 import { StylesContainer } from '../styles/Pages/ForgotPassword';
 
@@ -18,6 +21,8 @@ interface IForgotPasswordFormData {
 }
 
 const ForgotPassword = (): ReactElement => {
+  const { loginModalIsOpen, closeLoginModal } = useSignInModal();
+
   const formRef = useRef<FormHandles>();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +53,10 @@ const ForgotPassword = (): ReactElement => {
 
   return (
     <StylesContainer>
+      <SignModal
+        isModalOpen={loginModalIsOpen}
+        onRequestClose={closeLoginModal}
+      />
       <TopMenu />
 
       <div>
