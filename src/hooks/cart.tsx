@@ -34,6 +34,7 @@ interface CartContextData {
   removeProduct: (productId: number) => void;
   updateProductAmount: ({ product, amount }: UpdateProductAmount) => void;
   checkout: (data: ICheckoutProps) => void;
+  totalCartPrice: () => number;
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
@@ -117,6 +118,14 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     });
   };
 
+  const totalCartPrice = (): number => {
+    const totalProductsPrice = cart.map(product => {
+      return product.price * product.amount;
+    });
+
+    return totalProductsPrice.reduce((a, b) => a + b, 0);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -125,6 +134,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         removeProduct,
         updateProductAmount,
         checkout,
+        totalCartPrice,
       }}
     >
       {children}
