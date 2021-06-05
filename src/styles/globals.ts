@@ -76,6 +76,11 @@ export const GlobalStyles = createGlobalStyle`
     cursor: not-allowed;
   }
 
+  .Toastify__toast--info {
+    background: var(--primary);
+    color: var(--text);
+  }
+
   .react-modal-overlay {
     background: rgba(0, 0, 0, 0.5);
 
