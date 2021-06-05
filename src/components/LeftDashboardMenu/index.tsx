@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
 import { FiHome, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { IoReceiptOutline } from 'react-icons/io5';
 
 import { useAuth } from '../../hooks/auth';
 
@@ -31,6 +32,13 @@ const LeftDashboardMenu = (): ReactElement => {
         <div className={`item ${activeLink === '/cart' && 'selected'}`}>
           <FiShoppingCart size={20} />
           <p>Carrinho</p>
+        </div>
+      </Link>
+
+      <Link href="/orders">
+        <div className={`item ${activeLink === '/orders' && 'selected'}`}>
+          <IoReceiptOutline size={20} />
+          <p>Meus pedidos</p>
         </div>
       </Link>
 
