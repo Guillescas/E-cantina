@@ -4,7 +4,6 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import { FiSearch, FiUser } from 'react-icons/fi';
 import * as Yup from 'yup';
-import { useRouter } from 'next/router';
 
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
@@ -27,10 +26,14 @@ interface ISearchRestaurantFormData {
 
 interface ITopDashboardMenuProps {
   setIsLoading?: (props: boolean) => void;
+  setSearchByRestaurantName?: (restaurantName: string) => void;
+  isToClearFormData?: boolean;
 }
 
 const TopDashboardMenu = ({
   setIsLoading,
+  setSearchByRestaurantName,
+  isToClearFormData,
 }: ITopDashboardMenuProps): ReactElement => {
   const { user } = useAuth();
   const { openLoginModal } = useSignInModal();
@@ -38,18 +41,23 @@ const TopDashboardMenu = ({
 
   const [userImageUrl, setUserImageUrl] = useState('');
 
-  const router = useRouter();
-
   const formRef = useRef<FormHandles>(null);
 
   useEffect(() => {
+    formRef.current.clearField('name');
+  }, [isToClearFormData]);
+
+  useEffect(() => {
+    if (!user.urlImage) {
+      return setUserImageUrl('');
+    }
     setUserImageUrl(user.urlImage);
   }, [user]);
 
+  // FIXME - Finalizar a parada de quando o user digita alguma coisa na barra de busca e não está no dashboard
   const handleSubmit = useCallback(
     async (data: ISearchRestaurantFormData) => {
       setIsLoading(true);
-
       try {
         formRef.current?.setErrors({});
 
@@ -61,10 +69,7 @@ const TopDashboardMenu = ({
           abortEarly: false,
         });
 
-        router.push({
-          pathname: '/restaurant/search',
-          query: { keyword: data.name },
-        });
+        setSearchByRestaurantName(data.name);
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(error);
@@ -74,7 +79,7 @@ const TopDashboardMenu = ({
       }
       setIsLoading(false);
     },
-    [router, setIsLoading],
+    [setIsLoading, setSearchByRestaurantName],
   );
 
   return (

@@ -40,6 +40,7 @@ export const InlineMenu = styled.header`
 
       width: 100%;
       max-width: 280px;
+      min-width: 280px;
       height: 100%;
       max-height: 48px;
       min-height: 48px;
@@ -66,7 +67,11 @@ export const InlineMenu = styled.header`
 
         img {
           max-width: 32px;
+          min-width: 32px;
+          width: 100%;
           max-height: 32px;
+          min-height: 32px;
+          height: 100%;
 
           border-radius: 50%;
           margin: 0.5rem 0;
