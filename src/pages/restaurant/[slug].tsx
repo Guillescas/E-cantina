@@ -111,7 +111,11 @@ const Restaurant = (
               <div className="cards">
                 {products &&
                   products.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      restaurantId={Number(id)}
+                    />
                   ))}
               </div>
             </div>

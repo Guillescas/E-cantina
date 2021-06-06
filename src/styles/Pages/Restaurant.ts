@@ -20,9 +20,9 @@ export const RestaurantContent = styled.div`
 
   width: 100%;
   max-width: 1000px;
-  min-height: 1200px;
+  min-height: 500px;
 
-  margin-left: 1rem;
+  padding: 1rem 1rem 1.5rem;
 
   background: #009fff;
   background: -webkit-linear-gradient(
