@@ -9,8 +9,10 @@ import {
   FiLock,
   FiUser,
 } from 'react-icons/fi';
-
+import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
+
 import BaseDashboard from '../components/BaseDashboard';
 import InputWithMask from '../components/Inputs/InputWithMask';
 import Input from '../components/Inputs/Input';
@@ -18,12 +20,14 @@ import Button from '../components/Button';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
 import getvalidationErrors from '../utils/getValidationErrors';
+import { formatPrice } from '../utils/formatPriceToBR';
 
 import { useCart } from '../hooks/cart';
+import { useAuth } from '../hooks/auth';
+
+import { api } from '../services/apiClient';
 
 import { StylesContainer } from '../styles/Pages/Checkout';
-import { formatPrice } from '../utils/formatPriceToBR';
-import ButtonWithIcon from '../components/ButtonWithIcon';
 
 interface ICheckoutFormData {
   cardUserName: string;
@@ -33,7 +37,11 @@ interface ICheckoutFormData {
 }
 
 const Checkout = (): ReactElement => {
-  const { cart, totalCartPrice } = useCart();
+  const { user } = useAuth();
+  const { cart, totalCartPrice, discount, discountId, clearCart } = useCart();
+
+  const router = useRouter();
+
   const formRef = useRef<FormHandles>(null);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +53,42 @@ const Checkout = (): ReactElement => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          name: Yup.string().required('Nome do restaurante obrigatório'),
+          cardUserName: Yup.string().required('Nome no cartão obrigatório'),
+          cardNumber: Yup.string().required('Número do cartão obrigatório'),
+          cardValidateDate: Yup.string().required(
+            'Data de validade do cartão obrigatória',
+          ),
+          cardCVV: Yup.string().required('CVV do cartão obrigatório'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
+
+        const orderData = {
+          clientId: Number(user.sub),
+          restaurantId: cart[0].restaurantId,
+          discountId,
+          observation: null,
+          productList: cart.map(product => {
+            return {
+              productId: product.id,
+              quantity: product.amount,
+              description: product.observation,
+            };
+          }),
+        };
+
+        api
+          .post('/order', orderData)
+          .then(() => {
+            toast.success('Pedido realizado com sucesso');
+            router.push('/orders');
+            clearCart();
+          })
+          .catch(error => {
+            toast.error(error);
+          });
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(error);
@@ -60,7 +98,7 @@ const Checkout = (): ReactElement => {
       }
       setIsLoading(false);
     },
-    [setIsLoading],
+    [cart, clearCart, discountId, router, user.sub],
   );
 
   return (
@@ -85,6 +123,7 @@ const Checkout = (): ReactElement => {
                 icon={FiUser}
                 label="Nome no cartão"
                 placeholder="Nome no cartão"
+                isInUppercase
               />
               <InputWithMask
                 name="cardNumber"
@@ -95,14 +134,14 @@ const Checkout = (): ReactElement => {
               />
               <div className="inline-inputs">
                 <InputWithMask
-                  name="cardUserName"
+                  name="cardValidateDate"
                   icon={FiCalendar}
                   label="Data de validade"
                   placeholder="Data de validade"
                   mask="99/99"
                 />
                 <Input
-                  name="cardUserName"
+                  name="cardCVV"
                   icon={FiLock}
                   label="CVV"
                   placeholder="CVV"
@@ -120,7 +159,7 @@ const Checkout = (): ReactElement => {
                 </tr>
                 <tr>
                   <th>Desconto:</th>
-                  <td>{formatPrice(Number(0))}</td>
+                  <td>{formatPrice(Number(discount))}</td>
                 </tr>
                 <tr>
                   <th>Preço final:</th>
@@ -130,7 +169,7 @@ const Checkout = (): ReactElement => {
 
               <Button
                 className="checkout-button"
-                type="submit"
+                onClick={() => formRef.current.submitForm()}
                 isLoading={isLoading}
               >
                 Finalizar pedido
