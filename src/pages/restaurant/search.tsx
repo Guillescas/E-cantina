@@ -6,12 +6,10 @@ import { toast } from 'react-toastify';
 import LeftDashboardMenu from '../../components/LeftDashboardMenu';
 import Loading from '../../components/Loading';
 import RestaurantCard from '../../components/RestaurantCard';
-import SearchByTypeCard from '../../components/SearchByTypeCard';
 import SEO from '../../components/SEO';
 import TopDashboardMenu from '../../components/TopDashboardMenu';
 import ButtonWithIcon from '../../components/ButtonWithIcon';
-
-import { useAuth } from '../../hooks/auth';
+import Categories from '../../components/Categories';
 
 import { api } from '../../services/apiClient';
 
@@ -35,14 +33,15 @@ interface IRestaurantProps {
 }
 
 const Search = (): ReactElement => {
-  const { token, signOut } = useAuth();
-
   const router = useRouter();
 
   const restaurantName = router.query;
 
   const [restaurants, setRestaurants] = useState<IRestaurantProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState('');
+  const [searchByRestaurantName, setSearchByRestaurantName] = useState('');
+  const [isToClearFormData, setIsToClearFormData] = useState(false);
 
   useEffect(() => {
     api
@@ -53,53 +52,77 @@ const Search = (): ReactElement => {
       .catch(() => {
         return toast.error('Houve um erro inesperado. Tente mais tarde');
       });
-  }, [token, restaurantName, signOut]);
+  }, [restaurantName]);
+
+  useEffect(() => {
+    api
+      .get(`/restaurant?nameCategory=${category}`)
+      .then(response => {
+        setRestaurants(response.data.content);
+      })
+      .catch(() => {
+        return toast.error('Houve um erro inesperado. Tente mais tarde');
+      });
+  }, [category]);
 
   return (
     <StylesContainer>
-      <SEO title="Dashboard" />
-      <TopDashboardMenu setIsLoading={setIsLoading} />
+      <SEO title="Busca" />
+
+      <TopDashboardMenu
+        setIsLoading={setIsLoading}
+        setSearchByRestaurantName={setSearchByRestaurantName}
+        isToClearFormData={isToClearFormData}
+        setCategory={setCategory}
+      />
 
       <Content>
         <LeftDashboardMenu />
 
         <ContentList>
-          <div className="categories">
-            <SearchByTypeCard
-              categoryName="Lanches"
-              imagePath="hamburger.jpeg"
-              color="db5a40"
-            />
-            <SearchByTypeCard
-              categoryName="Japonês"
-              imagePath="japa.jpeg"
-              color="8C52FF"
-            />
-            <SearchByTypeCard
-              categoryName="Vegetariana"
-              imagePath="vegan.jpeg"
-              color="7ED957"
-            />
-            <SearchByTypeCard
-              categoryName="Brasileira"
-              imagePath="brasiliam.jpeg"
-              color="FF914D"
-            />
-            <SearchByTypeCard
-              categoryName="Bebidas"
-              imagePath="drink.jpeg"
-              color="FFDE59"
-            />
-          </div>
+          <Categories
+            setCategory={setCategory}
+            setSearchByRestaurantName={setSearchByRestaurantName}
+          />
 
-          <div className="search-result-bar">
-            <h2>
-              Resultados de busca para:{' '}
-              <strong>{restaurantName.keyword}</strong>{' '}
-            </h2>
+          {searchByRestaurantName !== '' && (
+            <div className="search-result-bar">
+              <p>
+                Resultados de busca para:{' '}
+                <strong>{searchByRestaurantName}</strong>{' '}
+              </p>
 
-            <ButtonWithIcon icon={FiX}>Cancelar pesquisa</ButtonWithIcon>
-          </div>
+              <ButtonWithIcon
+                icon={FiX}
+                onClick={() => {
+                  setIsToClearFormData(!isToClearFormData);
+                  setCategory('');
+                }}
+              >
+                Cancelar pesquisa
+              </ButtonWithIcon>
+            </div>
+          )}
+
+          {category !== '' && (
+            <div className="search-result-bar">
+              <p>
+                Resultados de busca para a categoria:{' '}
+                <strong>{category}</strong>{' '}
+              </p>
+
+              <ButtonWithIcon
+                icon={FiX}
+                onClick={() => {
+                  setSearchByRestaurantName('');
+                  setIsToClearFormData(!isToClearFormData);
+                  setCategory('');
+                }}
+              >
+                Cancelar pesquisa
+              </ButtonWithIcon>
+            </div>
+          )}
 
           {isLoading && (
             <div className="loading">
