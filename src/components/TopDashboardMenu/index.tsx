@@ -5,6 +5,7 @@ import { slide as Menu } from 'react-burger-menu';
 import { FiSearch, FiUser } from 'react-icons/fi';
 import * as Yup from 'yup';
 
+import { useRouter } from 'next/router';
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
 import { useAuth } from '../../hooks/auth';
@@ -27,17 +28,21 @@ interface ISearchRestaurantFormData {
 interface ITopDashboardMenuProps {
   setIsLoading?: (props: boolean) => void;
   setSearchByRestaurantName?: (restaurantName: string) => void;
+  setCategory?: (category: string) => void;
   isToClearFormData?: boolean;
 }
 
 const TopDashboardMenu = ({
   setIsLoading,
   setSearchByRestaurantName,
+  setCategory,
   isToClearFormData,
 }: ITopDashboardMenuProps): ReactElement => {
   const { user } = useAuth();
   const { openLoginModal } = useSignInModal();
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
+
+  const router = useRouter();
 
   const [userImageUrl, setUserImageUrl] = useState('');
 
@@ -54,11 +59,10 @@ const TopDashboardMenu = ({
     setUserImageUrl(user.urlImage);
   }, [user]);
 
-  // FIXME - Finalizar a parada de quando o user digita alguma coisa na barra de busca e não está no dashboard
   const handleSubmit = useCallback(
     async (data: ISearchRestaurantFormData) => {
-      setIsLoading(true);
       try {
+        setCategory('');
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
@@ -69,6 +73,13 @@ const TopDashboardMenu = ({
           abortEarly: false,
         });
 
+        if (router.pathname !== '/dashboard') {
+          router.push({
+            pathname: '/restaurant/search',
+            query: { keyword: data.name },
+          });
+        }
+
         setSearchByRestaurantName(data.name);
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
@@ -77,9 +88,8 @@ const TopDashboardMenu = ({
           formRef.current?.setErrors(errors);
         }
       }
-      setIsLoading(false);
     },
-    [setIsLoading, setSearchByRestaurantName],
+    [router, setCategory, setSearchByRestaurantName],
   );
 
   return (
