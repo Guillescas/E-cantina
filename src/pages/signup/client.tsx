@@ -109,18 +109,21 @@ const Client = (): ReactElement => {
         <Form ref={formRef} onSubmit={handleSignUpFormSubmit}>
           <Input
             name="name"
+            autoComplete="name"
             icon={FiUser}
             label="Nome completo"
             placeholder="Nome completo"
           />
           <Input
             name="email"
+            autoComplete="email"
             icon={FiMail}
             label="E-mail"
             placeholder="E-mail"
           />
           <Input
             name="password"
+            autoComplete="password"
             icon={FiLock}
             label="Senha"
             placeholder="Senha"
@@ -128,6 +131,7 @@ const Client = (): ReactElement => {
           />
           <Input
             name="confirmPassword"
+            autoComplete="password"
             icon={FiLock}
             label="Confirme sua senha"
             placeholder="Confirme sua senha"

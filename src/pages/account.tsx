@@ -79,7 +79,7 @@ const Account = (): ReactElement => {
         const formattedLastName = separatedName
           .filter(name => name !== separatedName[0])
           .toString()
-          .replace(',', ' ');
+          .replaceAll(',', ' ');
 
         if (!userData.cpf) {
           formRef.current?.setData({
@@ -192,7 +192,6 @@ const Account = (): ReactElement => {
       uploadFileFormRef.current.clearField('image');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
-        console.log(err);
         const errors = getvalidationErrors(err);
 
         uploadFileFormRef.current?.setErrors(errors);

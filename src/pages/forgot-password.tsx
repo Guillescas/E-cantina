@@ -3,8 +3,8 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { FiMail } from 'react-icons/fi';
 import * as Yup from 'yup';
-
 import { toast } from 'react-toastify';
+
 import Button from '../components/Button';
 import Input from '../components/Inputs/Input';
 import TopMenu from '../components/TopMenu';
