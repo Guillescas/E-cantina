@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiInfo, FiTrash2 } from 'react-icons/fi';
 import { IoTicket } from 'react-icons/io5';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
 import SEO from '../components/SEO';
@@ -30,11 +31,16 @@ interface IFormData {
 }
 
 const Cart = (): ReactElement => {
-  const { cart, removeProduct, totalCartPrice } = useCart();
+  const {
+    cart,
+    removeProduct,
+    totalCartPrice,
+    discount,
+    setDiscount,
+    setDiscountId,
+  } = useCart();
 
   const formRef = useRef<FormHandles>(null);
-
-  const [discount, setDiscount] = useState<number>(0);
 
   const router = useRouter();
 
@@ -53,10 +59,13 @@ const Cart = (): ReactElement => {
       api
         .get(`/discount/${data.discountCoupon}`)
         .then(response => {
-          console.log(response.data);
+          setDiscountId(response.data.id);
+          setDiscount(response.data.value);
+
+          toast.success('Cupom adicionado com sucesso');
+          formRef.current.clearField('discountCoupon');
         })
-        .catch(error => {
-          console.log(error);
+        .catch(() => {
           // toast.error('Erro ao verificar cupom. Tente mais tarde');
         });
     } catch (err) {
@@ -121,7 +130,13 @@ const Cart = (): ReactElement => {
                   label="Insira seu cupom"
                   placeholder="Insira seu cupom"
                   icon={IoTicket}
+                  isInUppercase
                 />
+
+                <div className="discount-info">
+                  <FiInfo />
+                  <p>Você só pode usar um código por compra.</p>
+                </div>
 
                 <Button type="submit">Inserir</Button>
               </Form>
@@ -141,7 +156,7 @@ const Cart = (): ReactElement => {
                 </tr>
                 <tr>
                   <th>Preço final:</th>
-                  <td>{formatPrice(Number(totalCartPrice()))}</td>
+                  <td>{formatPrice(Number(totalCartPrice(discount)))}</td>
                 </tr>
               </table>
 
