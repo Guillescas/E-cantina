@@ -6,7 +6,8 @@ interface CartProviderProps {
   children: ReactNode;
 }
 
-interface IProduct {
+interface ICartProduct {
+  restaurantId: number;
   id: number;
   type: string;
   name: string;
@@ -19,28 +20,30 @@ interface IProduct {
 }
 
 interface UpdateProductAmount {
-  product: IProduct;
+  product: ICartProduct;
   amount: number;
 }
 
-interface ICheckoutProps {
-  userId: number;
-  name?: string;
-}
-
 interface CartContextData {
-  cart: IProduct[];
-  addProduct: (product: IProduct) => Promise<void>;
+  discountId: number;
+  setDiscountId: (discountId: number) => void;
+  discount: number;
+  setDiscount: (discount: number) => void;
+  cart: ICartProduct[];
+  addProduct: (product: ICartProduct) => Promise<void>;
   removeProduct: (productId: number) => void;
   updateProductAmount: ({ product, amount }: UpdateProductAmount) => void;
-  checkout: (data: ICheckoutProps) => void;
-  totalCartPrice: () => number;
+  clearCart: () => void;
+  totalCartPrice: (discount?: number) => number;
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
-  const [cart, setCart] = useState<IProduct[]>(() => {
+  const [discount, setDiscount] = useState<number>(0);
+  const [discountId, setDiscountId] = useState<number>(0);
+
+  const [cart, setCart] = useState<ICartProduct[]>(() => {
     const storagedCart = Cookies.get('@ECantina:cart');
 
     if (storagedCart) {
@@ -50,9 +53,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     return [];
   });
 
-  const addProduct = async (product: IProduct) => {
+  const addProduct = async (product: ICartProduct) => {
     try {
       const cartItemId = cart.length + 1;
+
+      if (cart.length > 1 && cart[0].restaurantId !== product.restaurantId) {
+        toast.error('Você só pode adicionar itens de um restaurante por vez');
+
+        return;
+      }
 
       const updatedProduct = {
         ...product,
@@ -107,15 +116,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       Cookies.set('@ECantina:cart', updatedCart);
     } catch (error) {
       toast.error('Erro na alteração de quantidade do produto');
-      console.log(error);
     }
   };
 
-  const checkout = ({ userId }: ICheckoutProps) => {
-    const sumOfProductsPrice = cart.map(product => {
-      const increment = product.price * product.amount;
-      return increment;
-    });
+  const clearCart = () => {
+    setCart([]);
+    Cookies.remove('@ECantina:cart');
   };
 
   const totalCartPrice = (): number => {
@@ -123,17 +129,23 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       return product.price * product.amount;
     });
 
-    return totalProductsPrice.reduce((a, b) => a + b, 0);
+    const sum = totalProductsPrice.reduce((a, b) => a + b, 0);
+
+    return sum - discount;
   };
 
   return (
     <CartContext.Provider
       value={{
+        discountId,
+        setDiscountId,
+        discount,
+        setDiscount,
         cart,
         addProduct,
         removeProduct,
         updateProductAmount,
-        checkout,
+        clearCart,
         totalCartPrice,
       }}
     >
