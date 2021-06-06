@@ -21,7 +21,6 @@ const QuantitySelector = ({
   const handleAddQuantity = () => {
     if (quantity < 50) {
       setQuantity(quantity + 1);
-      console.log(quantity);
     }
   };
 
