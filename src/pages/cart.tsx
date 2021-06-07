@@ -135,10 +135,12 @@ const Cart = (): ReactElement => {
 
                 <div className="discount-info">
                   <FiInfo />
-                  <p>Você só pode usar um código por compra.</p>
+                  <p>Você só pode usar um cupom por compra.</p>
                 </div>
 
-                <Button type="submit">Inserir</Button>
+                <Button type="submit" isDisabled={cart.length < 1}>
+                  Inserir
+                </Button>
               </Form>
             </div>
 
@@ -163,6 +165,7 @@ const Cart = (): ReactElement => {
               <Button
                 className="checkout-button"
                 onClick={() => router.push('/checkout')}
+                isDisabled={cart.length < 1}
               >
                 Ir para pagamento
               </Button>

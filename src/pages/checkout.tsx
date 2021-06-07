@@ -65,6 +65,10 @@ const Checkout = (): ReactElement => {
           abortEarly: false,
         });
 
+        api.post('/card', data).catch(error => {
+          return toast.error(error.response.message);
+        });
+
         const orderData = {
           clientId: Number(user.sub),
           restaurantId: cart[0].restaurantId,
@@ -83,8 +87,8 @@ const Checkout = (): ReactElement => {
           .post('/order', orderData)
           .then(() => {
             toast.success('Pedido realizado com sucesso');
-            router.push('/orders');
             clearCart();
+            router.push('/orders');
           })
           .catch(error => {
             toast.error(error);
@@ -98,7 +102,7 @@ const Checkout = (): ReactElement => {
       }
       setIsLoading(false);
     },
-    [cart, clearCart, discountId, router, user.sub],
+    [cart, clearCart, discountId, router, user],
   );
 
   return (

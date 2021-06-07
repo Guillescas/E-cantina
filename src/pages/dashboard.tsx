@@ -36,10 +36,12 @@ const Dashboard = (): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     api
       .get(`/restaurant?nameRestaurant=${searchByRestaurantName}`)
       .then(response => {
         setRestaurants(response.data.content);
+        setIsLoading(false);
       })
       .catch(() => {
         return toast.error('Houve um erro inesperado. Tente mais tarde');
@@ -47,9 +49,11 @@ const Dashboard = (): ReactElement => {
   }, [searchByRestaurantName, setRestaurants]);
 
   useEffect(() => {
+    setIsLoading(true);
     api
       .get(`/restaurant?nameCategory=${category}`)
       .then(response => {
+        setIsLoading(false);
         setRestaurants(response.data.content);
       })
       .catch(() => {
