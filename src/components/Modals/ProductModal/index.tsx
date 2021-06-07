@@ -86,7 +86,7 @@ const ProductModal = ({
       <StylesContainer>
         <h2>Adicionar produto ao carrinho</h2>
 
-        <div className="">
+        <div className="resume">
           <p>
             <span>Produto: </span> {product && product.name}
           </p>

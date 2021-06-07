@@ -10,7 +10,7 @@ export const StylesContainer = styled.div`
 
   .resume {
     margin: 2rem 0 0.75rem;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
 
     span {
       font-weight: 700;
