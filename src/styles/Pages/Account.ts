@@ -35,6 +35,10 @@ export const ContentList = styled.div`
     h1 {
       flex: 1;
     }
+
+    button + button {
+      margin-left: 0.25rem;
+    }
   }
 
   form {
@@ -116,6 +120,59 @@ export const ContentList = styled.div`
 
       img {
         object-fit: cover;
+      }
+    }
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 8rem 0 2rem;
+
+    h1 {
+      flex: 1;
+    }
+
+    button + button {
+      margin-left: 0.25rem;
+    }
+  }
+
+  .card-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+
+      @media (min-width: 400px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    form {
+      .card-area {
+        h2 {
+          margin-bottom: 2rem;
+        }
+
+        .inline-inputs {
+          display: flex;
+          align-items: center;
+
+          div {
+            margin: 0;
+          }
+        }
+
+        button {
+          margin-top: 1rem;
+        }
       }
     }
   }
