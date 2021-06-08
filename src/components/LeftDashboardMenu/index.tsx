@@ -5,6 +5,7 @@ import { FiHome, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
 import { IoReceiptOutline } from 'react-icons/io5';
 
 import { useAuth } from '../../hooks/auth';
+import { useCart } from '../../hooks/cart';
 
 import { StylesContainer } from './styles';
 
@@ -12,6 +13,7 @@ const LeftDashboardMenu = (): ReactElement => {
   const router = useRouter();
 
   const { signOut } = useAuth();
+  const { cart } = useCart();
 
   useEffect(() => {
     setActiveLink(router.asPath);
@@ -31,7 +33,10 @@ const LeftDashboardMenu = (): ReactElement => {
       <Link href="/cart">
         <div className={`item ${activeLink === '/cart' && 'selected'}`}>
           <FiShoppingCart size={20} />
-          <p>Carrinho</p>
+          <p>
+            Carrinho
+            {cart.length > 0 && <span>{cart.length}</span>}
+          </p>
         </div>
       </Link>
 

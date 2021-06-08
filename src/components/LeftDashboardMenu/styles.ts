@@ -23,6 +23,8 @@ export const StylesContainer = styled.div`
 
     cursor: pointer;
 
+    border-right: 4px solid transparent;
+
     transition: color 0.1s;
 
     &:hover {
@@ -30,7 +32,29 @@ export const StylesContainer = styled.div`
     }
 
     p {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      width: 100%;
+
       margin-left: 1rem;
+      padding-right: 1rem;
+
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+        background: var(--text);
+        color: var(--background);
+
+        font-size: 0.9rem;
+
+        width: 1.25rem;
+        height: 1.25rem;
+      }
     }
   }
 
