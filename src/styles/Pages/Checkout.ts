@@ -28,8 +28,46 @@ export const StylesContainer = styled.div`
       margin-top: 3rem;
 
       .card-area {
-        h2 {
+        width: 564px;
+
+        .no-cards {
+          text-align: center;
+          margin-bottom: 1rem;
+        }
+
+        .card-area-title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
           margin-bottom: 2rem;
+
+          a {
+            display: flex;
+            align-items: center;
+
+            margin-right: 0.25rem;
+
+            transition: color 0.1s;
+
+            svg {
+              margin-right: 0.25rem;
+            }
+
+            &:hover {
+              color: var(--hover-text);
+            }
+          }
+        }
+
+        .cards {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+
+          @media (min-width: 400px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
 
         .inline-inputs {
