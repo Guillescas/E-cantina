@@ -165,6 +165,7 @@ const SignUpRestaurant = (): ReactElement => {
             <div>
               <Input
                 name="email"
+                type="email"
                 icon={FiMail}
                 label="E-mail do responsável"
                 placeholder="E-mail do responsável"

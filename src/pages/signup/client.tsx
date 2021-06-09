@@ -116,6 +116,7 @@ const Client = (): ReactElement => {
           />
           <Input
             name="email"
+            type="email"
             autoComplete="email"
             icon={FiMail}
             label="E-mail"

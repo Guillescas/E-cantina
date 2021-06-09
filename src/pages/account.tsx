@@ -253,6 +253,7 @@ const Account = (): ReactElement => {
         });
 
         const creditCardData = {
+          clientId: Number(user.sub),
           nickname: data.nickname,
           owner: data.owner,
           cardNumber: data.cardNumber.replaceAll('-', ''),
@@ -285,7 +286,7 @@ const Account = (): ReactElement => {
       setIsUserAddingCreditCard(false);
       setIsLoading(false);
     },
-    [],
+    [user],
   );
 
   return (
