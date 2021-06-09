@@ -20,9 +20,9 @@ export const RestaurantContent = styled.div`
 
   width: 100%;
   max-width: 1000px;
-  min-height: 1200px;
+  min-height: 500px;
 
-  margin-left: 1rem;
+  padding: 1rem 1rem 1.5rem;
 
   background: #009fff;
   background: -webkit-linear-gradient(
@@ -47,17 +47,40 @@ export const RestaurantContent = styled.div`
 
     .title {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
 
       .rating {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
 
-        span {
-          margin-top: 4px;
-          margin-right: 0.5rem;
+        button {
+          border-radius: 0.25rem;
+          background: transparent;
+          color: var(--text);
+          border: 2px solid var(--background);
+
+          padding: 0.5rem 1rem;
+          margin-top: 0.5rem;
+
+          transition: background 0.2s;
+
+          &:hover {
+            background: var(--background);
+          }
+        }
+
+        > div {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          span {
+            margin-top: 4px;
+            margin-right: 0.5rem;
+          }
         }
       }
     }

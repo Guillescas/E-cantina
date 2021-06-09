@@ -5,11 +5,17 @@ import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import {
   FiAlertCircle,
+  FiCalendar,
   FiCreditCard,
   FiEdit2,
+  FiHash,
   FiLock,
   FiMail,
+  FiPlus,
+  FiSave,
+  FiTag,
   FiUser,
+  FiX,
 } from 'react-icons/fi';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
@@ -20,6 +26,7 @@ import InputWithMask from '../components/Inputs/InputWithMask';
 import ButtonWithIcon from '../components/ButtonWithIcon';
 import Button from '../components/Button';
 import Dropzone from '../components/Inputs/Dropzone';
+import CreditCard from '../components/CreditCard';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
 import getvalidationErrors from '../utils/getValidationErrors';
@@ -34,8 +41,12 @@ interface IUpdateUserInfosFormData {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
   cpf: string;
+}
+
+interface IUpdateUserImageFormData {
+  image: any;
+  password: string;
 }
 
 interface IUserResponse {
@@ -45,17 +56,43 @@ interface IUserResponse {
   cpf: string;
 }
 
+interface IAddCreditCardFormData {
+  nickname: string;
+  owner: string;
+  cardNumber: string;
+  validThru: string;
+  cvv: string;
+  cpfClient: string;
+}
+
+interface ICreditCardData {
+  id: number;
+  nickname: string;
+  owner: string;
+  cardNumber: string;
+  validThru: string;
+  cvv: string;
+}
+
 const Account = (): ReactElement => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, updateUserImage } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isUserEditingFields, setIsUserEditingFields] = useState(false);
+  const [isUserUpdatingImage, setIsUserUpdatingImage] = useState(false);
   const [userImageUrl, setUserImageUrl] = useState('');
+
+  const [isUserAddingCreditCard, setIsUserAddingCreditCard] = useState(false);
+  const [userCreditCards, setUserCreditCards] = useState<ICreditCardData[]>([]);
 
   const formRef = useRef<FormHandles>(null);
   const uploadFileFormRef = useRef<FormHandles>(null);
+  const addCreditCardFormRef = useRef<FormHandles>(null);
 
   useEffect(() => {
+    if (!user.urlImage) {
+      return setUserImageUrl('');
+    }
     setUserImageUrl(user.urlImage);
   }, [user]);
 
@@ -70,13 +107,14 @@ const Account = (): ReactElement => {
         const formattedLastName = separatedName
           .filter(name => name !== separatedName[0])
           .toString()
-          .replace(',', ' ');
+          .replaceAll(',', ' ');
 
         if (!userData.cpf) {
           formRef.current?.setData({
             firstName: formattedFirstName,
             lastName: formattedLastName,
             email: userData.email,
+            cpf: '',
           });
         } else {
           formRef.current?.setData({
@@ -86,13 +124,15 @@ const Account = (): ReactElement => {
             cpf: userData.cpf,
           });
         }
+
+        setUserCreditCards(response.data.cards);
       })
       .catch(() => {
         toast.error('Erro inesperado. Tente novamente mais tarde');
       });
   }, [user, updateUser]);
 
-  const handleSignUpFormSubmit = useCallback(
+  const handleUpdatePersonalInfoFormSubmit = useCallback(
     async (data: IUpdateUserInfosFormData) => {
       setIsLoading(true);
       try {
@@ -104,7 +144,6 @@ const Account = (): ReactElement => {
           email: Yup.string()
             .email('Por favor insira um e-mail válido')
             .required('E-mail obrigatório'),
-          password: Yup.string().required('Senha obrigatória'),
         });
 
         await schema.validate(data, {
@@ -115,7 +154,6 @@ const Account = (): ReactElement => {
           name: `${data.firstName} ${data.lastName}`,
           email: data.email,
           cpf: data.cpf,
-          password: data.password,
         };
 
         await updateUser({ dataOfUser: userData, setIsUserEditingFields });
@@ -132,7 +170,9 @@ const Account = (): ReactElement => {
     [updateUser],
   );
 
-  async function handleFileUpload(data: any): Promise<void> {
+  async function handleFileUpload(
+    data: IUpdateUserImageFormData,
+  ): Promise<void> {
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -140,36 +180,113 @@ const Account = (): ReactElement => {
       formData.append('image', data.image[0]);
       formData.append('userId', user.sub);
 
-      console.log(data.image[0]);
-
       uploadFileFormRef.current?.setErrors({});
 
       const schema = Yup.object().shape({
-        image: Yup.mixed().required('Nome obrigatório'),
+        image: Yup.mixed().required('Imagem obrigatória'),
+        password: Yup.string().required('Senha obrigatória'),
       });
 
       await schema.validate(data, {
         abortEarly: false,
       });
 
-      fetch('http://localhost:8080/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      if (!data.image[0]) {
+        toast.info('Você deve selecionar uma imagem para completar este passo');
+        throw new Error();
+      }
 
-      toast.success('Imagem alterada com sucesso');
+      api
+        .post('http://localhost:8080/upload', formData, {
+          headers: {
+            'Content-Type':
+              'multipart/form-data; boundary=----WebKitFormBoundaryLl5fBkPZH3nO3InH',
+          },
+        })
+        .then(response => {
+          setTimeout(async () => {
+            await updateUserImage({
+              dataOfUser: response.data.urlImage,
+              setIsUserUpdatingImage,
+            });
+          }, 1000);
+        })
+        .then(() => {
+          toast.success('Imagem alterada com sucesso');
+        })
+        .catch(() => {
+          toast.error('Erro inesperado. Tente novamente mais tarde', {
+            toastId: 2,
+          });
+        });
       uploadFileFormRef.current.clearField('image');
     } catch (err) {
-      console.log(err);
       if (err instanceof Yup.ValidationError) {
         const errors = getvalidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+        uploadFileFormRef.current?.setErrors(errors);
       }
     }
 
     setIsLoading(false);
   }
+
+  const handleAddCreditCard = useCallback(
+    async (data: IAddCreditCardFormData) => {
+      setIsLoading(true);
+      try {
+        addCreditCardFormRef.current?.setErrors({});
+
+        const schema = Yup.object().shape({
+          nickname: Yup.string().required('Apelido obrigatório'),
+          owner: Yup.string().required('Nome no cartão obrigatório'),
+          cardNumber: Yup.string().required('Número do cartão obrigatório'),
+          validThru: Yup.string().required(
+            'Data de validade do cartão obrigatória',
+          ),
+          cvv: Yup.string().required('CVV do cartão obrigatório'),
+          cpfClient: Yup.string().required('CPF do titular obrigatório'),
+        });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        const creditCardData = {
+          nickname: data.nickname,
+          owner: data.owner,
+          cardNumber: data.cardNumber.replaceAll('-', ''),
+          validThru: `28/${data.validThru.slice(
+            0,
+            -3,
+          )}/20${data.validThru.slice(-2)}`,
+          cvv: data.cvv,
+          bank: data.nickname,
+          cpfClient: data.cpfClient,
+        };
+
+        api
+          .post('/card', creditCardData)
+          .then(response => {
+            toast.success('Cartão adicionado com sucesso');
+            setUserCreditCards(response.data);
+            addCreditCardFormRef.current.reset();
+          })
+          .catch(error => {
+            return toast.error(error.response.data.message);
+          });
+      } catch (error) {
+        if (error instanceof Yup.ValidationError) {
+          const errors = getvalidationErrors(error);
+
+          addCreditCardFormRef.current?.setErrors(errors);
+        }
+      }
+      setIsUserAddingCreditCard(false);
+      setIsLoading(false);
+    },
+    [],
+  );
 
   return (
     <StylesContainer>
@@ -182,21 +299,42 @@ const Account = (): ReactElement => {
         <ContentList>
           <div className="title">
             <h1>Informações pessoais</h1>
-            <ButtonWithIcon
-              type="button"
-              icon={FiEdit2}
-              onClick={() => setIsUserEditingFields(true)}
-            >
-              Editar informações
-            </ButtonWithIcon>
+
+            {isUserEditingFields ? (
+              <>
+                <ButtonWithIcon
+                  type="button"
+                  icon={FiSave}
+                  isSuccess
+                  onClick={() => formRef.current.submitForm()}
+                >
+                  Salvar
+                </ButtonWithIcon>
+                <ButtonWithIcon
+                  type="button"
+                  icon={FiX}
+                  onClick={() => setIsUserEditingFields(false)}
+                >
+                  Cancelar
+                </ButtonWithIcon>
+              </>
+            ) : (
+              <ButtonWithIcon
+                type="button"
+                icon={FiEdit2}
+                onClick={() => setIsUserEditingFields(true)}
+              >
+                Editar informações
+              </ButtonWithIcon>
+            )}
           </div>
 
-          <Form onSubmit={handleSignUpFormSubmit} ref={formRef}>
+          <Form onSubmit={handleUpdatePersonalInfoFormSubmit} ref={formRef}>
             <div className="inputs">
               <Input
                 name="firstName"
-                placeholder="Nome"
-                label="Nome"
+                placeholder="Primeiro nome"
+                label="Primeiro nome"
                 icon={FiUser}
                 disabled={!isUserEditingFields}
               />
@@ -223,27 +361,6 @@ const Account = (): ReactElement => {
                 disabled={!isUserEditingFields}
               />
             </div>
-
-            {isUserEditingFields && (
-              <div className="finish-update-container">
-                <span>
-                  <FiAlertCircle size={18} />
-                  Insira sua senha para salvar as alterações
-                </span>
-                <div className="finish-update-user-infos">
-                  <Input
-                    name="password"
-                    type="password"
-                    icon={FiLock}
-                    label="Senha"
-                  />
-
-                  <Button type="submit" isLoading={isLoading}>
-                    Salvar
-                  </Button>
-                </div>
-              </div>
-            )}
           </Form>
 
           <p className="upload-image-p">Altere sua imagem de perfil aqui</p>
@@ -253,26 +370,32 @@ const Account = (): ReactElement => {
             className="file-upload-form"
           >
             <div className="dropzone-area">
-              <Dropzone name="image" />
+              <Dropzone
+                name="image"
+                setIsUserUpdatingImage={setIsUserUpdatingImage}
+              />
 
-              <div className="finish-update-container">
-                <span>
-                  <FiAlertCircle size={18} />
-                  Insira sua senha para salvar as alterações
-                </span>
-                <div className="finish-update-user-infos">
-                  <Input
-                    name="password"
-                    type="password"
-                    icon={FiLock}
-                    label="Senha"
-                  />
+              {isUserUpdatingImage && (
+                <div className="finish-update-container">
+                  <span>
+                    <FiAlertCircle size={18} />
+                    Insira sua senha para salvar as alterações
+                  </span>
+                  <div className="finish-update-user-infos">
+                    <Input
+                      name="password"
+                      type="password"
+                      icon={FiLock}
+                      label="Senha"
+                      placeholder="Senha"
+                    />
 
-                  <Button type="submit" isLoading={isLoading}>
-                    Salvar
-                  </Button>
+                    <Button type="submit" isLoading={isLoading}>
+                      Salvar
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="user-image">
@@ -286,6 +409,101 @@ const Account = (): ReactElement => {
               )}
             </div>
           </Form>
+
+          <div className="card-title">
+            <h1>Informações sobre pagamento</h1>
+
+            {isUserAddingCreditCard ? (
+              <>
+                <ButtonWithIcon
+                  type="button"
+                  icon={FiSave}
+                  isSuccess
+                  onClick={() => addCreditCardFormRef.current.submitForm()}
+                >
+                  Salvar
+                </ButtonWithIcon>
+                <ButtonWithIcon
+                  type="button"
+                  icon={FiX}
+                  onClick={() => setIsUserAddingCreditCard(false)}
+                >
+                  Cancelar
+                </ButtonWithIcon>
+              </>
+            ) : (
+              <ButtonWithIcon
+                type="button"
+                icon={FiPlus}
+                onClick={() => setIsUserAddingCreditCard(true)}
+              >
+                Adicionar cartão
+              </ButtonWithIcon>
+            )}
+          </div>
+
+          <div className="card-content">
+            <div className="cards">
+              {userCreditCards.map(userCreditCard => (
+                <CreditCard
+                  key={userCreditCard.id}
+                  id={userCreditCard.id}
+                  nickname={userCreditCard.nickname}
+                  cardNumber={userCreditCard.cardNumber}
+                />
+              ))}
+            </div>
+
+            {isUserAddingCreditCard && (
+              <Form onSubmit={handleAddCreditCard} ref={addCreditCardFormRef}>
+                <div className="card-area">
+                  <h2>Dados do cartão</h2>
+                  <Input
+                    name="nickname"
+                    icon={FiTag}
+                    label="Apelido do cartão"
+                    placeholder="Apelido do cartão"
+                  />
+                  <InputWithMask
+                    name="cpfClient"
+                    icon={FiCreditCard}
+                    label="CPF do titular do cartão"
+                    placeholder="CPF do titular do cartão"
+                    mask="999.999.999-99"
+                  />
+                  <Input
+                    name="owner"
+                    icon={FiUser}
+                    label="Nome no cartão"
+                    placeholder="Nome no cartão"
+                    isInUppercase
+                  />
+                  <InputWithMask
+                    name="cardNumber"
+                    icon={FiHash}
+                    label="Número no cartão"
+                    placeholder="Número no cartão"
+                    mask="9999-9999-9999-9999"
+                  />
+                  <div className="inline-inputs">
+                    <InputWithMask
+                      name="validThru"
+                      icon={FiCalendar}
+                      label="Data de validade"
+                      placeholder="Data de validade"
+                      mask="99/99"
+                    />
+                    <Input
+                      name="cvv"
+                      icon={FiLock}
+                      label="CVV"
+                      placeholder="CVV"
+                    />
+                  </div>
+                </div>
+              </Form>
+            )}
+          </div>
         </ContentList>
       </Content>
     </StylesContainer>

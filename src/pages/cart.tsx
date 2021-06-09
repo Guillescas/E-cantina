@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { FiTrash2 } from 'react-icons/fi';
+import { FiInfo, FiTrash2 } from 'react-icons/fi';
 import { IoTicket } from 'react-icons/io5';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 
 import LeftDashboardMenu from '../components/LeftDashboardMenu';
 import SEO from '../components/SEO';
@@ -21,6 +22,8 @@ import getvalidationErrors from '../utils/getValidationErrors';
 
 import { useCart } from '../hooks/cart';
 
+import { api } from '../services/apiClient';
+
 import { StylesContainer, Content, CartContent } from '../styles/Pages/Cart';
 
 interface IFormData {
@@ -28,22 +31,18 @@ interface IFormData {
 }
 
 const Cart = (): ReactElement => {
-  const { cart, removeProduct } = useCart();
+  const {
+    cart,
+    removeProduct,
+    totalCartPrice,
+    discount,
+    setDiscount,
+    setDiscountId,
+  } = useCart();
 
   const formRef = useRef<FormHandles>(null);
 
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [discount, setDiscount] = useState<number>(0);
-
   const router = useRouter();
-
-  useEffect(() => {
-    const totalProductsPrice = cart.map(product => {
-      return product.price * product.amount;
-    });
-
-    setTotalPrice(totalProductsPrice.reduce((a, b) => a + b, 0));
-  }, [cart]);
 
   const handleDiscountCouponFormSubmit = async (data: IFormData) => {
     try {
@@ -57,9 +56,18 @@ const Cart = (): ReactElement => {
         abortEarly: false,
       });
 
-      const userData = {
-        discountCoupon: data.discountCoupon,
-      };
+      api
+        .get(`/discount/${data.discountCoupon}`)
+        .then(response => {
+          setDiscountId(response.data.id);
+          setDiscount(response.data.value);
+
+          toast.success('Cupom adicionado com sucesso');
+          formRef.current.clearField('discountCoupon');
+        })
+        .catch(() => {
+          // toast.error('Erro ao verificar cupom. Tente mais tarde');
+        });
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getvalidationErrors(err);
@@ -71,7 +79,7 @@ const Cart = (): ReactElement => {
 
   return (
     <StylesContainer>
-      <SEO title="Dashboard" />
+      <SEO title="Carrinho" />
       <TopDashboardMenu />
 
       <Content>
@@ -122,9 +130,17 @@ const Cart = (): ReactElement => {
                   label="Insira seu cupom"
                   placeholder="Insira seu cupom"
                   icon={IoTicket}
+                  isInUppercase
                 />
 
-                <Button type="submit">Inserir</Button>
+                <div className="discount-info">
+                  <FiInfo />
+                  <p>Você só pode usar um cupom por compra.</p>
+                </div>
+
+                <Button type="submit" isDisabled={cart.length < 1}>
+                  Inserir
+                </Button>
               </Form>
             </div>
 
@@ -142,13 +158,14 @@ const Cart = (): ReactElement => {
                 </tr>
                 <tr>
                   <th>Preço final:</th>
-                  <td>{formatPrice(Number(totalPrice))}</td>
+                  <td>{formatPrice(Number(totalCartPrice(discount)))}</td>
                 </tr>
               </table>
 
               <Button
                 className="checkout-button"
                 onClick={() => router.push('/checkout')}
+                isDisabled={cart.length < 1}
               >
                 Ir para pagamento
               </Button>

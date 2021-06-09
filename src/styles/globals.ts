@@ -12,6 +12,8 @@ export const GlobalStyles = createGlobalStyle`
     --primary: #8d99ae;
 
     --secondary: #ed6d51;
+
+    --success: #08BC0C;
   }
 
   * {
@@ -74,6 +76,11 @@ export const GlobalStyles = createGlobalStyle`
   [disabled] {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  .Toastify__toast--info {
+    background: var(--primary);
+    color: var(--text);
   }
 
   .react-modal-overlay {

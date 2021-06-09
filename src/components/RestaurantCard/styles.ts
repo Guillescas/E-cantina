@@ -32,7 +32,7 @@ export const StylesContainer = styled.div`
     flex: 1;
 
     h2 {
-      margin-top: 0.5rem;
+      margin: 0.5rem 0 0.25rem;
     }
   }
 

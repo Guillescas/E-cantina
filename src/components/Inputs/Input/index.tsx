@@ -16,12 +16,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   icon?: React.ComponentType<IconBaseProps>;
   label: string;
+  isInUppercase?: boolean;
 }
 
 const Input = ({
   name,
   icon: Icon,
   label,
+  isInUppercase,
   ...rest
 }: InputProps): ReactElement => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,6 +59,7 @@ const Input = ({
         onBlur={handleInputBlur}
         defaultValue={defaultValue}
         ref={inputRef}
+        style={isInUppercase && { textTransform: 'uppercase' }}
         {...rest}
       />
       {label && <label>{label}</label>}

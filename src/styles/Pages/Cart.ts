@@ -20,10 +20,10 @@ export const CartContent = styled.div`
 
   width: 100%;
   max-width: 1000px;
-  min-height: 1200px;
+  min-height: 500px;
 
   margin-left: 1rem;
-  padding: 1rem;
+  padding: 1rem 1rem 1.5rem;
 
   .table-container {
     overflow-x: auto;
@@ -80,12 +80,27 @@ export const CartContent = styled.div`
     margin-top: 3rem;
 
     .coupon-area {
+      display: flex;
+      flex-direction: column;
+
+      height: 241px;
+
       h2 {
         margin-bottom: 2rem;
       }
 
+      .discount-info {
+        margin: 0.5rem 0;
+        display: flex;
+        align-items: center;
+
+        p {
+          margin-left: 0.5rem;
+        }
+      }
+
       button {
-        margin-top: 1rem;
+        margin-top: 0.75rem;
       }
     }
 

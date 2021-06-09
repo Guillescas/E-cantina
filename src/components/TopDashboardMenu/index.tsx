@@ -4,8 +4,8 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import { FiSearch, FiUser } from 'react-icons/fi';
 import * as Yup from 'yup';
-import { useRouter } from 'next/router';
 
+import { useRouter } from 'next/router';
 import { useBurger } from '../../hooks/burger';
 import { useSignInModal } from '../../hooks/signinModal';
 import { useAuth } from '../../hooks/auth';
@@ -27,30 +27,42 @@ interface ISearchRestaurantFormData {
 
 interface ITopDashboardMenuProps {
   setIsLoading?: (props: boolean) => void;
+  setSearchByRestaurantName?: (restaurantName: string) => void;
+  setCategory?: (category: string) => void;
+  isToClearFormData?: boolean;
 }
 
 const TopDashboardMenu = ({
   setIsLoading,
+  setSearchByRestaurantName,
+  setCategory,
+  isToClearFormData,
 }: ITopDashboardMenuProps): ReactElement => {
   const { user } = useAuth();
   const { openLoginModal } = useSignInModal();
   const { toggleMenu, isMenuOpen, stateChangeHandler } = useBurger();
 
-  const [userImageUrl, setUserImageUrl] = useState('');
-
   const router = useRouter();
+
+  const [userImageUrl, setUserImageUrl] = useState('');
 
   const formRef = useRef<FormHandles>(null);
 
   useEffect(() => {
+    formRef.current.clearField('name');
+  }, [isToClearFormData]);
+
+  useEffect(() => {
+    if (!user.urlImage) {
+      return setUserImageUrl('');
+    }
     setUserImageUrl(user.urlImage);
   }, [user]);
 
   const handleSubmit = useCallback(
     async (data: ISearchRestaurantFormData) => {
-      setIsLoading(true);
-
       try {
+        setCategory('');
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
@@ -61,10 +73,14 @@ const TopDashboardMenu = ({
           abortEarly: false,
         });
 
-        router.push({
-          pathname: '/restaurant/search',
-          query: { keyword: data.name },
-        });
+        if (router.pathname !== '/dashboard') {
+          router.push({
+            pathname: '/restaurant/search',
+            query: { keyword: data.name },
+          });
+        }
+
+        setSearchByRestaurantName(data.name);
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(error);
@@ -72,9 +88,8 @@ const TopDashboardMenu = ({
           formRef.current?.setErrors(errors);
         }
       }
-      setIsLoading(false);
     },
-    [router, setIsLoading],
+    [router, setCategory, setSearchByRestaurantName],
   );
 
   return (

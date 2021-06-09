@@ -13,7 +13,6 @@ import Button from '../../Button';
 import getvalidationErrors from '../../../utils/getValidationErrors';
 
 import { useAuth } from '../../../hooks/auth';
-import { useSignInModal } from '../../../hooks/signinModal';
 
 import { StylesContainer } from './styles';
 
@@ -32,7 +31,6 @@ const SignModal = ({
   onRequestClose,
 }: ISignModalProps): ReactElement => {
   const { signIn } = useAuth();
-  const { setModalLoginIsOpen } = useSignInModal();
 
   const loginFormRef = useRef<FormHandles>(null);
 
@@ -51,8 +49,9 @@ const SignModal = ({
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
-      setIsLoading(true);
       try {
+        setIsLoading(true);
+
         loginFormRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
@@ -71,18 +70,16 @@ const SignModal = ({
           password: data.password,
         });
 
-        setModalLoginIsOpen(false);
+        setIsLoading(false);
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(err);
 
           loginFormRef.current?.setErrors(errors);
         }
       }
-      setIsLoading(false);
     },
-    [setModalLoginIsOpen, signIn],
+    [signIn, setIsLoading],
   );
 
   return (
@@ -99,6 +96,7 @@ const SignModal = ({
           <div>
             <Input
               name="email"
+              autoComplete="email"
               placeholder="email"
               icon={FiMail}
               type="text"
@@ -109,6 +107,7 @@ const SignModal = ({
           <div>
             <Input
               name="password"
+              autoComplete="password"
               icon={FiLock}
               type="password"
               placeholder="Senha"

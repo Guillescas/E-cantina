@@ -44,7 +44,9 @@ const Client = (): ReactElement => {
 
         const schema = Yup.object().shape({
           name: Yup.string().required('Nome obrigatório'),
-          email: Yup.string().email().required('E-mail obrigatório'),
+          email: Yup.string()
+            .email('Por favor, insira um e-mail válido')
+            .required('E-mail obrigatório'),
           password: Yup.string()
             .min(8, 'A senha precisa ter no mínimo 8 caracteres')
             .required('Senha obrigatória'),
@@ -107,18 +109,21 @@ const Client = (): ReactElement => {
         <Form ref={formRef} onSubmit={handleSignUpFormSubmit}>
           <Input
             name="name"
+            autoComplete="name"
             icon={FiUser}
             label="Nome completo"
             placeholder="Nome completo"
           />
           <Input
             name="email"
+            autoComplete="email"
             icon={FiMail}
             label="E-mail"
             placeholder="E-mail"
           />
           <Input
             name="password"
+            autoComplete="password"
             icon={FiLock}
             label="Senha"
             placeholder="Senha"
@@ -126,6 +131,7 @@ const Client = (): ReactElement => {
           />
           <Input
             name="confirmPassword"
+            autoComplete="password"
             icon={FiLock}
             label="Confirme sua senha"
             placeholder="Confirme sua senha"

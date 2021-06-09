@@ -4,23 +4,35 @@ import { StylesContainer } from './styles';
 
 interface ISearchByTypeCardProps {
   imagePath: string;
+  categoryLabel: string;
   categoryName: string;
   color: string;
+  setCategory: (categoryName: string) => void;
+  setSearchByRestaurantName: (restaurantName: string) => void;
 }
 
 const SearchByTypeCard = ({
   imagePath,
+  categoryLabel,
   categoryName,
   color,
+  setCategory,
+  setSearchByRestaurantName,
 }: ISearchByTypeCardProps): ReactElement => {
   return (
-    <StylesContainer color={color}>
+    <StylesContainer
+      color={color}
+      onClick={() => {
+        setSearchByRestaurantName('');
+        setCategory(categoryName);
+      }}
+    >
       <img
         src={`/assets/${imagePath}`}
-        alt={`Imagem da categoria de ${categoryName}`}
+        alt={`Imagem da categoria de ${categoryLabel}`}
       />
 
-      <p>{categoryName}</p>
+      <p>{categoryLabel}</p>
     </StylesContainer>
   );
 };

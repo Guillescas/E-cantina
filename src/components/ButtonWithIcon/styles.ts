@@ -16,6 +16,12 @@ export const StylesContainer = styled.button`
 
   transition: width 0.2s;
 
+  &.success {
+    background: var(--success);
+    color: #fff;
+    font-weight: 500;
+  }
+
   .icon {
     color: transparent;
     transition: all 0.2s;

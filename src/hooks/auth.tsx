@@ -39,12 +39,17 @@ interface IUpdateUserInfosProps {
   name: string;
   email: string;
   cpf: string;
-  password: string;
+  // password: string;
 }
 
 interface IUpdateUserProps {
   dataOfUser: IUpdateUserInfosProps;
   setIsUserEditingFields: (isUserEditingFields: boolean) => void;
+}
+
+interface IUpdateUserImageProps {
+  dataOfUser: string;
+  setIsUserUpdatingImage: (isUserUpdatingImage: boolean) => void;
 }
 
 interface AuthContextData {
@@ -54,6 +59,7 @@ interface AuthContextData {
   signOut(): void;
   isAuthenticated: boolean;
   updateUser(props: IUpdateUserProps): Promise<void>;
+  updateUserImage(props: IUpdateUserImageProps): Promise<void>;
 }
 
 interface IAuthProviderProps {
@@ -66,7 +72,6 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   const router = useRouter();
   const { setModalLoginIsOpen } = useSignInModal();
 
-  // FIXME - Separar token de user
   const [data, setData] = useState<AuthState>(() => {
     const { '@ECantina:token': token } = parseCookies();
     const user = Cookies.get('@ECantina:user');
@@ -79,55 +84,61 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
   });
   const isAuthenticated = !!data.user;
 
-  const signIn = useCallback(async ({ email, password }) => {
-    const userData = {
-      email,
-      password,
-    };
+  const signIn = useCallback(
+    async ({ email, password }) => {
+      const userData = {
+        email,
+        password,
+      };
 
-    api
-      .post('/authentication', userData)
-      .then(async response => {
-        const { token } = response.data;
+      api
+        .post('/authentication', userData)
+        .then(async response => {
+          const { token } = response.data;
+          api.defaults.headers.Authorization = `Bearer ${token}`;
 
-        api.defaults.headers.Authorization = `Bearer ${token}`;
+          const decodedJWTToken: ITokenResponse = await jwt_decode(token);
+          const formattedUserInfosFromToken = {
+            sub: decodedJWTToken.sub,
+            email: decodedJWTToken.email,
+            name: decodedJWTToken.name,
+            type: decodedJWTToken.type,
+            urlImage: decodedJWTToken.urlImage,
+          };
+          setData({ token, user: formattedUserInfosFromToken });
 
-        const decodedJWTToken: ITokenResponse = await jwt_decode(token);
-        const formattedUserInfosFromToken = {
-          sub: decodedJWTToken.sub,
-          email: decodedJWTToken.email,
-          name: decodedJWTToken.name,
-          type: decodedJWTToken.type,
-          urlImage: decodedJWTToken.urlImage,
-        };
-        setData({ token, user: formattedUserInfosFromToken });
+          setCookie(undefined, '@ECantina:token', token, {
+            maxAge: 60 * 60 * 24, // 1 dia
+            path: '/',
+          });
+          Cookies.set(
+            '@ECantina:user',
+            JSON.stringify(formattedUserInfosFromToken),
+          );
 
-        setCookie(undefined, '@ECantina:token', token, {
-          maxAge: 60 * 60 * 24, // 1 dia
-          path: '/',
+          if (formattedUserInfosFromToken.type === 'client') {
+            router.push('/dashboard');
+          }
+
+          if (formattedUserInfosFromToken.type === 'restaurant') {
+            router.push('/restaurants/dashboard');
+          }
+        })
+        .then(() => {
+          destroyCookie(undefined, '@ECantinaReturnMessage');
+        })
+        .catch(error => {
+          return toast.error(error);
         });
-        Cookies.set(
-          '@ECantina:user',
-          JSON.stringify(formattedUserInfosFromToken),
-        );
-      })
-      .then(() => {
-        destroyCookie(undefined, '@ECantinaReturnMessage');
-        destroyCookie(undefined, '@ECantinaReturnMessage');
-      })
-      .then(() => {
-        router.push('/dashboard');
-      })
-      .catch(() => {
-        return toast.error('Ocorreu um erro ao realizar login');
-      });
-  }, []);
+    },
+    [router],
+  );
 
   const updateUser = useCallback(
     async ({ dataOfUser, setIsUserEditingFields }: IUpdateUserProps) => {
       api
         .patch(`/client/${data.user.sub}`, dataOfUser)
-        .then(async response => {
+        .then(response => {
           if (!response.data) {
             return toast.error('Erro ao atualizar o usuário');
           }
@@ -135,56 +146,15 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
           setData({
             token: data.token,
             user: {
+              ...data.user,
               name: dataOfUser.name,
               email: dataOfUser.email,
-              ...data.user,
             },
           });
         })
         .then(() => {
-          api
-            .post('/authentication', {
-              email: dataOfUser.email,
-              password: dataOfUser.password,
-            })
-            .then(async response => {
-              const { token } = response.data;
-
-              api.defaults.headers.Authorization = `Bearer ${token}`;
-
-              const decodedJWTToken: ITokenResponse = await jwt_decode(token);
-              const formattedUserInfosFromToken = {
-                sub: decodedJWTToken.sub,
-                email: decodedJWTToken.email,
-                name: decodedJWTToken.name,
-                type: decodedJWTToken.type,
-                urlImage: decodedJWTToken.urlImage,
-              };
-              setData({ token, user: formattedUserInfosFromToken });
-
-              setCookie(undefined, '@ECantina:token', token, {
-                maxAge: 60 * 60 * 24, // 1 dia
-                path: '/',
-              });
-              Cookies.set(
-                '@ECantina:user',
-                JSON.stringify(formattedUserInfosFromToken),
-              );
-            })
-            .then(() => {
-              destroyCookie(undefined, '@ECantinaReturnMessage');
-              destroyCookie(undefined, '@ECantinaReturnMessage');
-
-              toast.success('Dados atualizados com sucesso');
-              setIsUserEditingFields(false);
-            })
-            .catch(error => {
-              if (error.response.data.message === 'Bad credentials') {
-                return toast.error('Senha incorreta. Tente novamente');
-              }
-
-              return toast.error('Ocorreu um erro atualizar os dados');
-            });
+          toast.success('Dados atualizados com sucesso');
+          setIsUserEditingFields(false);
         })
         .catch(error => {
           return toast.error(
@@ -195,14 +165,29 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
     [data.token, data.user],
   );
 
+  const updateUserImage = useCallback(
+    async ({ dataOfUser, setIsUserUpdatingImage }: IUpdateUserImageProps) => {
+      setData({
+        token: data.token,
+        user: {
+          ...data.user,
+          urlImage: dataOfUser,
+        },
+      });
+      setIsUserUpdatingImage(false);
+    },
+    [data.token, data.user],
+  );
+
   const signOut = useCallback(async () => {
+    await router.push('/');
+
     destroyCookie(undefined, '@ECantina:token');
     Cookies.remove('@ECantina:user');
 
     setData({} as AuthState);
 
     setModalLoginIsOpen(false);
-    router.push('/');
   }, [router, setModalLoginIsOpen]);
 
   return (
@@ -214,6 +199,7 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
         signOut,
         isAuthenticated,
         updateUser,
+        updateUserImage,
       }}
     >
       {children}

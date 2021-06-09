@@ -3,14 +3,19 @@ import { BurgerProvider } from './burger';
 import { CartProvider } from './cart';
 import { ProductModalContextProvider } from './productModal';
 import { SignInModalContextProvider } from './signinModal';
+import { SearchRestaurantByProvider } from './searchRestaurantBy';
 
 const AppProvider: React.FC = ({ children }: any) => (
   <BurgerProvider>
     <SignInModalContextProvider>
       <AuthProvider>
-        <CartProvider>
-          <ProductModalContextProvider>{children}</ProductModalContextProvider>
-        </CartProvider>
+        <SearchRestaurantByProvider>
+          <CartProvider>
+            <ProductModalContextProvider>
+              {children}
+            </ProductModalContextProvider>
+          </CartProvider>
+        </SearchRestaurantByProvider>
       </AuthProvider>
     </SignInModalContextProvider>
   </BurgerProvider>

@@ -16,6 +16,16 @@ const dragReject = css`
   border-color: #ee6c4d;
 `;
 
+export const StylesContainer = styled.div`
+  p {
+    margin: 0.5rem 0.25rem;
+
+    span {
+      font-weight: 700;
+    }
+  }
+`;
+
 export const DropContainer = styled.div.attrs({
   className: 'dropzone',
 })`

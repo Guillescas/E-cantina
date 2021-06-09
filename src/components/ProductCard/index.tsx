@@ -21,9 +21,13 @@ interface IProductProps {
 
 interface IProductCardProps {
   product: IProductProps;
+  restaurantId: number;
 }
 
-const ProductCard = ({ product }: IProductCardProps): ReactElement => {
+const ProductCard = ({
+  product,
+  restaurantId,
+}: IProductCardProps): ReactElement => {
   const {
     productModalIsOpen,
     closeProductModal,
@@ -37,6 +41,7 @@ const ProductCard = ({ product }: IProductCardProps): ReactElement => {
         onRequestClose={closeProductModal}
         setModalProductIsOpen={setModalProductIsOpen}
         product={product}
+        restaurantId={restaurantId}
       />
 
       <img

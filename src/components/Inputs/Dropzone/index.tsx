@@ -2,17 +2,22 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useField } from '@unform/core';
 
-import { DropContainer, UploadMessage } from './styles';
+import { toast } from 'react-toastify';
+import { StylesContainer, DropContainer, UploadMessage } from './styles';
 
-interface Props {
+interface IDropzoneProps {
   name: string;
+  setIsUserUpdatingImage?: (isUpdating: boolean) => void;
 }
 
 interface InputRefProps extends HTMLInputElement {
   acceptedFiles: File[];
 }
 
-export default function Dropzone({ name }: Props): ReactElement {
+export default function Dropzone({
+  name,
+  setIsUserUpdatingImage,
+}: IDropzoneProps): ReactElement {
   const inputRef = useRef<InputRefProps>(null);
   const { fieldName, registerField, defaultValue = [] } = useField(name);
 
@@ -27,8 +32,12 @@ export default function Dropzone({ name }: Props): ReactElement {
     accept: 'image/*',
     onDrop: onDropAcceptedFiles => {
       if (inputRef.current) {
+        if (acceptedFiles.length > 1) {
+          return toast.error('Por favor, selecione apenas uma imagem');
+        }
         inputRef.current.acceptedFiles = onDropAcceptedFiles;
         setAcceptedFiles(onDropAcceptedFiles);
+        setIsUserUpdatingImage(true);
       }
     },
   });
@@ -66,23 +75,27 @@ export default function Dropzone({ name }: Props): ReactElement {
   }
 
   return (
-    <>
+    <StylesContainer>
       <DropContainer
         role="button"
         {...getRootProps()}
         onClick={() => inputRef.current?.click()}
       >
-        <input {...getInputProps()} accept="image/*" ref={inputRef} />
+        <input
+          {...getInputProps()}
+          accept="image/*"
+          maxLength={1}
+          ref={inputRef}
+        />
 
         {renderDragMessage()}
       </DropContainer>
-      {acceptedFiles.length !== 0 && (
-        <ul>
-          {acceptedFiles.map(file => (
-            <li key={file.name}>{file.name}</li>
-          ))}
-        </ul>
-      )}
-    </>
+      {acceptedFiles.map(file => (
+        <p key={file.name}>
+          <span>Arquivo selecionado: </span>
+          {file.name}
+        </p>
+      ))}
+    </StylesContainer>
   );
 }
