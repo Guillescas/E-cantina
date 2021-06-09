@@ -9,6 +9,7 @@ import {
   FiHash,
   FiLock,
   FiPlus,
+  FiSave,
   FiTag,
   FiUser,
   FiX,
@@ -21,6 +22,7 @@ import BaseDashboard from '../components/BaseDashboard';
 import InputWithMask from '../components/Inputs/InputWithMask';
 import Input from '../components/Inputs/Input';
 import Button from '../components/Button';
+import SelectCreditCard from '../components/SelectCreditCard';
 
 import { withSSRAuth } from '../utils/withSSRAuth';
 import getvalidationErrors from '../utils/getValidationErrors';
@@ -32,7 +34,7 @@ import { useAuth } from '../hooks/auth';
 import { api } from '../services/apiClient';
 
 import { StylesContainer } from '../styles/Pages/Checkout';
-import CreditCard from '../components/CreditCard';
+import ButtonWithIcon from '../components/ButtonWithIcon';
 
 interface IAddCreditCardFormData {
   nickname: string;
@@ -58,11 +60,13 @@ const Checkout = (): ReactElement => {
 
   const router = useRouter();
 
-  const formRef = useRef<FormHandles>(null);
+  const addCreditCardFormRef = useRef<FormHandles>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+
   const [userCreditCards, setUserCreditCards] = useState<ICreditCardData[]>([]);
   const [isUserAddingCard, setIsUserAddingCard] = useState(false);
+  const [selectedCreditCardId, setSelectedCreditCardId] = useState<number>();
 
   useEffect(() => {
     api
@@ -75,11 +79,50 @@ const Checkout = (): ReactElement => {
       });
   }, [user]);
 
-  const handleCheckoutSubmit = useCallback(
+  const handleCheckoutSubmit = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      if (!selectedCreditCardId) {
+        setIsLoading(false);
+        return toast.error('Você deve selecionar um método de pagamento');
+      }
+
+      const orderData = {
+        clientId: Number(user.sub),
+        restaurantId: cart[0].restaurantId,
+        discountId,
+        observation: null,
+        productList: cart.map(product => {
+          return {
+            productId: product.id,
+            quantity: product.amount,
+            description: product.observation,
+          };
+        }),
+      };
+
+      api
+        .post('/order', orderData)
+        .then(() => {
+          toast.success('Pedido realizado com sucesso');
+          clearCart();
+          router.push('/orders');
+        })
+        .catch(error => {
+          toast.error(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  }, [cart, clearCart, discountId, router, selectedCreditCardId, user]);
+
+  const handleAddCreditCard = useCallback(
     async (data: IAddCreditCardFormData) => {
       setIsLoading(true);
       try {
-        formRef.current?.setErrors({});
+        addCreditCardFormRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
           nickname: Yup.string().required('Apelido obrigatório'),
@@ -111,48 +154,25 @@ const Checkout = (): ReactElement => {
 
         api
           .post('/card', creditCardData)
-          .then(() => {
+          .then(response => {
             toast.success('Cartão adicionado com sucesso');
-            setIsUserAddingCard(false);
+            setUserCreditCards([...userCreditCards, response.data]);
+            addCreditCardFormRef.current.reset();
           })
           .catch(error => {
-            return toast.error(error.response.message);
-          });
-
-        const orderData = {
-          clientId: Number(user.sub),
-          restaurantId: cart[0].restaurantId,
-          discountId,
-          observation: null,
-          productList: cart.map(product => {
-            return {
-              productId: product.id,
-              quantity: product.amount,
-              description: product.observation,
-            };
-          }),
-        };
-
-        api
-          .post('/order', orderData)
-          .then(() => {
-            toast.success('Pedido realizado com sucesso');
-            clearCart();
-            router.push('/orders');
-          })
-          .catch(error => {
-            toast.error(error);
+            return toast.error(error.response.daat.message);
           });
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(error);
 
-          formRef.current?.setErrors(errors);
+          addCreditCardFormRef.current?.setErrors(errors);
         }
       }
+      setIsUserAddingCard(false);
       setIsLoading(false);
     },
-    [cart, clearCart, discountId, router, user],
+    [userCreditCards],
   );
 
   return (
@@ -167,118 +187,131 @@ const Checkout = (): ReactElement => {
 
         <h1>Pagamento</h1>
 
-        <Form ref={formRef} onSubmit={handleCheckoutSubmit}>
-          <div className="resume">
-            <div className="card-area">
-              <div className="card-area-title">
-                <h2>Meus cartões</h2>
+        <div className="resume">
+          <div className="card-area">
+            <div className="card-area-title">
+              <h2>Meus cartões</h2>
 
-                {isUserAddingCard ? (
-                  <a role="button" onClick={() => setIsUserAddingCard(false)}>
-                    <FiX />
-                    Cancelar
-                  </a>
-                ) : (
-                  <a role="button" onClick={() => setIsUserAddingCard(true)}>
-                    <FiPlus />
-                    Adicionar cartão
-                  </a>
-                )}
-              </div>
-
-              <div className="cards">
-                {userCreditCards.map(userCreditCard => (
-                  <CreditCard
-                    key={userCreditCard.id}
-                    id={userCreditCard.id}
-                    nickname={userCreditCard.nickname}
-                    cardNumber={userCreditCard.cardNumber}
-                  />
-                ))}
-              </div>
-
-              {userCreditCards.length === 0 && (
-                <p className="no-cards">
-                  Você não possui nenhum cartão cadastrado :(
-                </p>
-              )}
-
-              {isUserAddingCard && (
-                <>
-                  <Input
-                    name="nickname"
-                    icon={FiTag}
-                    label="Apelido do cartão"
-                    placeholder="Apelido do cartão"
-                  />
-                  <InputWithMask
-                    name="cpfClient"
-                    icon={FiCreditCard}
-                    label="CPF do titular do cartão"
-                    placeholder="CPF do titular do cartão"
-                    mask="999.999.999-99"
-                  />
-                  <Input
-                    name="owner"
-                    icon={FiUser}
-                    label="Nome no cartão"
-                    placeholder="Nome no cartão"
-                    isInUppercase
-                  />
-                  <InputWithMask
-                    name="cardNumber"
-                    icon={FiHash}
-                    label="Número no cartão"
-                    placeholder="Número no cartão"
-                    mask="9999-9999-9999-9999"
-                  />
-                  <div className="inline-inputs">
-                    <InputWithMask
-                      name="validThru"
-                      icon={FiCalendar}
-                      label="Data de validade"
-                      placeholder="Data de validade"
-                      mask="99/99"
-                    />
-                    <Input
-                      name="cvv"
-                      icon={FiLock}
-                      label="CVV"
-                      placeholder="CVV"
-                    />
-                  </div>
-                </>
+              {isUserAddingCard ? (
+                <a role="button" onClick={() => setIsUserAddingCard(false)}>
+                  <FiX />
+                  Cancelar
+                </a>
+              ) : (
+                <a role="button" onClick={() => setIsUserAddingCard(true)}>
+                  <FiPlus />
+                  Adicionar cartão
+                </a>
               )}
             </div>
 
-            <div>
-              <h2>Resumo da compra</h2>
-
-              <table>
-                <tr>
-                  <th>Total de itens:</th>
-                  <td>{cart.length}</td>
-                </tr>
-                <tr>
-                  <th>Desconto:</th>
-                  <td>{formatPrice(Number(discount))}</td>
-                </tr>
-                <tr>
-                  <th>Preço final:</th>
-                  <td>{formatPrice(Number(totalCartPrice()))}</td>
-                </tr>
-              </table>
-
-              <Button
-                className="checkout-button"
-                onClick={() => formRef.current.submitForm()}
-                isLoading={isLoading}
-              >
-                Finalizar pedido
-              </Button>
+            <div className="cards">
+              {userCreditCards.map(userCreditCard => (
+                <SelectCreditCard
+                  key={userCreditCard.id}
+                  id={userCreditCard.id}
+                  nickname={userCreditCard.nickname}
+                  cardNumber={userCreditCard.cardNumber}
+                  selected={selectedCreditCardId === userCreditCard.id}
+                  setSelectedCreditCardId={setSelectedCreditCardId}
+                />
+              ))}
             </div>
+
+            {userCreditCards.length === 0 && (
+              <p className="no-cards">
+                Você não possui nenhum cartão cadastrado :(
+              </p>
+            )}
+
+            {isUserAddingCard && (
+              <Form ref={addCreditCardFormRef} onSubmit={handleAddCreditCard}>
+                <div className="card-title">
+                  <h2>Informações sobre pagamento</h2>
+
+                  <ButtonWithIcon
+                    type="button"
+                    icon={FiSave}
+                    isSuccess
+                    onClick={() => addCreditCardFormRef.current.submitForm()}
+                  >
+                    Salvar
+                  </ButtonWithIcon>
+                </div>
+
+                <Input
+                  name="nickname"
+                  icon={FiTag}
+                  label="Apelido do cartão"
+                  placeholder="Apelido do cartão"
+                />
+                <InputWithMask
+                  name="cpfClient"
+                  icon={FiCreditCard}
+                  label="CPF do titular do cartão"
+                  placeholder="CPF do titular do cartão"
+                  mask="999.999.999-99"
+                />
+                <Input
+                  name="owner"
+                  icon={FiUser}
+                  label="Nome no cartão"
+                  placeholder="Nome no cartão"
+                  isInUppercase
+                />
+                <InputWithMask
+                  name="cardNumber"
+                  icon={FiHash}
+                  label="Número no cartão"
+                  placeholder="Número no cartão"
+                  mask="9999-9999-9999-9999"
+                />
+                <div className="inline-inputs">
+                  <InputWithMask
+                    name="validThru"
+                    icon={FiCalendar}
+                    label="Data de validade"
+                    placeholder="Data de validade"
+                    mask="99/99"
+                  />
+                  <Input
+                    name="cvv"
+                    icon={FiLock}
+                    label="CVV"
+                    placeholder="CVV"
+                  />
+                </div>
+              </Form>
+            )}
           </div>
-        </Form>
+
+          <div>
+            <h2>Resumo da compra</h2>
+
+            <table>
+              <tr>
+                <th>Total de itens:</th>
+                <td>{cart.length}</td>
+              </tr>
+              <tr>
+                <th>Desconto:</th>
+                <td>{formatPrice(Number(discount))}</td>
+              </tr>
+              <tr>
+                <th>Preço final:</th>
+                <td>{formatPrice(Number(totalCartPrice()))}</td>
+              </tr>
+            </table>
+
+            <Button
+              className="checkout-button"
+              onClick={handleCheckoutSubmit}
+              isLoading={isLoading}
+            >
+              Finalizar pedido
+            </Button>
+          </div>
+        </div>
       </StylesContainer>
     </BaseDashboard>
   );
