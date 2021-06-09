@@ -49,9 +49,9 @@ const SignModal = ({
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
-      setIsLoading(true);
-
       try {
+        setIsLoading(true);
+
         loginFormRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
@@ -69,6 +69,8 @@ const SignModal = ({
           email: data.email,
           password: data.password,
         });
+
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(err);
@@ -76,7 +78,6 @@ const SignModal = ({
           loginFormRef.current?.setErrors(errors);
         }
       }
-      setIsLoading(false);
     },
     [signIn, setIsLoading],
   );
@@ -91,12 +92,7 @@ const SignModal = ({
       <StylesContainer>
         <h2>Login</h2>
 
-        <Form
-          ref={loginFormRef}
-          onSubmit={data => {
-            handleSubmit(data);
-          }}
-        >
+        <Form ref={loginFormRef} onSubmit={handleSubmit}>
           <div>
             <Input
               name="email"
