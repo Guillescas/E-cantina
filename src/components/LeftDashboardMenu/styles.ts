@@ -48,7 +48,7 @@ export const StylesContainer = styled.div`
 
         border-radius: 50%;
         background: var(--text);
-        color: var(--background);
+        color: #000;
 
         font-size: 0.9rem;
 
