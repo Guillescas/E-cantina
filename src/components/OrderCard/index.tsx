@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import moment from 'moment';
 import QRCode from 'qrcode.react';
 
@@ -6,54 +6,32 @@ import { formatPrice } from '../../utils/formatPriceToBR';
 
 import { StylesContainer } from './styles';
 
-interface IProductProps {
-  id: number;
-  name: string;
-  type: string;
-  description: string;
-  price: number;
-  urlImage: string;
-}
-
-interface IProductListProps {
-  id: number;
-  quantity: number;
-  value: number;
-  total: number;
-  description: string;
-  product: IProductProps;
-}
-
 interface IOrderCardProps {
-  id: number;
+  order: any;
   orderAt: string;
   totalPrice: number;
-  productList: IProductListProps[];
+  orderRestaurantName: string;
+  orderRestaurantImage: string;
 }
 
 const OrderCard = ({
-  id,
+  order,
   orderAt,
   totalPrice,
-  productList,
+  orderRestaurantName,
+  orderRestaurantImage,
 }: IOrderCardProps): ReactElement => {
-  const [productsNames, setProductsNames] = useState([]);
-
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
-
-  useEffect(() => {
-    setProductsNames(productList.map(product => product.product.name));
-  }, [productList]);
 
   return (
     <StylesContainer>
       <img
-        src="/assets/restaurant.jpeg"
-        alt={`Imagem de ${productList[0].product.name}`}
+        src={`http://localhost:8080${orderRestaurantImage}`}
+        alt={`Imagem de ${orderRestaurantName}`}
       />
 
       <div className="infos">
-        <h2>{productsNames}</h2>
+        <h2>{orderRestaurantName}</h2>
         <p>
           Pedido feito em:{' '}
           <strong>{moment(orderAt).format('DD/MM/YYYY')}</strong>
@@ -69,7 +47,7 @@ const OrderCard = ({
             <button type="button" onClick={() => setIsQRCodeOpen(false)}>
               Fechar QR Code
             </button>
-            <QRCode value={`${id}`} bgColor="#f1f1f1" renderAs="svg" />
+            <QRCode value={`${order}`} bgColor="#f1f1f1" renderAs="svg" />
           </>
         ) : (
           <button type="button" onClick={() => setIsQRCodeOpen(true)}>
