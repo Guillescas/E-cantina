@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
+import { FaRegStar, FaStar } from 'react-icons/fa';
 
 import LeftDashboardMenu from '../../components/modules/Restaurant/LeftDashboardMenu';
 import Loading from '../../components/Loading';
@@ -25,7 +25,7 @@ const Dashboard = (): ReactElement => {
   const { setRestaurants, category } = useSearchRestaurantBy();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [restaurantRating, setRestaurantRating] = useState();
+  const [restaurantRating, setRestaurantRating] = useState<number>();
   const [totalOrders, setTotalOrders] = useState([]);
 
   useEffect(() => {
@@ -33,8 +33,7 @@ const Dashboard = (): ReactElement => {
     api
       .get(`/restaurant/${user.sub}`)
       .then(response => {
-        setRestaurantRating(response.data.rating);
-        setRestaurantRating(response.data.orders);
+        setRestaurantRating(response.data.averageRating);
         setIsLoading(false);
       })
       .catch(() => {
@@ -79,12 +78,63 @@ const Dashboard = (): ReactElement => {
             <section className="rating">
               <p>Avaliação do restaurante</p>
               <div className="rating">
-                <span>3.7</span>
-                <FaStar size={20} />
-                <FaStar size={20} />
-                <FaStarHalfAlt size={20} />
-                <FaRegStar size={20} />
-                <FaRegStar size={20} />
+                {!restaurantRating && <p>Nenhuma avaliação disponível</p>}
+                <span>{restaurantRating && restaurantRating.toFixed(1)}</span>
+                {restaurantRating &&
+                  restaurantRating >= 1 &&
+                  restaurantRating < 2 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                {restaurantRating &&
+                  restaurantRating >= 2 &&
+                  restaurantRating < 3 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                {restaurantRating &&
+                  restaurantRating >= 3 &&
+                  restaurantRating < 4 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                {restaurantRating &&
+                  restaurantRating >= 4 &&
+                  restaurantRating < 5 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                {restaurantRating &&
+                  restaurantRating >= 5 &&
+                  restaurantRating <= 6 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
               </div>
             </section>
           </div>

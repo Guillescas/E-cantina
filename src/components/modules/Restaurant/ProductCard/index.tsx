@@ -1,11 +1,9 @@
 import { ReactElement } from 'react';
-import { FiPlus } from 'react-icons/fi';
+import { FiEdit2, FiPlus } from 'react-icons/fi';
+import { useProductModal } from '../../../../hooks/productModal';
 
-import { useProductModal } from '../../hooks/productModal';
-
-import { formatPrice } from '../../utils/formatPriceToBR';
-
-import ProductModal from '../Modals/ProductModal';
+import { formatPrice } from '../../../../utils/formatPriceToBR';
+import EditProductModal from '../../../Modals/EditProductModal';
 
 import { StylesContainer } from './styles';
 
@@ -26,7 +24,7 @@ interface IProductCardProps {
   restaurantId: number;
 }
 
-const VerticalProductCard = ({
+const ProductCard = ({
   product,
   restaurantId,
 }: IProductCardProps): ReactElement => {
@@ -38,7 +36,7 @@ const VerticalProductCard = ({
 
   return (
     <StylesContainer>
-      <ProductModal
+      <EditProductModal
         isModalOpen={productModalIsOpen}
         onRequestClose={closeProductModal}
         setModalProductIsOpen={setModalProductIsOpen}
@@ -50,32 +48,23 @@ const VerticalProductCard = ({
         <img
           src={`http://localhost:8080${product && product.urlImage}`}
           alt={`Imagem de ${product && product.name}`}
-          id="vertocal-product-card-image"
         />
       ) : (
         <img
           src="/assets/food.jpeg"
           alt={`Imagem de ${product && product.name}`}
-          id="vertocal-product-card-image"
         />
       )}
+      <h2>{product && product.name}</h2>
+      <p>{product && product.description}</p>
+      <span>{formatPrice(product && product.price)}</span>
 
-      <div className="infos">
-        <h2>Cheese burger</h2>
-        <p>Pão, carne e muito queijo</p>
-        <span>{formatPrice(23.9)}</span>
-      </div>
-
-      <div
-        className="icon"
-        role="button"
-        onClick={() => setModalProductIsOpen(true)}
-      >
-        <FiPlus size={22} />
-        Ver mais
-      </div>
+      <button type="button" onClick={() => setModalProductIsOpen(true)}>
+        <FiEdit2 />
+        <p>Editar</p>
+      </button>
     </StylesContainer>
   );
 };
 
-export default VerticalProductCard;
+export default ProductCard;

@@ -69,8 +69,6 @@ const SignModal = ({
           email: data.email,
           password: data.password,
         });
-
-        setIsLoading(false);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getvalidationErrors(err);
@@ -78,6 +76,7 @@ const SignModal = ({
           loginFormRef.current?.setErrors(errors);
         }
       }
+      setIsLoading(false);
     },
     [signIn, setIsLoading],
   );

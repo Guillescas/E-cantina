@@ -8,17 +8,26 @@ interface IRestaurantCardProps {
   id: number;
   name: string;
   description: string;
+  restaurantUrlImage: string;
 }
 
 const RestaurantCard = ({
   id,
   name,
   description,
+  restaurantUrlImage,
 }: IRestaurantCardProps): ReactElement => {
   return (
     <Link href={`/restaurant/${id}`}>
       <StylesContainer>
-        <img src="/assets/restaurant.jpeg" alt={`Imagem de ${name}`} />
+        {restaurantUrlImage ? (
+          <img
+            src={`http://localhost:8080${restaurantUrlImage}`}
+            alt={`Imagem de ${name}`}
+          />
+        ) : (
+          <img src="/assets/restaurant.jpeg" alt="Imagem de um restaurante" />
+        )}
 
         <div className="infos">
           <h2>{name}</h2>

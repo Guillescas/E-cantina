@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { FaStar, FaRegStar } from 'react-icons/fa';
 import { AiTwotoneFire } from 'react-icons/ai';
 import { GetServerSideProps } from 'next';
 import { toast } from 'react-toastify';
@@ -59,6 +59,9 @@ const Restaurant = (
   const [products, setProducts] = useState<IProductProps[]>([]);
   const [rating, setRating] = useState<number>();
 
+  const filledStars = [];
+  const unfilledStars = [];
+
   const onRequestCloseRateModal = () => {
     setRateModalIsOpen(false);
   };
@@ -73,7 +76,17 @@ const Restaurant = (
       .catch(error => {
         return toast.error(error);
       });
-  }, [id]);
+  }, [id, rating]);
+
+  useEffect(() => {
+    for (let i = 1; i <= rating; i += 1) {
+      filledStars.push(<FaStar size={20} />);
+    }
+
+    for (let m = 0; rating + m === 5; m += 1) {
+      unfilledStars.push(<FaRegStar size={20} />);
+    }
+  }, [rating]);
 
   useEffect(() => {
     api
@@ -85,17 +98,6 @@ const Restaurant = (
         return toast.error(error);
       });
   }, [id]);
-
-  const filledStars = [];
-  const unfilledStars = [];
-
-  for (let i = 1; i <= rating; i += 1) {
-    filledStars.push(<FaStar size={20} />);
-  }
-
-  for (let m = 0; rating + m !== 5; m += 1) {
-    unfilledStars.push(<FaRegStar size={20} />);
-  }
 
   return (
     <StylesContainer>
@@ -130,8 +132,51 @@ const Restaurant = (
                 <div>
                   {!rating && <p>Nenhuma avaliação disponível</p>}
                   <span>{rating && rating.toFixed(1)}</span>
-                  {filledStars.map(star => star)}
-                  {unfilledStars.map(star => star)}
+                  {rating >= 1 && rating < 2 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                  {rating >= 2 && rating < 3 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                  {rating >= 3 && rating < 4 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                  {rating >= 4 && rating < 5 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
+                  {rating >= 5 && rating <= 6 && (
+                    <>
+                      <FaStar size={20} />
+                      <FaStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                      <FaRegStar size={20} />
+                    </>
+                  )}
                   {/* <FaStar size={20} />
                   <FaStarHalfAlt size={20} />
                   <FaRegStar size={20} /> */}
@@ -167,7 +212,11 @@ const Restaurant = (
               <div className="vertical-cards">
                 {products &&
                   products.map(product => (
-                    <VerticalProductCard key={product.id} product={product} />
+                    <VerticalProductCard
+                      key={product.id}
+                      restaurantId={Number(id)}
+                      product={product}
+                    />
                   ))}
               </div>
             </div>

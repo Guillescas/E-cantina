@@ -42,8 +42,20 @@ interface IUpdateUserInfosProps {
   // password: string;
 }
 
+interface IUpdateRestaurantInfosProps {
+  name: string;
+  email: string;
+  cnpj: string;
+  description: string;
+}
+
 interface IUpdateUserProps {
   dataOfUser: IUpdateUserInfosProps;
+  setIsUserEditingFields: (isUserEditingFields: boolean) => void;
+}
+
+interface IUpdateRestaurantProps {
+  dataOfUser: IUpdateRestaurantInfosProps;
   setIsUserEditingFields: (isUserEditingFields: boolean) => void;
 }
 
@@ -59,6 +71,7 @@ interface AuthContextData {
   signOut(): void;
   isAuthenticated: boolean;
   updateUser(props: IUpdateUserProps): Promise<void>;
+  updateRestaurant(props: IUpdateRestaurantProps): Promise<void>;
   updateUserImage(props: IUpdateUserImageProps): Promise<void>;
 }
 
@@ -165,6 +178,37 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
     [data.token, data.user],
   );
 
+  const updateRestaurant = useCallback(
+    async ({ dataOfUser, setIsUserEditingFields }: IUpdateRestaurantProps) => {
+      api
+        .patch(`/restaurant/${data.user.sub}`, dataOfUser)
+        .then(response => {
+          if (!response.data) {
+            return toast.error('Erro ao atualizar o usuário');
+          }
+
+          setData({
+            token: data.token,
+            user: {
+              ...data.user,
+              name: dataOfUser.name,
+              email: dataOfUser.email,
+            },
+          });
+        })
+        .then(() => {
+          toast.success('Dados atualizados com sucesso');
+          setIsUserEditingFields(false);
+        })
+        .catch(error => {
+          return toast.error(
+            `Erro inesperado. Tente novamente mais tarde ${error}`,
+          );
+        });
+    },
+    [data.token, data.user],
+  );
+
   const updateUserImage = useCallback(
     async ({ dataOfUser, setIsUserUpdatingImage }: IUpdateUserImageProps) => {
       setData({
@@ -199,6 +243,7 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
         signOut,
         isAuthenticated,
         updateUser,
+        updateRestaurant,
         updateUserImage,
       }}
     >

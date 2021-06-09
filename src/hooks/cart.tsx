@@ -7,7 +7,7 @@ interface CartProviderProps {
 }
 
 interface ICartProduct {
-  restaurantId: number;
+  restaurantId?: number;
   id: number;
   type: string;
   name: string;

@@ -41,6 +41,7 @@ const Dashboard = (): ReactElement => {
       .get(`/restaurant?nameRestaurant=${searchByRestaurantName}`)
       .then(response => {
         setRestaurants(response.data.content);
+        console.log(response.data.content);
         setIsLoading(false);
       })
       .catch(() => {
@@ -138,6 +139,7 @@ const Dashboard = (): ReactElement => {
               id={restaurant.id}
               name={restaurant.name}
               description={restaurant.description}
+              restaurantUrlImage={restaurant.urlImage}
             />
           ))}
         </ContentList>

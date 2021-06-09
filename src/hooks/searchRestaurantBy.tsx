@@ -16,6 +16,7 @@ interface IRestaurantProps {
     id: number;
     name: string;
   };
+  urlImage: string;
 }
 
 interface SearchRestaurantByContextData {
