@@ -44,10 +44,17 @@ const ProductCard = ({
         restaurantId={restaurantId}
       />
 
-      <img
-        src="/assets/hamburger.jpeg"
-        alt={`Imagem de ${product && product.name}`}
-      />
+      {product && product.urlImage ? (
+        <img
+          src={`http://localhost:8080${product && product.urlImage}`}
+          alt={`Imagem de ${product && product.name}`}
+        />
+      ) : (
+        <img
+          src="/assets/food.jpeg"
+          alt={`Imagem de ${product && product.name}`}
+        />
+      )}
       <h2>{product && product.name}</h2>
       <p>{product && product.description}</p>
       <span>{formatPrice(product && product.price)}</span>

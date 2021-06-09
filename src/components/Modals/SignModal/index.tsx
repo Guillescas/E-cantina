@@ -99,7 +99,7 @@ const SignModal = ({
               autoComplete="email"
               placeholder="email"
               icon={FiMail}
-              type="text"
+              type="email"
               label="E-mail"
             />
           </div>
