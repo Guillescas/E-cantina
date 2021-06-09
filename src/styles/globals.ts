@@ -12,6 +12,8 @@ export const GlobalStyles = createGlobalStyle`
     --primary: #8d99ae;
 
     --secondary: #ed6d51;
+
+    --success: #08BC0C;
   }
 
   * {

@@ -32,7 +32,9 @@ export function setupAPIClient(ctx = undefined): AxiosInstance {
         Cookie.remove('@ECantina:user');
 
         if (process.browser) {
-          toast.error('Sua sessão foi expirada. Faça login novamente :)');
+          toast.error('Sua sessão foi expirada. Faça login novamente :)', {
+            toastId: 2,
+          });
           Router.push('/');
         } else {
           return Promise.reject(new AuthTokenErrorExpired());

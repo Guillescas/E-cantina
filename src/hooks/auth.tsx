@@ -115,12 +115,17 @@ export const AuthProvider: React.FC = ({ children }: IAuthProviderProps) => {
             '@ECantina:user',
             JSON.stringify(formattedUserInfosFromToken),
           );
+
+          if (formattedUserInfosFromToken.type === 'client') {
+            router.push('/dashboard');
+          }
+
+          if (formattedUserInfosFromToken.type === 'restaurant') {
+            router.push('/restaurants/dashboard');
+          }
         })
         .then(() => {
           destroyCookie(undefined, '@ECantinaReturnMessage');
-        })
-        .then(() => {
-          router.push('/dashboard');
         })
         .catch(error => {
           return toast.error(error);

@@ -267,12 +267,13 @@ const Account = (): ReactElement => {
 
         api
           .post('/card', creditCardData)
-          .then(() => {
+          .then(response => {
             toast.success('Cartão adicionado com sucesso');
+            setUserCreditCards(response.data);
             addCreditCardFormRef.current.reset();
           })
           .catch(error => {
-            return toast.error(error.response.message);
+            return toast.error(error.response.data.message);
           });
       } catch (error) {
         if (error instanceof Yup.ValidationError) {

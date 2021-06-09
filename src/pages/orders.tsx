@@ -35,6 +35,10 @@ interface IOrderProps {
   valid: boolean;
   total: number;
   productLists: IProductListProps[];
+  restaurant: {
+    name: string;
+    urlImage: string;
+  };
 }
 
 const Orders = (): ReactElement => {
@@ -44,7 +48,6 @@ const Orders = (): ReactElement => {
 
   useEffect(() => {
     api.get(`/client/${user.sub}`).then(response => {
-      console.log(response.data.orders);
       setOrders(response.data.orders);
     });
   }, [user]);
@@ -59,10 +62,11 @@ const Orders = (): ReactElement => {
               return (
                 <OrderCard
                   key={order.id}
-                  id={order.id}
+                  order={order}
                   orderAt={order.createdAt}
                   totalPrice={order.total}
-                  productList={order.productLists}
+                  orderRestaurantName={order.restaurant.name}
+                  orderRestaurantImage={order.restaurant.urlImage}
                 />
               );
             }
@@ -77,10 +81,11 @@ const Orders = (): ReactElement => {
               return (
                 <OrderCard
                   key={order.id}
-                  id={order.id}
+                  order={order}
                   orderAt={order.createdAt}
                   totalPrice={order.total}
-                  productList={order.productLists}
+                  orderRestaurantName={order.restaurant.name}
+                  orderRestaurantImage={order.restaurant.urlImage}
                 />
               );
             }
