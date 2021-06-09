@@ -29,6 +29,7 @@ interface IRestaurantProps {
     id: number;
     name: string;
   };
+  urlImage: string;
 }
 
 interface IProductProps {
@@ -66,7 +67,6 @@ const Restaurant = (
     api
       .get(`/restaurant/${id}`)
       .then(response => {
-        console.log(response.data);
         setRating(response.data.averageRating);
         setRestaurant(response.data);
       })
@@ -86,10 +86,15 @@ const Restaurant = (
       });
   }, [id]);
 
-  const stars = [];
+  const filledStars = [];
+  const unfilledStars = [];
 
-  for (let i = 1; i < rating; i += 1) {
-    stars.push(<FaStar size={20} />);
+  for (let i = 1; i <= rating; i += 1) {
+    filledStars.push(<FaStar size={20} />);
+  }
+
+  for (let m = 0; rating + m !== 5; m += 1) {
+    unfilledStars.push(<FaRegStar size={20} />);
   }
 
   return (
@@ -105,7 +110,17 @@ const Restaurant = (
         <LeftDashboardMenu />
 
         <RestaurantContent>
-          <img src="/assets/restaurant.jpeg" alt="Imagem de" />
+          {restaurant && restaurant.urlImage ? (
+            <img
+              src={`http://localhost:8080${restaurant && restaurant.urlImage}`}
+              alt={`Imagem de ${restaurant && restaurant.name}`}
+            />
+          ) : (
+            <img
+              src="/assets/restaurant.jpeg"
+              alt={`Imagem de ${restaurant && restaurant.name}`}
+            />
+          )}
 
           <div className="main">
             <div className="title">
@@ -113,9 +128,10 @@ const Restaurant = (
 
               <div className="rating">
                 <div>
+                  {!rating && <p>Nenhuma avaliação disponível</p>}
                   <span>{rating && rating.toFixed(1)}</span>
-                  {rating && stars.map(star => star)}
-                  {rating && rating - 5 !== 0 && <FaRegStar size={20} />}
+                  {filledStars.map(star => star)}
+                  {unfilledStars.map(star => star)}
                   {/* <FaStar size={20} />
                   <FaStarHalfAlt size={20} />
                   <FaRegStar size={20} /> */}
@@ -149,7 +165,10 @@ const Restaurant = (
             <div className="section products">
               <h1>Mais produtos</h1>
               <div className="vertical-cards">
-                <VerticalProductCard />
+                {products &&
+                  products.map(product => (
+                    <VerticalProductCard key={product.id} product={product} />
+                  ))}
               </div>
             </div>
           </div>
