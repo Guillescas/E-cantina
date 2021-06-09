@@ -8,6 +8,7 @@ import LeftDashboardMenu from '../../components/LeftDashboardMenu';
 import ProductCard from '../../components/ProductCard';
 import TopDashboardMenu from '../../components/TopDashboardMenu';
 import VerticalProductCard from '../../components/VerticalProductCard';
+import RateModal from '../../components/Modals/RateModal';
 
 import { api } from '../../services/apiClient';
 
@@ -51,13 +52,22 @@ const Restaurant = (
 ): ReactElement => {
   const { id } = restaurantUrlProps;
 
+  const [rateModalIsOpen, setRateModalIsOpen] = useState(false);
+
   const [restaurant, setRestaurant] = useState<IRestaurantProps>();
   const [products, setProducts] = useState<IProductProps[]>([]);
+  const [rating, setRating] = useState<number>();
+
+  const onRequestCloseRateModal = () => {
+    setRateModalIsOpen(false);
+  };
 
   useEffect(() => {
     api
       .get(`/restaurant/${id}`)
       .then(response => {
+        console.log(response.data);
+        setRating(response.data.averageRating);
         setRestaurant(response.data);
       })
       .catch(error => {
@@ -76,8 +86,19 @@ const Restaurant = (
       });
   }, [id]);
 
+  const stars = [];
+
+  for (let i = 1; i < rating; i += 1) {
+    stars.push(<FaStar size={20} />);
+  }
+
   return (
     <StylesContainer>
+      <RateModal
+        isModalOpen={rateModalIsOpen}
+        onRequestClose={onRequestCloseRateModal}
+        restaurantId={Number(id)}
+      />
       <TopDashboardMenu />
 
       <Content>
@@ -91,12 +112,17 @@ const Restaurant = (
               <h1>{restaurant && restaurant.name}</h1>
 
               <div className="rating">
-                <span>3.7</span>
-                <FaStar size={20} />
-                <FaStar size={20} />
-                <FaStarHalfAlt size={20} />
-                <FaRegStar size={20} />
-                <FaRegStar size={20} />
+                <div>
+                  <span>{rating && rating.toFixed(1)}</span>
+                  {rating && stars.map(star => star)}
+                  {rating && rating - 5 !== 0 && <FaRegStar size={20} />}
+                  {/* <FaStar size={20} />
+                  <FaStarHalfAlt size={20} />
+                  <FaRegStar size={20} /> */}
+                </div>
+                <button type="button" onClick={() => setRateModalIsOpen(true)}>
+                  Avaliar restaurante
+                </button>
               </div>
             </div>
 
