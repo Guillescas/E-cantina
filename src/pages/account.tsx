@@ -272,6 +272,7 @@ const Account = (): ReactElement => {
             toast.success('Cartão adicionado com sucesso');
             setUserCreditCards(response.data);
             addCreditCardFormRef.current.reset();
+            setIsUserAddingCreditCard(false);
           })
           .catch(error => {
             return toast.error(error.response.data.message);
@@ -283,7 +284,6 @@ const Account = (): ReactElement => {
           addCreditCardFormRef.current?.setErrors(errors);
         }
       }
-      setIsUserAddingCreditCard(false);
       setIsLoading(false);
     },
     [user],
