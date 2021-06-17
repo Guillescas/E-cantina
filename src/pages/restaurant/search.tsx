@@ -22,6 +22,7 @@ import {
 } from '../../styles/Pages/Search';
 
 interface IRestaurantProps {
+  url: string;
   id: number;
   email: string;
   name: string;
@@ -138,6 +139,7 @@ const Search = (): ReactElement => {
 
           {restaurants.map(restaurant => (
             <RestaurantCard
+              restaurantUrlImage={restaurant.url}
               key={restaurant.id}
               id={restaurant.id}
               name={restaurant.name}
